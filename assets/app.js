@@ -74,7 +74,7 @@ $$('.tag').forEach((button) =>
 
 const toggle = $('.nav-toggle');
 const nav = $('#site-nav');
-const desktopQuery = matchMedia('(min-width: 961px)');
+const desktopQuery = matchMedia('(min-width: 1121px)');
 
 function closeNav({ returnFocus = false } = {}) {
   if (!toggle || !nav) return;

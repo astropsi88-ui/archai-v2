@@ -892,7 +892,7 @@ footer a:hover {
   }
 }
 /* Media queries */
-@media (max-width: 960px) {
+@media (max-width: 1120px) {
   .nav-toggle {
     display: inline-grid;
   }
@@ -917,7 +917,8 @@ footer a:hover {
     padding: 12px 10px;
   }
 
-  .header-actions .header-media {
+  .header-actions .header-media,
+  .header-actions .yt {
     display: none;
   }
   .nav-media {
