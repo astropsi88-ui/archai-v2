@@ -1,7 +1,80 @@
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const phrases={companion:'Хочу создать AI-компаньона, который будет рядом для жизни, дел и общей истории.',partner:'Хочу создать личного ИИ-напарника для рабочих задач, проектов и процессов.',coauthor:'Хочу создать цифрового соавтора для текстов, сценариев и регулярного контента.',project:'Хочу создать цифровую личность проекта для Telegram и сайта.',start:'Не знаю, с чего начать. Помогите выбрать подходящую цифровую личность.'};
-function typeLoop(el,text){if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches){if(el)el.textContent=text;return}let i=0,del=false;setInterval(()=>{el.textContent=text.slice(0,i); if(!del&&i<text.length)i++; else if(!del){del=true;setTimeout(()=>{},900)} else if(i>0)i--; else del=false},75)}
+const phrases={companion:'Хочу создать AI-компаньона, который будет рядом для жизни, дел и общей истории.',partner:'Хочу создать личного напарника для рабочих задач, проектов и процессов.',coauthor:'Хочу создать цифрового соавтора для текстов, сценариев и регулярного контента.',project:'Хочу создать цифровую личность проекта для Telegram и сайта.',start:'Не знаю, с чего начать. Помогите выбрать подходящую цифровую личность.'};
+function typeLoop(el,text){
+  if(!el)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=text;return}
+  let i=0,mode='type',pause=0;
+  setInterval(()=>{
+    if(mode==='pause'){pause--;if(pause<=0)mode='erase';return}
+    if(mode==='shortPause'){pause--;if(pause<=0)mode='type';return}
+    el.textContent=text.slice(0,i);
+    if(mode==='type'){
+      if(i<text.length)i++;else{mode='pause';pause=16}
+    }else if(i>0){i--}else{mode='shortPause';pause=5}
+  },70);
+}
 typeLoop($('.typing'),'Напишите Вику своими словами, кого вы хотите создать…');
-$$('.tag').forEach(b=>b.addEventListener('click',()=>{const text=phrases[b.dataset.prompt]||b.textContent.trim(); const input=$('#chat-input'); if(input){input.value=text; input.focus(); $('#vik-chat')?.scrollIntoView({behavior:'smooth',block:'center'}); $('.chat-shell')?.classList.add('revealed')}}));
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');io.unobserve(e.target)}}),{threshold:.18});$$('.reveal,.card,.node,.price-card').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=`${Math.min(i%7*70,420)}ms`;io.observe(el)});
+$$('.tag[data-prompt]').forEach(link=>link.addEventListener('click',()=>{sessionStorage.setItem('archaiPrompt',phrases[link.dataset.prompt]||link.textContent.trim())}));
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');io.unobserve(e.target)}}),{threshold:.18});
+  $$('.reveal,.card,.node,.price-card,.system-strip,.orbit-schema,.video-box').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=`${Math.min(i%7*70,420)}ms`;io.observe(el)});
+}else{$$('.reveal,.card,.node,.price-card,.system-strip,.orbit-schema,.video-box').forEach(el=>el.classList.add('revealed'))}
 $$('.card,.price-card').forEach(el=>el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();el.style.setProperty('--x',`${e.clientX-r.left}px`);el.style.setProperty('--y',`${e.clientY-r.top}px`)}));
+const schemaNotes={memory:'Память — хранит контекст, материалы и общую историю владельца с цифровой личностью.',character:'Характер — задаёт роль, тон, ритм и узнаваемую манеру общения.',infra:'Инфраструктура — связывает личность с нужными каналами, файлами и рабочими средами.',server:'Сервер — даёт техническую основу для стабильной работы и развития.',backup:'Бэкапы — защищают историю, настройки и материалы от потери.',connection:'Связь — помогает жить в Telegram, на сайте и в других выбранных каналах.',abilities:'Способности — подключают задачи, действия, автоматизации и рабочие сценарии.',ownership:'Собственность — предусматривает передачу владельцу вместе с памятью и материалами.'};
+function setSchemaNode(key){
+  const root=$('[data-schema]'),note=$('#schema-note');
+  if(!root||!schemaNotes[key])return;
+  $$('.orbit-node',root).forEach(n=>n.classList.toggle('active',n.dataset.node===key));
+  $$('.schema-lines path',root).forEach(line=>line.classList.toggle('active',line.dataset.line===key));
+  if(note)note.textContent=schemaNotes[key];
+}
+$$('.orbit-node').forEach(node=>{
+  node.addEventListener('pointerenter',()=>setSchemaNode(node.dataset.node));
+  node.addEventListener('focus',()=>setSchemaNode(node.dataset.node));
+  node.addEventListener('click',()=>setSchemaNode(node.dataset.node));
+});
+setSchemaNode('memory');
+
+const siteHeader=$('.site-header');
+const menuToggle=$('.menu-toggle');
+function closeMenu({restoreFocus=false}={}){
+  if(!siteHeader||!menuToggle)return;
+  siteHeader.classList.remove('menu-open');
+  menuToggle.setAttribute('aria-expanded','false');
+  if(restoreFocus)menuToggle.focus();
+}
+function openMenu(){
+  if(!siteHeader||!menuToggle)return;
+  siteHeader.classList.add('menu-open');
+  menuToggle.setAttribute('aria-expanded','true');
+}
+menuToggle?.addEventListener('click',()=>siteHeader?.classList.contains('menu-open')?closeMenu():openMenu());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&siteHeader?.classList.contains('menu-open'))closeMenu({restoreFocus:true})});
+$$('.site-header a').forEach(a=>a.addEventListener('click',()=>closeMenu()));
+matchMedia('(min-width: 961px)').addEventListener('change',e=>{if(e.matches)closeMenu()});
+
+function updateSchemaGeometry(){
+  const root=$('[data-schema]'),core=$('.orbit-core'),svg=$('.schema-lines');
+  if(!root||!core||!svg)return;
+  const rootBox=root.getBoundingClientRect();
+  const centerOf=el=>{const r=el.getBoundingClientRect();return{x:r.left-rootBox.left+r.width/2,y:r.top-rootBox.top+r.height/2}};
+  const corePoint=centerOf(core);
+  const width=Math.max(root.clientWidth,1),height=Math.max(root.clientHeight,1);
+  svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+  svg.setAttribute('width',width);
+  svg.setAttribute('height',height);
+  $$('.orbit-node',root).forEach(node=>{
+    const line=$(`.schema-lines [data-line="${node.dataset.node}"]`,root);
+    if(!line)return;
+    const p=centerOf(node);
+    line.setAttribute('d',`M${corePoint.x.toFixed(1)} ${corePoint.y.toFixed(1)} L${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+  });
+  const cross= $$('.schema-lines .cross',root);
+  const nodes=$$('.orbit-node',root);
+  if(cross[0]&&nodes[7]&&nodes[1]){const a=centerOf(nodes[7]),b=centerOf(nodes[1]);cross[0].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y+35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y+35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}
+  if(cross[1]&&nodes[5]&&nodes[3]){const a=centerOf(nodes[5]),b=centerOf(nodes[3]);cross[1].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y-35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y-35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}
+}
+window.addEventListener('DOMContentLoaded',updateSchemaGeometry);
+window.addEventListener('resize',updateSchemaGeometry);
+window.addEventListener('orientationchange',()=>setTimeout(updateSchemaGeometry,120));
+if(document.readyState!=='loading')updateSchemaGeometry();
