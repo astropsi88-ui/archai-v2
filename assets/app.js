@@ -34,3 +34,47 @@ $$('.orbit-node').forEach(node=>{
   node.addEventListener('click',()=>setSchemaNode(node.dataset.node));
 });
 setSchemaNode('memory');
+
+const siteHeader=$('.site-header');
+const menuToggle=$('.menu-toggle');
+function closeMenu({restoreFocus=false}={}){
+  if(!siteHeader||!menuToggle)return;
+  siteHeader.classList.remove('menu-open');
+  menuToggle.setAttribute('aria-expanded','false');
+  if(restoreFocus)menuToggle.focus();
+}
+function openMenu(){
+  if(!siteHeader||!menuToggle)return;
+  siteHeader.classList.add('menu-open');
+  menuToggle.setAttribute('aria-expanded','true');
+}
+menuToggle?.addEventListener('click',()=>siteHeader?.classList.contains('menu-open')?closeMenu():openMenu());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&siteHeader?.classList.contains('menu-open'))closeMenu({restoreFocus:true})});
+$$('.site-header a').forEach(a=>a.addEventListener('click',()=>closeMenu()));
+matchMedia('(min-width: 961px)').addEventListener('change',e=>{if(e.matches)closeMenu()});
+
+function updateSchemaGeometry(){
+  const root=$('[data-schema]'),core=$('.orbit-core'),svg=$('.schema-lines');
+  if(!root||!core||!svg)return;
+  const rootBox=root.getBoundingClientRect();
+  const centerOf=el=>{const r=el.getBoundingClientRect();return{x:r.left-rootBox.left+r.width/2,y:r.top-rootBox.top+r.height/2}};
+  const corePoint=centerOf(core);
+  const width=Math.max(root.clientWidth,1),height=Math.max(root.clientHeight,1);
+  svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+  svg.setAttribute('width',width);
+  svg.setAttribute('height',height);
+  $$('.orbit-node',root).forEach(node=>{
+    const line=$(`.schema-lines [data-line="${node.dataset.node}"]`,root);
+    if(!line)return;
+    const p=centerOf(node);
+    line.setAttribute('d',`M${corePoint.x.toFixed(1)} ${corePoint.y.toFixed(1)} L${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+  });
+  const cross= $$('.schema-lines .cross',root);
+  const nodes=$$('.orbit-node',root);
+  if(cross[0]&&nodes[7]&&nodes[1]){const a=centerOf(nodes[7]),b=centerOf(nodes[1]);cross[0].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y+35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y+35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}
+  if(cross[1]&&nodes[5]&&nodes[3]){const a=centerOf(nodes[5]),b=centerOf(nodes[3]);cross[1].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y-35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y-35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}
+}
+window.addEventListener('DOMContentLoaded',updateSchemaGeometry);
+window.addEventListener('resize',updateSchemaGeometry);
+window.addEventListener('orientationchange',()=>setTimeout(updateSchemaGeometry,120));
+if(document.readyState!=='loading')updateSchemaGeometry();
