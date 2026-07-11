@@ -16,16 +16,16 @@ typeLoop($('.typing'),typingText);
 function sizeVikMessage(){const field=$('[data-vik-message]');if(!field)return;field.style.height='auto';field.style.height=`${Math.min(field.scrollHeight,132)}px`}
 async function sendToVik(message){
   sessionStorage.setItem('archaiPendingMessage',message);
+  const telegramWindow=window.open('https://t.me/AI_VIK_dialog','_blank','noopener');
   if(navigator.clipboard?.writeText){try{await navigator.clipboard.writeText(message)}catch(e){}}
-  window.open('https://t.me/AI_VIK_dialog','_blank','noopener');
-  return {queued:true};
+  return {popupOpened:Boolean(telegramWindow)};
 }
 const vikForm=$('[data-vik-form]'),vikMessage=$('[data-vik-message]'),vikStatus=$('[data-vik-status]');
 function setVikStatus(text){if(vikStatus)vikStatus.textContent=text}
-vikMessage?.addEventListener('input',sizeVikMessage);
+vikMessage?.addEventListener('input',()=>{sizeVikMessage();setVikStatus('Вик готов слушать')});
 vikMessage?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();vikForm?.requestSubmit()}});
-vikForm?.addEventListener('submit',async e=>{e.preventDefault();const message=vikMessage?.value.trim();if(!message){vikMessage?.focus();return}await sendToVik(message);setVikStatus('Сообщение сохранено. Отправьте его Вику в Telegram.')});
-$$('.tag[data-prompt]').forEach(button=>button.addEventListener('click',()=>{const text=phrases[button.dataset.prompt]||button.textContent.trim();if(vikMessage){vikMessage.value=text;sizeVikMessage();vikMessage.focus();vikMessage.setSelectionRange(vikMessage.value.length,vikMessage.value.length)}sessionStorage.setItem('archaiPrompt',text)}));
+vikForm?.addEventListener('submit',async e=>{e.preventDefault();const message=vikMessage?.value.trim();if(!message){vikMessage?.focus();return}const result=await sendToVik(message);setVikStatus(result.popupOpened?'Сообщение сохранено. Отправьте его Вику в Telegram.':'Сообщение сохранено. Откройте Telegram Вика и вставьте его в чат.')});
+$$('.tag[data-prompt]').forEach(button=>button.addEventListener('click',()=>{const text=phrases[button.dataset.prompt]||button.textContent.trim();if(vikMessage){vikMessage.value=text;sizeVikMessage();setVikStatus('Вик готов слушать');vikMessage.focus();vikMessage.setSelectionRange(vikMessage.value.length,vikMessage.value.length)}sessionStorage.setItem('archaiPrompt',text)}));
 if('IntersectionObserver' in window){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');io.unobserve(e.target)}}),{threshold:.18});
   $$('.reveal,.card,.node,.price-card,.system-strip,.orbit-schema,.video-box').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=`${Math.min(i%7*70,420)}ms`;io.observe(el)});

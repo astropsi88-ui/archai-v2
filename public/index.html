@@ -46,12 +46,12 @@
 <h1>Ваша собственная цифровая личность, которая знает ваш контекст и развивается вместе с вами</h1>
 <div class="electric-box hero-electric" aria-label="Электрическое поле Вика">
 <div class="electric-inner">
-<div class="typing" aria-live="polite"></div>
+<div class="typing"></div>
 <form class="vik-form" data-vik-form>
 <label class="sr-only" for="vik-message">Сообщение для Вика</label>
 <textarea id="vik-message" class="vik-message" name="message" rows="2" placeholder="Напишите Вику сообщение…" data-vik-message></textarea>
 <div class="vik-form-footer">
-<span class="soft vik-status" data-vik-status>Вик готов слушать</span>
+<span class="soft vik-status" data-vik-status role="status" aria-live="polite" aria-atomic="true">Вик готов слушать</span>
 <button class="vik-send" type="submit">Отправить</button>
 </div>
 </form>
