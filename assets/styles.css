@@ -225,12 +225,12 @@ footer{padding:64px 0 32px;border-top:1px solid rgba(196,202,212,.08);background
 @media(max-width:640px){.home-page .directions-note{width:min(100%,440px);max-width:100%;margin-top:30px;padding-left:20px;font-size:15px;line-height:1.6;text-align:left}.home-page .directions-note span{display:inline}.home-page .directions-note span:not(:last-child)::after{content:" "}}
 
 /* Vik intro text column */
-.home-page #vik-chat .feature-split{align-items:center;column-gap:58px}
-.home-page #vik-chat .vik-intro-copy{max-width:610px;font-family:var(--font-display);text-align:left;justify-self:start;align-self:center}
+.home-page #vik-chat .feature-split{align-items:start;column-gap:58px}
+.home-page #vik-chat .vik-intro-copy{max-width:610px;padding-top:32px;font-family:var(--font-display);text-align:left;justify-self:start;align-self:start}
 .home-page #vik-chat .vik-intro-copy .eyebrow{text-align:left;margin:0 0 14px}
 .home-page #vik-chat .vik-intro-copy h2{max-width:620px;margin:0 0 28px;color:#f0eef6;font-family:var(--font-display);font-size:clamp(34px,3vw,40px);font-weight:600;line-height:1.08;letter-spacing:-.03em;text-align:left}
 .home-page #vik-chat .vik-intro-lead{max-width:570px;margin:0 0 22px;color:#cbc7e8;font-size:18px;font-weight:500;line-height:1.55;letter-spacing:-.005em}
 .home-page #vik-chat .vik-intro-body{max-width:600px;margin:0;color:#b8c4d4;font-size:17px;font-weight:400;line-height:1.7}
 .home-page #vik-chat .vik-intro-final{max-width:590px;margin:26px 0 0;color:#d2dde7;font-size:17px;font-weight:500;line-height:1.65}
-@media(min-width:641px) and (max-width:960px){.home-page #vik-chat .feature-split{column-gap:28px}.home-page #vik-chat .vik-intro-copy{max-width:680px;width:100%}.home-page #vik-chat .vik-intro-copy h2{font-size:clamp(31px,4vw,34px);line-height:1.1}.home-page #vik-chat .vik-intro-lead{font-size:17.5px}.home-page #vik-chat .vik-intro-body,.home-page #vik-chat .vik-intro-final{font-size:16.5px}}
-@media(max-width:640px){.home-page #vik-chat .vik-intro-copy{max-width:100%;width:100%}.home-page #vik-chat .vik-intro-copy h2{margin-bottom:22px;font-size:clamp(26px,7.5vw,29px);line-height:1.12;text-wrap:balance}.home-page #vik-chat .vik-intro-lead{margin-bottom:20px;font-size:17px;line-height:1.55}.home-page #vik-chat .vik-intro-body{font-size:16px;line-height:1.65}.home-page #vik-chat .vik-intro-final{margin-top:22px;font-size:16px;line-height:1.65}}
+@media(min-width:641px) and (max-width:960px){.home-page #vik-chat .feature-split{column-gap:28px}.home-page #vik-chat .vik-intro-copy{max-width:680px;width:100%;padding-top:0}.home-page #vik-chat .vik-intro-copy h2{font-size:clamp(31px,4vw,34px);line-height:1.1}.home-page #vik-chat .vik-intro-lead{font-size:17.5px}.home-page #vik-chat .vik-intro-body,.home-page #vik-chat .vik-intro-final{font-size:16.5px}}
+@media(max-width:640px){.home-page #vik-chat .vik-intro-copy{max-width:100%;width:100%;padding-top:0}.home-page #vik-chat .vik-intro-copy h2{margin-bottom:22px;font-size:clamp(26px,7.5vw,29px);line-height:1.12;text-wrap:balance}.home-page #vik-chat .vik-intro-lead{margin-bottom:20px;font-size:17px;line-height:1.55}.home-page #vik-chat .vik-intro-body{font-size:16px;line-height:1.65}.home-page #vik-chat .vik-intro-final{margin-top:22px;font-size:16px;line-height:1.65}}
