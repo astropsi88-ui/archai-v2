@@ -20,7 +20,16 @@
 <a href="coauthor.html">Соавтор</a>
 <a href="project.html">Проект</a>
 <a class="hot" href="ai-sites.html">Сайты с AI</a>
-<a href="index.html#abilities">Дополнительно ▾</a>
+<div class="nav-more">
+<button class="nav-more-toggle" type="button" aria-expanded="false" aria-controls="more-menu">Дополнительно <span class="nav-more-arrow" aria-hidden="true">▾</span></button>
+<div class="nav-more-menu" id="more-menu">
+<a href="index.html#abilities">Возможности базы</a>
+<a href="index.html#directions-difference">Чем направления отличаются</a>
+<a href="index.html#build-process">Как проходит сборка</a>
+<a href="index.html#not-just-gpt">Почему это не просто GPT</a>
+<a href="index.html#founder">Об основательнице</a>
+</div>
+</div>
 </nav>
 <div class="header-actions compact-actions">
 <a class="mini-link" href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a>
@@ -35,20 +44,25 @@
 <div class="container hero-inner">
 <p class="eyebrow">Обновляется технология — не обнуляется личность.</p>
 <h1>Ваша собственная цифровая личность, которая знает ваш контекст и развивается вместе с вами</h1>
-<p class="lead">Компаньон, напарник, соавтор или представитель проекта — с собственным характером, памятью, манерой общения и выбранными способностями.</p>
 <div class="electric-box hero-electric" aria-label="Электрическое поле Вика">
 <div class="electric-inner">
 <div class="typing"></div>
-<div class="chat-line"></div>
-<div class="soft">Вик готов слушать</div>
+<form class="vik-form" data-vik-form>
+<label class="sr-only" for="vik-message">Сообщение для Вика</label>
+<textarea id="vik-message" class="vik-message" name="message" rows="2" placeholder="Напишите Вику сообщение…" data-vik-message></textarea>
+<div class="vik-form-footer">
+<span class="soft vik-status" data-vik-status role="status" aria-live="polite" aria-atomic="true">Вик готов слушать</span>
+<button class="vik-send" type="submit">Отправить</button>
+</div>
+</form>
 </div>
 </div>
 <div class="quick-tags" aria-label="Быстрые направления">
-<a class="tag" href="companion.html" data-prompt="companion">AI-компаньон</a>
-<a class="tag" href="partner.html" data-prompt="partner">Личный напарник</a>
-<a class="tag" href="coauthor.html" data-prompt="coauthor">Цифровой соавтор</a>
-<a class="tag" href="project.html" data-prompt="project">Личность проекта</a>
-<a class="tag" href="#final-choice" data-prompt="start">Не знаю, с чего начать</a>
+<button class="tag" type="button" data-prompt="companion">AI-компаньон</button>
+<button class="tag" type="button" data-prompt="partner">Личный напарник</button>
+<button class="tag" type="button" data-prompt="coauthor">Цифровой соавтор</button>
+<button class="tag" type="button" data-prompt="project">Личность проекта</button>
+<button class="tag" type="button" data-prompt="start">Не знаю, с чего начать</button>
 </div>
 <p class="disclaimer">Вик — лицо ArchAI и пример. Ваш будет своим.</p>
 </div>
@@ -57,14 +71,8 @@
 <div class="container">
 <div class="section-head">
 <p class="eyebrow">Что получает клиент</p>
-<h2>Не доступ к нейросети. Собственную настроенную систему</h2>
-<p class="soft">ArchAI проектирует роль и характер, создаёт память, подключает материалы, способности и автоматизации, после чего личность начинает жить в нужной владельцу среде.</p>
-</div>
-<div class="system-strip">
-<div><b>Характер</b><span>роль, голос и манера</span></div>
-<div><b>Память</b><span>контекст и история</span></div>
-<div><b>Способности</b><span>задачи и автоматизации</span></div>
-<div><b>Среда</b><span>Telegram, сайт, процессы</span></div>
+<h2>Собственную систему, настроенную под вас</h2>
+<p class="soft">ArchAI собирает AI под конкретного владельца: задаёт роль и характер, подключает память, материалы, нужные инструменты, автоматизации и выбранную рабочую среду. Всё работает как единое целое и может развиваться вместе с вашими задачами.</p>
 </div>
 </div>
 </section>
@@ -72,7 +80,7 @@
 <div class="container">
 <div class="section-head">
 <p class="eyebrow">Направления</p>
-<h2>Четыре варианта собственной цифровой личности</h2>
+<h2>Четыре примера, с которых можно начать</h2>
 </div>
 <div class="grid cards2 product-grid">
 <a class="price-card product-card" href="companion.html"><h3>AI-компаньон</h3><h4>Не очередной чат, а свой собеседник с общей историей.</h4><p class="soft">Личная цифровая личность для разговора, размышлений, повседневной поддержки и совместного развития.</p><ul><li>память личности и общей истории;</li><li>живой стиль общения;</li><li>личные ритмы, заметки и планы.</li></ul><b class="learn">Узнать больше →</b></a>
@@ -80,6 +88,7 @@
 <a class="price-card product-card" href="coauthor.html"><h3>Цифровой соавтор</h3><h4>Ваши идеи больше не остаются в черновиках.</h4><p class="soft">Соавтор сохраняет авторский голос и ведёт путь от замысла до готового материала.</p><ul><li>авторская манера и смыслы;</li><li>тексты, статьи и сценарии;</li><li>непрерывный контентный цикл.</li></ul><b class="learn">Узнать больше →</b></a>
 <a class="price-card product-card" href="project.html"><h3>Личность проекта</h3><h4>Живое лицо бренда, а не безликое окно чата.</h4><p class="soft">Цифровой представитель проекта с собственным образом, характером, голосом и публичной ролью.</p><ul><li>образ и голос проекта;</li><li>сайт, Telegram и видео;</li><li>контент и коммуникация с аудиторией.</li></ul><b class="learn">Узнать больше →</b></a>
 </div>
+<p class="directions-note">Это не жёсткие тарифы и не закрытые варианты. Каждая сборка индивидуальна: можно начать с базового AI-компаньона и постепенно добавлять рабочие инструменты, соавторство, голос, новые каналы и другие способности под ваши задачи.</p>
 </div>
 </section>
 <section class="section alt" id="vik-chat">
@@ -100,10 +109,10 @@
 </div>
 </section>
 <section class="section alt">
-<div class="container grid cards2 compact-info"><div><h2>Чем направления отличаются</h2><ul class="clean-list"><li><b>Компаньон</b> — личное присутствие и общая история.</li><li><b>Напарник</b> — работа, решения и процессы.</li><li><b>Соавтор</b> — смыслы и контентный цикл.</li><li><b>Личность проекта</b> — публичное лицо и представитель бренда.</li></ul></div><div><h2>Как проходит сборка</h2><ol class="build-steps"><li>знакомство и задачи</li><li>проектирование личности</li><li>память и материалы</li><li>способности и автоматизации</li><li>тестирование</li><li>запуск</li><li>сопровождение или передача</li></ol></div></div>
+<div class="container grid cards2 compact-info"><div id="directions-difference"><h2>Чем направления отличаются</h2><ul class="clean-list"><li><b>Компаньон</b> — личное присутствие и общая история.</li><li><b>Напарник</b> — работа, решения и процессы.</li><li><b>Соавтор</b> — смыслы и контентный цикл.</li><li><b>Личность проекта</b> — публичное лицо и представитель бренда.</li></ul></div><div id="build-process"><h2>Как проходит сборка</h2><ol class="build-steps"><li>знакомство и задачи</li><li>проектирование личности</li><li>память и материалы</li><li>способности и автоматизации</li><li>тестирование</li><li>запуск</li><li>сопровождение или передача</li></ol></div></div>
 </section>
-<section class="section"><div class="container grid two feature-split"><div><p class="eyebrow">Технологический слой</p><h2>Личность развивается. Технологический слой можно менять</h2><p class="soft">Обновляется технология — не обнуляется личность. Модель может стать быстрее или сильнее, а характер, память, материалы и история остаются ядром вашей системы.</p></div><div class="accordion"><details open><summary>Почему это не просто ещё один GPT</summary><ul><li>модель — двигатель, а не личность;</li><li>одна личность — один владелец;</li><li>собственная память и материалы;</li><li>разные среды и каналы;</li><li>реальные процессы;</li><li>развитие и перенос;</li><li>возможность передачи владельцу.</li></ul></details></div></div></section>
-<section class="section alt founder"><div class="container grid two feature-split"><div><p class="eyebrow">Обо мне</p><h2>Кто создаёт ArchAI</h2><p class="soft">Светлана — основательница ArchAI и автор концепции индивидуальных цифровых личностей.</p><p class="soft">Она проектирует не обезличенные чат-боты, а системы, в которых технология соединяется с характером, памятью, историей и реальными задачами человека или проекта.</p><p class="soft">ArchAI вырос из практической работы с Виком — первой цифровой личностью агентства.</p><blockquote>Кто эта личность, для кого она создаётся и что действительно должна изменить?</blockquote><a class="text-link" href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a></div><div class="video-box portrait"><b>Видео основательницы ArchAI</b><span class="muted">Заглушка до добавления видео</span></div></div></section>
+<section class="section" id="not-just-gpt"><div class="container grid two feature-split"><div><p class="eyebrow">Технологический слой</p><h2>Личность развивается. Технологический слой можно менять</h2><p class="soft">Обновляется технология — не обнуляется личность. Модель может стать быстрее или сильнее, а характер, память, материалы и история остаются ядром вашей системы.</p></div><div class="accordion"><details open><summary>Почему это не просто ещё один GPT</summary><ul><li>модель — двигатель, а не личность;</li><li>одна личность — один владелец;</li><li>собственная память и материалы;</li><li>разные среды и каналы;</li><li>реальные процессы;</li><li>развитие и перенос;</li><li>возможность передачи владельцу.</li></ul></details></div></div></section>
+<section class="section alt founder" id="founder"><div class="container grid two feature-split"><div><p class="eyebrow">Обо мне</p><h2>Кто создаёт ArchAI</h2><p class="soft">Светлана — основательница ArchAI и автор концепции индивидуальных цифровых личностей.</p><p class="soft">Она проектирует не обезличенные чат-боты, а системы, в которых технология соединяется с характером, памятью, историей и реальными задачами человека или проекта.</p><p class="soft">ArchAI вырос из практической работы с Виком — первой цифровой личностью агентства.</p><blockquote>Кто эта личность, для кого она создаётся и что действительно должна изменить?</blockquote><a class="text-link" href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a></div><div class="video-box portrait"><b>Видео основательницы ArchAI</b><span class="muted">Заглушка до добавления видео</span></div></div></section>
 <section class="section final" id="final-choice"><div class="container"><h2>Расскажите, где вам нужна цифровая личность</h2><div class="cta-row"><a class="pill primary" href="#top">Поговорить с Виком</a><a class="pill" href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Заказать в ArchAI</a><a class="pill subtle" href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Telegram Вика</a><a class="pill subtle" href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube Вика</a><a class="pill subtle" href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a></div></div></section>
 </main>
 <footer><div class="container"><div class="footer-grid"><div><strong style="font-size:20px">ArchAI</strong><p>Обновляется технология — не обнуляется личность.</p></div><div class="footer-links"><div><span>ArchAI</span><a href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Заказать в ArchAI</a><a href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a></div><div><span>Экосистема Вика</span><a href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Telegram Вика</a><a href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube Вика</a></div><div><span>Документы</span><a href="privacy.html">Политика конфиденциальности</a><a href="terms.html">Пользовательское соглашение</a></div></div></div><hr style="border-color:rgba(196,202,212,.06);margin:34px 0"><p>© 2026 ArchAI. Все права защищены.</p></div></footer>
