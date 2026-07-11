@@ -52,3 +52,20 @@ $$('.site-header a').forEach(a=>a.addEventListener('click',()=>closeMenu()));
 matchMedia('(min-width: 961px)').addEventListener('change',e=>{if(e.matches)closeMenu()});
 function updateSchemaGeometry(){const root=$('[data-schema]'),core=$('.orbit-core'),svg=$('.schema-lines');if(!root||!core||!svg)return;const rootBox=root.getBoundingClientRect();const centerOf=el=>{const r=el.getBoundingClientRect();return{x:r.left-rootBox.left+r.width/2,y:r.top-rootBox.top+r.height/2}};const corePoint=centerOf(core);const width=Math.max(root.clientWidth,1),height=Math.max(root.clientHeight,1);svg.setAttribute('viewBox',`0 0 ${width} ${height}`);svg.setAttribute('width',width);svg.setAttribute('height',height);$$('.orbit-node',root).forEach(node=>{const line=$(`.schema-lines [data-line="${node.dataset.node}"]`,root);if(!line)return;const p=centerOf(node);line.setAttribute('d',`M${corePoint.x.toFixed(1)} ${corePoint.y.toFixed(1)} L${p.x.toFixed(1)} ${p.y.toFixed(1)}`)});const cross=$$('.schema-lines .cross',root),nodes=$$('.orbit-node',root);if(cross[0]&&nodes[7]&&nodes[1]){const a=centerOf(nodes[7]),b=centerOf(nodes[1]);cross[0].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y+35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y+35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}if(cross[1]&&nodes[5]&&nodes[3]){const a=centerOf(nodes[5]),b=centerOf(nodes[3]);cross[1].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y-35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y-35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}}
 window.addEventListener('DOMContentLoaded',()=>{updateSchemaGeometry();sizeVikMessage();syncVikCompose()});window.addEventListener('resize',updateSchemaGeometry);window.addEventListener('orientationchange',()=>setTimeout(updateSchemaGeometry,120));if(document.readyState!=='loading'){updateSchemaGeometry();sizeVikMessage();syncVikCompose()}
+
+function initProductCardTouchGlow(){
+  const cards=$$('.home-page .product-grid .product-card');
+  if(!cards.length)return;
+  let glowTimer;
+  const clearGlow=()=>cards.forEach(card=>card.classList.remove('is-touch-glow'));
+  const scheduleClear=()=>{clearTimeout(glowTimer);glowTimer=setTimeout(clearGlow,180)};
+  cards.forEach(card=>{
+    card.addEventListener('touchstart',()=>{clearTimeout(glowTimer);cards.forEach(other=>{if(other!==card)other.classList.remove('is-touch-glow')});card.classList.add('is-touch-glow')},{passive:true});
+    card.addEventListener('touchend',scheduleClear,{passive:true});
+    card.addEventListener('touchcancel',scheduleClear,{passive:true});
+  });
+  window.addEventListener('pageshow',clearGlow);
+  window.addEventListener('blur',clearGlow);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)clearGlow()});
+}
+initProductCardTouchGlow();
