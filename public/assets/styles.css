@@ -248,3 +248,20 @@ footer{padding:64px 0 32px;border-top:1px solid rgba(196,202,212,.08);background
 .home-page #vik-chat .vik-platform-separator{color:#77758a}
 .home-page #vik-chat .vik-platform-hint{margin:10px 0 0;color:#9497aa;font-family:var(--font-display);font-size:13.75px;font-weight:400;line-height:1.5;text-align:left}
 @media(max-width:640px){.home-page #vik-chat .vik-primary-actions{flex-direction:column;align-items:stretch;gap:11px;margin-bottom:19px}.home-page #vik-chat .vik-primary-actions .pill{width:100%}.home-page #vik-chat .vik-platform-links{gap:9px 12px}.home-page #vik-chat .vik-platform-separator{display:none}.home-page #vik-chat .vik-platform-hint{margin-top:10px}}
+
+/* ArchAI base neural schema refresh */
+.home-page #abilities .schema-head{max-width:760px;margin-bottom:34px}
+.home-page #abilities .schema-head h2{font-family:var(--font-display);font-size:clamp(32px,3.6vw,46px);font-weight:600;line-height:1.08;letter-spacing:-.035em;color:#f0eef6;margin:0 0 14px}
+.home-page #abilities .schema-head .soft{max-width:680px;margin:0 auto;color:#b8c4d4;font-family:var(--font-display);font-size:17px;line-height:1.6}
+.home-page #abilities .orbit-schema{height:540px;max-width:800px}
+.home-page #abilities .schema-lines path{stroke:rgba(125,155,255,.32);stroke-width:1.55;stroke-dasharray:7 11;filter:drop-shadow(0 0 7px rgba(90,124,255,.32));animation:dash 5.8s linear infinite}
+.home-page #abilities .schema-lines path.cross{stroke:rgba(182,109,255,.2)}
+.home-page #abilities .schema-lines path.active{stroke:#b9c7ff;stroke-width:2.5;filter:drop-shadow(0 0 13px rgba(92,141,255,.7)) drop-shadow(0 0 18px rgba(196,112,255,.34))}
+.home-page #abilities .orbit-core{width:158px;height:134px;border-radius:32px;background:linear-gradient(145deg,rgba(12,25,61,.7),rgba(35,24,76,.54));border:1px solid rgba(144,171,255,.38);box-shadow:0 0 54px rgba(0,82,255,.34),0 0 42px rgba(166,92,255,.18),inset 0 0 30px rgba(126,213,255,.16);display:grid;place-items:center;padding:0;overflow:visible}
+.home-page #abilities .brain-core{width:132px;height:106px;overflow:visible;filter:drop-shadow(0 0 10px rgba(104,199,255,.5)) drop-shadow(0 0 18px rgba(154,92,255,.26))}
+.home-page #abilities .brain-lobe{fill:rgba(17,37,83,.74);stroke:#7dd8ff;stroke-width:2.2;stroke-linejoin:round}
+.home-page #abilities .brain-lobe.right{stroke:#b9a7ff}.home-page #abilities .brain-line{fill:none;stroke:rgba(217,232,255,.82);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.home-page #abilities .brain-node{fill:#8fe7ff;filter:drop-shadow(0 0 5px rgba(143,231,255,.75))}.home-page #abilities .core-dot{fill:#c8b6ff}
+.home-page #abilities .orbit-node{width:96px;height:96px;min-width:96px;padding:0 10px;display:grid;place-items:center;text-align:center;border-radius:50%;border:1px solid rgba(204,142,255,.28);background:linear-gradient(145deg,rgba(10,17,36,.9),rgba(31,23,58,.82));color:#eef2ff;font:600 13px/1.15 var(--font-display);box-shadow:0 14px 38px rgba(0,0,0,.28),inset 0 0 18px rgba(102,126,255,.08);cursor:pointer}
+.home-page #abilities .orbit-node:hover,.home-page #abilities .orbit-node:focus,.home-page #abilities .orbit-node.active{outline:none;border-color:rgba(220,158,255,.72);box-shadow:0 0 30px rgba(111,143,255,.24),0 0 26px rgba(204,92,255,.18),0 18px 44px rgba(0,0,0,.32),inset 0 0 24px rgba(154,117,255,.16);translate:0 -2px}
+.home-page #abilities .schema-note{border-color:rgba(164,142,255,.22);background:rgba(14,18,38,.58);color:#c8d0e4;font-family:var(--font-display);box-shadow:0 18px 48px rgba(0,0,0,.18)}
+@media(max-width:640px){.home-page #abilities .schema-head{margin-bottom:28px}.home-page #abilities .schema-head h2{font-size:clamp(28px,8vw,34px)}.home-page #abilities .schema-head .soft{font-size:15.5px;line-height:1.55}.home-page #abilities .orbit-schema{height:520px}.home-page #abilities .orbit-core{width:120px;height:104px;border-radius:26px}.home-page #abilities .brain-core{width:100px;height:82px}.home-page #abilities .orbit-node{width:78px;height:78px;min-width:78px;padding:0 7px;font-size:11.5px}.home-page #abilities .schema-lines path.cross{display:none}}
