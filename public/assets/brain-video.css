@@ -123,7 +123,7 @@
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(360px,.82fr);
   gap:54px;
-  align-items:center;
+  align-items:stretch;
 }
 .home-page .foundation-accordions{
   display:grid;
@@ -196,72 +196,102 @@
 }
 .home-page .foundation-card{
   position:relative;
-  min-height:410px;
-  padding:48px 42px;
+  height:100%;
+  min-height:0;
+  padding:38px 34px;
   display:grid;
   place-items:center;
+  align-self:stretch;
   isolation:isolate;
   overflow:hidden;
-  border:1px solid rgba(143,241,255,.2);
+  border:1px solid rgba(255,190,255,.58);
   border-radius:34px;
   background:
-    radial-gradient(circle at 50% 44%,rgba(0,82,255,.3),transparent 38%),
-    radial-gradient(circle at 78% 20%,rgba(141,122,230,.18),transparent 34%),
-    linear-gradient(145deg,rgba(9,25,69,.96),rgba(3,8,24,.98));
-  box-shadow:0 30px 90px rgba(0,0,0,.38),inset 0 0 54px rgba(0,82,255,.12),0 0 48px rgba(0,82,255,.11);
+    radial-gradient(circle at 18% 20%,rgba(255,255,255,.22),transparent 28%),
+    radial-gradient(circle at 82% 78%,rgba(103,232,249,.18),transparent 36%),
+    linear-gradient(135deg,rgba(93,48,190,.82),rgba(220,63,211,.7) 38%,rgba(71,102,255,.72) 68%,rgba(149,53,216,.78));
+  background-size:220% 220%;
+  backdrop-filter:blur(20px) saturate(1.28);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.38),
+    inset 0 0 70px rgba(255,255,255,.08),
+    0 0 42px rgba(212,78,255,.28),
+    0 0 72px rgba(72,113,255,.18);
+  animation:foundationAurora 8s ease-in-out infinite alternate;
 }
 .home-page .foundation-card::before{
   content:"";
   position:absolute;
-  inset:12% 8%;
-  z-index:-1;
-  background:radial-gradient(ellipse at center,rgba(90,174,186,.1),transparent 66%);
-  filter:blur(10px);
+  inset:-32%;
+  z-index:0;
+  background:conic-gradient(from 125deg,transparent 0 20%,rgba(255,255,255,.16) 28%,transparent 38% 61%,rgba(239,151,255,.16) 69%,transparent 80%);
+  filter:blur(24px);
+  opacity:.7;
+  animation:foundationSheen 12s linear infinite;
 }
 .home-page .foundation-trace{
   position:absolute;
   inset:0;
+  z-index:1;
   width:100%;
   height:100%;
   pointer-events:none;
+  mix-blend-mode:screen;
 }
 .home-page .foundation-trace path{
   fill:none;
-  stroke:rgba(111,224,239,.4);
-  stroke-width:1.6;
-  stroke-dasharray:9 13;
-  filter:drop-shadow(0 0 7px rgba(90,174,186,.72));
-  animation:foundationDash 7s linear infinite;
+  stroke:rgba(202,252,255,.98);
+  stroke-width:4.6;
+  stroke-linecap:round;
+  stroke-dasharray:24 16;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(76,229,255,1)) drop-shadow(0 0 24px rgba(66,152,255,.8));
+  animation:foundationDash 4.8s linear infinite;
 }
 .home-page .foundation-trace path:nth-child(2){
-  stroke:rgba(139,132,255,.38);
-  animation-duration:8.4s;
+  stroke:rgba(255,139,246,.98);
+  stroke-width:4.2;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.88)) drop-shadow(0 0 13px rgba(255,74,218,1)) drop-shadow(0 0 25px rgba(170,70,255,.82));
+  animation-duration:6.2s;
   animation-direction:reverse;
 }
 .home-page .foundation-card-copy{
   position:relative;
   z-index:2;
-  max-width:370px;
+  max-width:360px;
   text-align:center;
+  text-shadow:0 2px 18px rgba(23,7,58,.55);
 }
 .home-page .foundation-card-copy .eyebrow{
   margin-bottom:18px;
-  color:#8fe7ef;
+  color:#fff0ff;
+  text-shadow:0 0 14px rgba(255,181,255,.75);
 }
 .home-page .foundation-card-copy h3{
-  margin:0 0 16px;
-  font:700 clamp(30px,3.2vw,42px)/1.08 var(--font-display);
-  letter-spacing:-.035em;
-  color:#f5f8ff;
+  display:inline-block;
+  margin:0 0 18px;
+  font:500 clamp(23px,2.2vw,31px)/1.16 var(--font-display);
+  font-style:italic;
+  letter-spacing:-.018em;
+  color:#fff9ff;
+  transform:rotate(-1.2deg);
+  text-shadow:0 0 20px rgba(255,210,255,.36);
 }
 .home-page .foundation-card-copy p:last-child{
   margin:0;
-  color:#cbd7e8;
-  font-size:17px;
-  line-height:1.7;
+  color:#f0e9fb;
+  font-size:16px;
+  line-height:1.65;
 }
 @keyframes foundationDash{
-  to{stroke-dashoffset:-88}
+  to{stroke-dashoffset:-120}
+}
+@keyframes foundationAurora{
+  0%{background-position:0% 25%}
+  100%{background-position:100% 75%}
+}
+@keyframes foundationSheen{
+  to{transform:rotate(360deg)}
 }
 @media(max-width:960px){
   .home-page .foundation-layout{
@@ -292,12 +322,14 @@
   }
   .home-page .foundation-card{
     min-height:320px;
-    padding:34px 24px;
+    padding:32px 22px;
     border-radius:28px;
   }
-  .home-page .foundation-card-copy h3{font-size:30px}
-  .home-page .foundation-card-copy p:last-child{font-size:16px;line-height:1.6}
+  .home-page .foundation-card-copy h3{font-size:24px}
+  .home-page .foundation-card-copy p:last-child{font-size:15px;line-height:1.6}
 }
 @media(prefers-reduced-motion:reduce){
+  .home-page .foundation-card,
+  .home-page .foundation-card::before,
   .home-page .foundation-trace path{animation:none}
 }
