@@ -54,10 +54,19 @@
   border-bottom:0;
   box-shadow:none;
 }
+.home-page .hero{
+  background:
+    radial-gradient(circle at 50% 30%,rgba(0,82,255,.38),transparent 42%),
+    linear-gradient(180deg,#06104a 0%,#071334 54%,#091a35 100%);
+}
 .home-page .compact-system{
-  background:linear-gradient(180deg,#081329 0%,#071127 58%,#050b1c 100%);
+  margin-top:-1px;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(35,74,177,.10),transparent 56%),
+    linear-gradient(180deg,#091a35 0%,#0b1b36 34%,#081329 68%,#050b1c 100%);
 }
 .home-page #abilities{
+  margin-top:-1px;
   background:
     radial-gradient(circle at 50% 44%,rgba(32,70,166,.10),transparent 44%),
     linear-gradient(180deg,#050b1c 0%,#020611 32%,#01040c 70%,#071124 100%);
