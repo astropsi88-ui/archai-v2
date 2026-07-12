@@ -1,6 +1,10 @@
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const phrases={companion:'Хочу создать личного AI с характером, памятью и общей историей. Помоги понять, каким он должен быть.',partner:'Хочу развить моего AI для работы, проектов, документов и клиентов. Помоги продумать нужные подключения.',coauthor:'Хочу развить моего AI для творчества, контента и общения с аудиторией.',project:'Хочу создать личность проекта с собственным образом, голосом, памятью и публичной ролью.',start:'Я пока не знаю, какой вариант мне нужен. Задай мне несколько вопросов и помоги определиться.'};
 const typingText='Напишите Вику, каким должен стать ваш AI — или выберите одну из ролей ниже.';
+const heroTitle=$('.home-page .hero h1');
+if(heroTitle){heroTitle.textContent='AI с характером, памятью и общей историей';heroTitle.style.fontFamily='"Onest",Inter,system-ui,sans-serif'}
+const heroEyebrow=$('.home-page .hero .eyebrow');
+if(heroEyebrow){heroEyebrow.style.fontFamily='"Onest",Inter,system-ui,sans-serif';heroEyebrow.style.fontWeight='600';heroEyebrow.style.letterSpacing='.045em';heroEyebrow.style.textTransform='none'}
 function typeLoop(el,text){
   if(!el)return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=text;return}
