@@ -46,30 +46,35 @@
 }
 
 /* Continuous page background flow */
-.home-page main{background:#081329}
+.home-page main{
+  background:
+    radial-gradient(ellipse 72% 520px at 50% 210px,rgba(0,82,255,.38),transparent 72%),
+    linear-gradient(180deg,
+      #06104a 0,
+      #071334 420px,
+      #091a35 720px,
+      #0b1b36 980px,
+      #081329 1160px,
+      #050b1c 1360px,
+      #020611 1540px,
+      #01040c 1710px,
+      #071124 1900px);
+  background-repeat:no-repeat;
+  background-color:#081329;
+}
 .home-page .hero,
+.home-page .compact-system,
+.home-page #abilities{
+  background:transparent !important;
+  border-top:0;
+  border-bottom:0;
+  box-shadow:none;
+}
 .home-page .section,
 .home-page .section.alt{
   border-top:0;
   border-bottom:0;
   box-shadow:none;
-}
-.home-page .hero{
-  background:
-    radial-gradient(circle at 50% 30%,rgba(0,82,255,.38),transparent 42%),
-    linear-gradient(180deg,#06104a 0%,#071334 54%,#091a35 100%);
-}
-.home-page .compact-system{
-  margin-top:-1px;
-  background:
-    radial-gradient(ellipse at 50% 0%,rgba(35,74,177,.10),transparent 56%),
-    linear-gradient(180deg,#091a35 0%,#0b1b36 34%,#081329 68%,#050b1c 100%);
-}
-.home-page #abilities{
-  margin-top:-1px;
-  background:
-    radial-gradient(circle at 50% 44%,rgba(32,70,166,.10),transparent 44%),
-    linear-gradient(180deg,#050b1c 0%,#020611 32%,#01040c 70%,#071124 100%);
 }
 .home-page .directions-section{
   background:linear-gradient(180deg,#071124 0%,#09162b 18%,#0a1426 45%,#0a1426 100%);
@@ -83,4 +88,22 @@
 .home-page footer{
   border-top:0;
   background:linear-gradient(180deg,#081329 0%,#071121 100%);
+}
+@media(max-width:960px){
+  .home-page main{
+    background:
+      radial-gradient(ellipse 94% 500px at 50% 190px,rgba(0,82,255,.34),transparent 74%),
+      linear-gradient(180deg,
+        #06104a 0,
+        #071334 390px,
+        #091a35 690px,
+        #0b1b36 970px,
+        #081329 1190px,
+        #050b1c 1420px,
+        #020611 1640px,
+        #01040c 1840px,
+        #071124 2100px);
+    background-repeat:no-repeat;
+    background-color:#081329;
+  }
 }
