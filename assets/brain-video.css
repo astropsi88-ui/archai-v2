@@ -204,19 +204,19 @@
   align-self:stretch;
   isolation:isolate;
   overflow:hidden;
-  border:1px solid rgba(255,190,255,.58);
+  border:1px solid rgba(236,174,255,.4);
   border-radius:34px;
   background:
-    radial-gradient(circle at 18% 20%,rgba(255,255,255,.22),transparent 28%),
-    radial-gradient(circle at 82% 78%,rgba(103,232,249,.18),transparent 36%),
-    linear-gradient(135deg,rgba(93,48,190,.82),rgba(220,63,211,.7) 38%,rgba(71,102,255,.72) 68%,rgba(149,53,216,.78));
+    radial-gradient(circle at 18% 20%,rgba(255,255,255,.11),transparent 28%),
+    radial-gradient(circle at 82% 78%,rgba(76,190,226,.11),transparent 36%),
+    linear-gradient(135deg,rgba(55,25,133,.9),rgba(145,31,139,.78) 38%,rgba(38,61,160,.82) 68%,rgba(86,25,141,.88));
   background-size:220% 220%;
-  backdrop-filter:blur(20px) saturate(1.28);
+  backdrop-filter:blur(20px) saturate(1.16);
   box-shadow:
-    0 30px 90px rgba(0,0,0,.38),
-    inset 0 0 70px rgba(255,255,255,.08),
-    0 0 42px rgba(212,78,255,.28),
-    0 0 72px rgba(72,113,255,.18);
+    0 30px 90px rgba(0,0,0,.42),
+    inset 0 0 70px rgba(255,255,255,.045),
+    0 0 38px rgba(173,55,218,.18),
+    0 0 64px rgba(56,88,190,.12);
   animation:foundationAurora 8s ease-in-out infinite alternate;
 }
 .home-page .foundation-card::before{
@@ -224,9 +224,9 @@
   position:absolute;
   inset:-32%;
   z-index:0;
-  background:conic-gradient(from 125deg,transparent 0 20%,rgba(255,255,255,.16) 28%,transparent 38% 61%,rgba(239,151,255,.16) 69%,transparent 80%);
+  background:conic-gradient(from 125deg,transparent 0 20%,rgba(255,255,255,.09) 28%,transparent 38% 61%,rgba(220,112,239,.1) 69%,transparent 80%);
   filter:blur(24px);
-  opacity:.7;
+  opacity:.52;
   animation:foundationSheen 12s linear infinite;
 }
 .home-page .foundation-trace{
