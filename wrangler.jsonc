@@ -1,6 +1,7 @@
 {
   "name": "archai-v2",
   "compatibility_date": "2026-07-10",
+  "preview_urls": true,
   "assets": {
     "directory": "./public",
     "html_handling": "auto-trailing-slash",
