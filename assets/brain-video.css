@@ -77,7 +77,14 @@
   box-shadow:none;
 }
 .home-page .directions-section{
-  background:linear-gradient(180deg,#071124 0%,#09162b 18%,#0a1426 45%,#0a1426 100%);
+  margin-top:-1px;
+  background:linear-gradient(180deg,
+    rgba(7,17,36,0) 0%,
+    rgba(7,17,36,.32) 12%,
+    #071124 24%,
+    #09162b 40%,
+    #0a1426 62%,
+    #0a1426 100%);
 }
 .home-page #vik-chat{
   background:linear-gradient(180deg,#0a1426 0%,#09172c 52%,#081329 100%);
