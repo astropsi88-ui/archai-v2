@@ -17,6 +17,7 @@ function typeLoop(el,text){
   tick();
 }
 typeLoop($('.typing'),typingText);
+$$('.typing').slice(1).forEach(el=>typeLoop(el,'Расскажите, каким должен быть ваш AI.'));
 function sizeVikMessage(){const field=$('[data-vik-message]');if(!field)return;field.style.height='auto';field.style.height=`${Math.min(field.scrollHeight,112)}px`}
 async function sendToVik(message){
   sessionStorage.setItem('archaiPendingMessage',message);
@@ -32,6 +33,18 @@ vikMessage?.addEventListener('focus',syncVikCompose);
 vikMessage?.addEventListener('blur',syncVikCompose);
 vikMessage?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();vikForm?.requestSubmit()}});
 vikForm?.addEventListener('submit',async e=>{e.preventDefault();const message=vikMessage?.value.trim();if(!message){vikMessage?.focus();return}const result=await sendToVik(message);setVikStatus(result.popupOpened?'Сообщение сохранено. Отправьте его в открывшийся Telegram.':'Сообщение сохранено. Откройте Telegram и вставьте его в чат.')});
+$$('[data-vik-form]').slice(1).forEach(form=>{
+  const field=$('[data-vik-message]',form),compose=$('[data-vik-compose]',form),status=$('[data-vik-status]',form);
+  if(!field||!compose)return;
+  const size=()=>{field.style.height='auto';field.style.height=`${Math.min(field.scrollHeight,112)}px`};
+  const sync=()=>compose.classList.toggle('is-idle',!field.value&&document.activeElement!==field);
+  field.addEventListener('input',()=>{size();sync()});
+  field.addEventListener('focus',sync);
+  field.addEventListener('blur',sync);
+  field.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+  form.addEventListener('submit',async e=>{e.preventDefault();const message=field.value.trim();if(!message){field.focus();return}const result=await sendToVik(message);if(status)status.textContent=result.popupOpened?'Сообщение сохранено. Отправьте его в открывшийся Telegram.':'Сообщение сохранено. Откройте Telegram и вставьте его в чат.'});
+  size();sync();
+});
 $$('.tag[data-prompt]').forEach(button=>button.addEventListener('click',()=>{const text=phrases[button.dataset.prompt]||button.textContent.trim();if(vikMessage){vikMessage.value=text;sizeVikMessage();syncVikCompose();vikMessage.focus();vikMessage.setSelectionRange(vikMessage.value.length,vikMessage.value.length)}sessionStorage.setItem('archaiPrompt',text)}));
 if('IntersectionObserver' in window){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');io.unobserve(e.target)}}),{threshold:.18});
