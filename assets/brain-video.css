@@ -44,3 +44,34 @@
   .home-page #abilities .brain-video{display:none}
   .home-page #abilities .brain-poster{display:block}
 }
+
+/* Continuous page background flow */
+.home-page main{background:#081329}
+.home-page .hero,
+.home-page .section,
+.home-page .section.alt{
+  border-top:0;
+  border-bottom:0;
+  box-shadow:none;
+}
+.home-page .compact-system{
+  background:linear-gradient(180deg,#081329 0%,#071127 58%,#050b1c 100%);
+}
+.home-page #abilities{
+  background:
+    radial-gradient(circle at 50% 44%,rgba(32,70,166,.10),transparent 44%),
+    linear-gradient(180deg,#050b1c 0%,#020611 32%,#01040c 70%,#071124 100%);
+}
+.home-page .directions-section{
+  background:linear-gradient(180deg,#071124 0%,#09162b 18%,#0a1426 45%,#0a1426 100%);
+}
+.home-page #vik-chat{
+  background:linear-gradient(180deg,#0a1426 0%,#09172c 52%,#081329 100%);
+}
+.home-page #vik-chat ~ .section{
+  background:linear-gradient(180deg,#081329 0%,#09162b 50%,#081329 100%);
+}
+.home-page footer{
+  border-top:0;
+  background:linear-gradient(180deg,#081329 0%,#071121 100%);
+}
