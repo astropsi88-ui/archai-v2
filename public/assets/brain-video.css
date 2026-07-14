@@ -1,0 +1,365 @@
+/* Live ArchAI brain core */
+.home-page #abilities .orbit-core{
+  width:324px;
+  height:324px;
+  min-height:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+  display:grid;
+  place-items:center;
+  isolation:isolate;
+}
+.home-page #abilities .orbit-core::before,
+.home-page #abilities .orbit-core::after{
+  content:none;
+  display:none;
+}
+.home-page #abilities .brain-video,
+.home-page #abilities .brain-poster{
+  grid-area:1 / 1;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border:0;
+  background:transparent;
+  pointer-events:none;
+  mix-blend-mode:screen;
+  filter:saturate(1.06) contrast(1.04) drop-shadow(0 0 18px rgba(93,190,255,.46)) drop-shadow(0 0 38px rgba(167,82,255,.28));
+  -webkit-mask-image:radial-gradient(circle at center,#000 0 60%,rgba(0,0,0,.94) 72%,transparent 94%);
+  mask-image:radial-gradient(circle at center,#000 0 60%,rgba(0,0,0,.94) 72%,transparent 94%);
+}
+.home-page #abilities .brain-poster{display:none}
+@media(max-width:960px){
+  .home-page #abilities .orbit-core{width:260px;height:260px}
+}
+@media(max-width:640px){
+  .home-page #abilities .orbit-core{width:184px;height:184px}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-page #abilities .brain-video{display:none}
+  .home-page #abilities .brain-poster{display:block}
+}
+
+/* Continuous page background flow */
+.home-page main{
+  background:
+    radial-gradient(ellipse 72% 520px at 50% 210px,rgba(0,82,255,.38),transparent 72%),
+    linear-gradient(180deg,
+      #06104a 0,
+      #071334 420px,
+      #091a35 720px,
+      #0b1b36 980px,
+      #081329 1160px,
+      #050b1c 1360px,
+      #020611 1540px,
+      #01040c 1710px,
+      #071124 1900px);
+  background-repeat:no-repeat;
+  background-color:#081329;
+}
+.home-page .hero,
+.home-page .compact-system,
+.home-page #abilities{
+  background:transparent !important;
+  border-top:0;
+  border-bottom:0;
+  box-shadow:none;
+}
+.home-page .section,
+.home-page .section.alt{
+  border-top:0;
+  border-bottom:0;
+  box-shadow:none;
+}
+.home-page .directions-section{
+  margin-top:-1px;
+  background:linear-gradient(180deg,
+    rgba(7,17,36,0) 0%,
+    rgba(7,17,36,.32) 12%,
+    #071124 24%,
+    #09162b 40%,
+    #0a1426 62%,
+    #0a1426 100%);
+}
+.home-page #vik-chat{
+  background:linear-gradient(180deg,#0a1426 0%,#09172c 52%,#081329 100%);
+}
+.home-page #vik-chat ~ .section{
+  background:linear-gradient(180deg,#081329 0%,#09162b 50%,#081329 100%);
+}
+.home-page footer{
+  border-top:0;
+  background:linear-gradient(180deg,#081329 0%,#071121 100%);
+}
+@media(max-width:960px){
+  .home-page main{
+    background:
+      radial-gradient(ellipse 94% 500px at 50% 190px,rgba(0,82,255,.34),transparent 74%),
+      linear-gradient(180deg,
+        #06104a 0,
+        #071334 390px,
+        #091a35 690px,
+        #0b1b36 970px,
+        #081329 1190px,
+        #050b1c 1420px,
+        #020611 1640px,
+        #01040c 1840px,
+        #071124 2100px);
+    background-repeat:no-repeat;
+    background-color:#081329;
+  }
+}
+
+/* Foundation ecosystem block */
+.home-page .foundation-section{
+  padding:84px 0;
+}
+.home-page .foundation-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(360px,.82fr);
+  gap:54px;
+  align-items:stretch;
+}
+.home-page .foundation-accordions{
+  display:grid;
+  gap:16px;
+}
+.home-page .foundation-details{
+  scroll-margin-top:110px;
+  border:1px solid rgba(143,241,255,.18);
+  border-radius:999px;
+  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(70,92,162,.035));
+  box-shadow:0 18px 50px rgba(0,0,0,.16);
+  overflow:hidden;
+  transition:border-color .25s,background .25s,box-shadow .25s,border-radius .25s;
+}
+.home-page .foundation-details:hover{
+  border-color:rgba(143,241,255,.42);
+  box-shadow:0 0 28px rgba(74,101,255,.12),0 18px 50px rgba(0,0,0,.18);
+}
+.home-page .foundation-details[open]{
+  border-radius:28px;
+  border-color:rgba(143,241,255,.34);
+  background:linear-gradient(155deg,rgba(255,255,255,.07),rgba(31,48,104,.08));
+}
+.home-page .foundation-details summary{
+  list-style:none;
+  min-height:72px;
+  padding:0 24px 0 27px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  color:#eef6ff;
+  font:700 19px/1.25 var(--font-display);
+  cursor:pointer;
+}
+.home-page .foundation-details summary::-webkit-details-marker{display:none}
+.home-page .foundation-details summary::after{
+  content:"+";
+  flex:0 0 auto;
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  border:1px solid rgba(143,241,255,.22);
+  background:rgba(5,14,42,.42);
+  color:#9ff7ff;
+  font:500 24px/1 var(--font-display);
+  box-shadow:inset 0 0 18px rgba(0,82,255,.16),0 0 16px rgba(90,174,186,.08);
+  transition:transform .25s,background .25s,border-color .25s;
+}
+.home-page .foundation-details[open] summary::after{
+  content:"−";
+  transform:rotate(180deg);
+  background:rgba(0,82,255,.18);
+  border-color:rgba(143,241,255,.46);
+}
+.home-page .foundation-details-body{
+  margin:0 16px;
+  padding:18px 12px 24px;
+  border-top:1px solid rgba(196,202,212,.1);
+}
+.home-page .foundation-details-body .clean-list,
+.home-page .foundation-details-body .build-steps{
+  margin:0;
+  padding-left:24px;
+}
+.home-page .foundation-details-body li{
+  margin:9px 0;
+}
+.home-page .foundation-card{
+  position:relative;
+  height:100%;
+  min-height:0;
+  padding:38px 34px;
+  display:grid;
+  place-items:center;
+  align-self:stretch;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(159,116,216,.28);
+  border-radius:34px;
+  background:
+    radial-gradient(circle at 18% 20%,rgba(255,255,255,.05),transparent 30%),
+    radial-gradient(circle at 82% 78%,rgba(74,157,214,.07),transparent 38%),
+    linear-gradient(135deg,rgba(22,16,67,.95),rgba(63,26,91,.74) 38%,rgba(24,42,104,.86) 68%,rgba(47,22,79,.92));
+  background-size:220% 220%;
+  backdrop-filter:blur(20px) saturate(1.08);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.46),
+    inset 0 0 70px rgba(255,255,255,.025),
+    0 0 34px rgba(125,48,178,.11),
+    0 0 58px rgba(44,70,154,.08);
+  animation:foundationAurora 8s ease-in-out infinite alternate;
+}
+.home-page .foundation-card::before{
+  content:"";
+  position:absolute;
+  inset:-32%;
+  z-index:0;
+  background:conic-gradient(from 125deg,transparent 0 20%,rgba(255,255,255,.045) 28%,transparent 38% 61%,rgba(172,93,214,.06) 69%,transparent 80%);
+  filter:blur(24px);
+  opacity:.36;
+  animation:foundationSheen 12s linear infinite;
+}
+.home-page .foundation-trace{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  mix-blend-mode:screen;
+}
+.home-page .foundation-trace path{
+  fill:none;
+  stroke:rgba(202,252,255,.98);
+  stroke-width:4.6;
+  stroke-linecap:round;
+  stroke-dasharray:24 16;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.95)) drop-shadow(0 0 12px rgba(76,229,255,1)) drop-shadow(0 0 24px rgba(66,152,255,.8));
+  animation:foundationDash 4.8s linear infinite;
+}
+.home-page .foundation-trace path:nth-child(2){
+  stroke:rgba(194,127,255,.96);
+  stroke-width:4.2;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.82)) drop-shadow(0 0 13px rgba(151,75,255,.96)) drop-shadow(0 0 25px rgba(102,57,205,.78));
+  animation-duration:6.2s;
+  animation-direction:reverse;
+}
+.home-page .foundation-card-copy{
+  position:relative;
+  z-index:2;
+  max-width:360px;
+  text-align:center;
+  text-shadow:0 2px 18px rgba(12,7,43,.68);
+}
+.home-page .foundation-card-copy .eyebrow{
+  margin-bottom:18px;
+  color:#dfe7ff;
+  text-shadow:0 0 14px rgba(142,128,255,.42);
+}
+.home-page .foundation-card-copy h3{
+  display:inline-block;
+  margin:0 0 18px;
+  font:500 clamp(23px,2.2vw,31px)/1.16 var(--font-display);
+  font-style:italic;
+  letter-spacing:-.018em;
+  color:#f3f1ff;
+  transform:rotate(-1.2deg);
+  text-shadow:0 0 20px rgba(132,113,235,.24);
+}
+.home-page .foundation-card-copy p:last-child{
+  margin:0;
+  color:#d9d9eb;
+  font-size:16px;
+  line-height:1.65;
+}
+@keyframes foundationDash{
+  to{stroke-dashoffset:-120}
+}
+@keyframes foundationAurora{
+  0%{background-position:0% 25%}
+  100%{background-position:100% 75%}
+}
+@keyframes foundationSheen{
+  to{transform:rotate(360deg)}
+}
+@media(max-width:960px){
+  .home-page .foundation-layout{
+    grid-template-columns:1fr;
+    gap:30px;
+  }
+  .home-page .foundation-card{
+    width:min(100%,680px);
+    min-height:360px;
+    margin:0 auto;
+  }
+}
+@media(max-width:640px){
+  .home-page .foundation-section{padding:66px 0}
+  .home-page .foundation-details summary{
+    min-height:64px;
+    padding:0 17px 0 19px;
+    font-size:16px;
+  }
+  .home-page .foundation-details summary::after{
+    width:32px;
+    height:32px;
+    font-size:21px;
+  }
+  .home-page .foundation-details-body{
+    margin:0 10px;
+    padding:16px 7px 20px;
+  }
+  .home-page .foundation-card{
+    min-height:320px;
+    padding:32px 22px;
+    border-radius:28px;
+  }
+  .home-page .foundation-card-copy h3{font-size:24px}
+  .home-page .foundation-card-copy p:last-child{font-size:15px;line-height:1.6}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-page .foundation-card,
+  .home-page .foundation-card::before,
+  .home-page .foundation-trace path{animation:none}
+}
+
+/* Vik primary action — deep ArchAI violet */
+.home-page #vik-chat .vik-primary-actions .pill.primary{
+  border:1px solid rgba(159,116,216,.34);
+  color:#f4f2ff;
+  background:
+    radial-gradient(circle at 18% 20%,rgba(255,255,255,.055),transparent 34%),
+    radial-gradient(circle at 82% 78%,rgba(74,157,214,.075),transparent 42%),
+    linear-gradient(135deg,rgba(22,16,67,.98),rgba(63,26,91,.82) 38%,rgba(24,42,104,.9) 68%,rgba(47,22,79,.96));
+  background-size:220% 220%;
+  box-shadow:
+    inset 0 0 28px rgba(255,255,255,.025),
+    0 8px 24px rgba(0,0,0,.26),
+    0 0 22px rgba(105,54,176,.1);
+  animation:vikPrimaryAurora 8s ease-in-out infinite alternate;
+}
+.home-page #vik-chat .vik-primary-actions .pill.primary:hover{
+  border-color:rgba(170,135,225,.5);
+  box-shadow:
+    inset 0 0 30px rgba(255,255,255,.035),
+    0 12px 28px rgba(0,0,0,.32),
+    0 0 28px rgba(105,54,176,.16);
+}
+@keyframes vikPrimaryAurora{
+  0%{background-position:0% 25%}
+  100%{background-position:100% 75%}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-page #vik-chat .vik-primary-actions .pill.primary{animation:none}
+}
