@@ -48,7 +48,8 @@ function initVikSiteForm(form){
     const message=field.value.trim();
     if(!message){field.focus();return}
     setChatActive();
-    const userItems=addChatMessage('user',message);
+    const sensitiveCandidate=/(?:светочк|светлана\s+итаф|владель|секретн.{0,12}фраз)/iu.test(message.normalize('NFC'));
+    const userItems=sensitiveCandidate?[]:addChatMessage('user',message);
     const pending=addChatMessage('assistant','Вик думает…',{pending:true});
     field.value='';sizeVikMessage(field);sync();
     setChatDisabled(true);setVikStatus('Вик готовит ответ.');
