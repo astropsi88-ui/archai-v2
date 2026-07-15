@@ -1,6 +1,9 @@
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const phrases={companion:'Хочу создать личного AI с характером, памятью и общей историей. Помоги понять, каким он должен быть.',partner:'Хочу развить моего AI для работы, проектов, документов и клиентов. Помоги продумать нужные подключения.',coauthor:'Хочу развить моего AI для творчества, контента, постинга и общения с аудиторией.',project:'Хочу создать личность проекта с собственным образом, голосом, памятью и публичной ролью.',start:'Я пока не знаю, какой вариант мне нужен. Задай мне несколько вопросов и помоги определиться.'};
 const typingText='Расскажите, каким должен стать ваш AI — или выберите одну из ролей ниже.';
+const vikConversationStorageKey='vikSiteConversationId';
+function setChatActive(active=true){document.body.classList.toggle('chat-active',active)}
+setChatActive(Boolean(sessionStorage.getItem(vikConversationStorageKey)));
 const heroTitle=$('.home-page .hero h1');
 if(heroTitle){heroTitle.textContent='AI с характером, памятью и общей историей';heroTitle.style.fontFamily='"Onest",Inter,system-ui,sans-serif'}
 const heroEyebrow=$('.home-page .hero .eyebrow');
@@ -44,16 +47,17 @@ function initVikSiteForm(form){
     e.preventDefault();
     const message=field.value.trim();
     if(!message){field.focus();return}
+    setChatActive();
     addChatMessage('user',message);
     const pending=addChatMessage('assistant','Вик думает…',{pending:true});
     field.value='';sizeVikMessage(field);sync();
     setChatDisabled(true);setVikStatus('Вик готовит ответ.');
     try{
-      const conversationId=sessionStorage.getItem('vikSiteConversationId');
+      const conversationId=sessionStorage.getItem(vikConversationStorageKey);
       const response=await fetch('/api/vik-site/chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,...(conversationId?{conversationId}:{})})});
       const data=await response.json().catch(()=>({}));
       if(!response.ok)throw new Error(data.error||`http_${response.status}`);
-      if(data.conversationId)sessionStorage.setItem('vikSiteConversationId',data.conversationId);
+      if(data.conversationId)sessionStorage.setItem(vikConversationStorageKey,data.conversationId);
       updateChatMessages(pending,data.message?.content||'Я рядом. Попробуйте ещё раз.');
       setVikStatus('Ответ получен.');
     }catch(error){
