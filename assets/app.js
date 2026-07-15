@@ -48,7 +48,7 @@ function initVikSiteForm(form){
     const message=field.value.trim();
     if(!message){field.focus();return}
     setChatActive();
-    addChatMessage('user',message);
+    const userItems=addChatMessage('user',message);
     const pending=addChatMessage('assistant','Вик думает…',{pending:true});
     field.value='';sizeVikMessage(field);sync();
     setChatDisabled(true);setVikStatus('Вик готовит ответ.');
@@ -57,6 +57,7 @@ function initVikSiteForm(form){
       const response=await fetch('/api/vik-site/chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,...(conversationId?{conversationId}:{})})});
       const data=await response.json().catch(()=>({}));
       if(!response.ok)throw new Error(data.error||`http_${response.status}`);
+      if(data.inputConsumed)userItems.forEach(item=>item.remove());
       if(data.conversationId)sessionStorage.setItem(vikConversationStorageKey,data.conversationId);
       updateChatMessages(pending,data.message?.content||'Я рядом. Попробуйте ещё раз.');
       setVikStatus('Ответ получен.');
