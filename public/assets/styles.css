@@ -174,6 +174,15 @@ footer{padding:64px 0 32px;border-top:1px solid rgba(196,202,212,.08);background
 .home-page .vik-message{width:100%;min-height:54px;height:54px;max-height:112px;resize:none;border:0;border-radius:17px;background:rgba(2,8,40,.46);box-shadow:inset 0 0 0 1px rgba(180,218,255,.16),inset 0 12px 36px rgba(0,0,0,.2);color:#f7fbff;padding:15px 16px;font:500 16px/1.42 var(--font-display);outline:none;caret-color:#dff9ff;overflow:hidden}
 .home-page .vik-message::placeholder{color:transparent}
 .home-page .vik-message:focus{box-shadow:inset 0 0 0 1px rgba(143,241,255,.62),0 0 24px rgba(0,82,255,.24)}
+.home-page .vik-chat-messages{display:none;max-height:280px;overflow:auto;gap:10px;padding:2px 4px 4px;scrollbar-width:thin;scrollbar-color:rgba(143,241,255,.35) transparent}
+.home-page .vik-chat-messages:not(:empty){display:flex;flex-direction:column}
+.home-page .vik-chat-message{max-width:86%;padding:10px 13px;border-radius:15px;font:500 15px/1.45 var(--font-display);white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}
+.home-page .vik-chat-message.is-user{align-self:flex-end;background:linear-gradient(135deg,rgba(50,104,230,.7),rgba(119,78,205,.66));color:#fff;border-bottom-right-radius:5px}
+.home-page .vik-chat-message.is-assistant{align-self:flex-start;background:rgba(3,12,42,.72);box-shadow:inset 0 0 0 1px rgba(180,218,255,.16);color:#edf8ff;border-bottom-left-radius:5px}
+.home-page .vik-chat-message.is-pending{color:rgba(237,248,255,.68);animation:vik-chat-pulse 1.2s ease-in-out infinite}
+.home-page .vik-chat-message.is-error{color:#ffd8dc;box-shadow:inset 0 0 0 1px rgba(255,128,145,.25)}
+.home-page .vik-send:disabled,.home-page .vik-message:disabled{opacity:.58;cursor:wait}
+@keyframes vik-chat-pulse{50%{opacity:.48}}
 .home-page .vik-idle-caret{position:absolute;left:16px;bottom:17px;width:2px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(143,241,255,.18),rgba(224,246,255,.9),rgba(143,241,255,.22));box-shadow:0 0 16px rgba(143,241,255,.5);opacity:0;visibility:hidden;pointer-events:none;animation:none}
 .home-page .vik-compose.is-idle .vik-idle-caret{visibility:visible;animation:vikIdleCaret 1.45s ease-in-out infinite}
 .home-page .vik-send{width:46px;height:46px;min-width:46px;padding:0;display:grid;place-items:center;border:1px solid rgba(174,225,255,.34);border-radius:15px;background:linear-gradient(145deg,rgba(0,82,255,.35),rgba(90,174,186,.14));color:#f2fbff;cursor:pointer;font:800 14px var(--font-display);box-shadow:inset 0 0 18px rgba(143,241,255,.08),0 10px 24px rgba(0,0,0,.2);transition:transform .2s,border-color .2s,box-shadow .2s,background .2s}

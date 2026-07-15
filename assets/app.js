@@ -23,34 +23,51 @@ function typeLoop(el,text){
 }
 typeLoop($('.typing'),typingText);
 $$('.typing').slice(1).forEach(el=>typeLoop(el,'Расскажите, каким должен быть ваш AI.'));
-function sizeVikMessage(){const field=$('[data-vik-message]');if(!field)return;field.style.height='auto';field.style.height=`${Math.min(field.scrollHeight,112)}px`}
-async function sendToVik(message){
-  sessionStorage.setItem('archaiPendingMessage',message);
-  const telegramWindow=window.open('https://t.me/AI_VIK_dialog','_blank','noopener');
-  if(navigator.clipboard?.writeText){try{await navigator.clipboard.writeText(message)}catch(e){}}
-  return {popupOpened:Boolean(telegramWindow)};
+function sizeVikMessage(field){if(!field)return;field.style.height='auto';field.style.height=`${Math.min(field.scrollHeight,112)}px`}
+const siteForms=$$('[data-vik-site-form]');
+const vikChatMessages=$$('[data-vik-chat-messages]');
+function setVikStatus(text){siteForms.forEach(form=>{const status=$('[data-vik-status]',form);if(status)status.textContent=text})}
+function addChatMessage(role,text,{pending=false,error=false}={}){
+  return vikChatMessages.map(container=>{const item=document.createElement('div');item.className=`vik-chat-message is-${role}${pending?' is-pending':''}${error?' is-error':''}`;item.textContent=text;container.append(item);container.scrollTop=container.scrollHeight;return item});
 }
-const vikForm=$('[data-vik-form]'),vikMessage=$('[data-vik-message]'),vikStatus=$('[data-vik-status]'),vikCompose=$('[data-vik-compose]');
-function setVikStatus(text){if(vikStatus)vikStatus.textContent=text}
-function syncVikCompose(){if(!vikMessage||!vikCompose)return;vikCompose.classList.toggle('is-idle',!vikMessage.value&&!document.activeElement.isSameNode(vikMessage))}
-vikMessage?.addEventListener('input',()=>{sizeVikMessage();syncVikCompose()});
-vikMessage?.addEventListener('focus',syncVikCompose);
-vikMessage?.addEventListener('blur',syncVikCompose);
-vikMessage?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();vikForm?.requestSubmit()}});
-vikForm?.addEventListener('submit',async e=>{e.preventDefault();const message=vikMessage?.value.trim();if(!message){vikMessage?.focus();return}const result=await sendToVik(message);setVikStatus(result.popupOpened?'Сообщение сохранено. Отправьте его в открывшийся Telegram.':'Сообщение сохранено. Откройте Telegram и вставьте его в чат.')});
-$$('[data-vik-form]').slice(1).forEach(form=>{
-  const field=$('[data-vik-message]',form),compose=$('[data-vik-compose]',form),status=$('[data-vik-status]',form);
+function updateChatMessages(items,text,{error=false}={}){items.forEach(item=>{item.classList.remove('is-pending');item.classList.toggle('is-error',error);item.textContent=text})}
+function setChatDisabled(disabled){siteForms.forEach(form=>{const field=$('[data-vik-message]',form),button=$('.vik-send',form);if(field)field.disabled=disabled;if(button)button.disabled=disabled})}
+function initVikSiteForm(form){
+  const field=$('[data-vik-message]',form),compose=$('[data-vik-compose]',form);
   if(!field||!compose)return;
-  const size=()=>{field.style.height='auto';field.style.height=`${Math.min(field.scrollHeight,112)}px`};
   const sync=()=>compose.classList.toggle('is-idle',!field.value&&document.activeElement!==field);
-  field.addEventListener('input',()=>{size();sync()});
+  field.addEventListener('input',()=>{sizeVikMessage(field);sync()});
   field.addEventListener('focus',sync);
   field.addEventListener('blur',sync);
   field.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
-  form.addEventListener('submit',async e=>{e.preventDefault();const message=field.value.trim();if(!message){field.focus();return}const result=await sendToVik(message);if(status)status.textContent=result.popupOpened?'Сообщение сохранено. Отправьте его в открывшийся Telegram.':'Сообщение сохранено. Откройте Telegram и вставьте его в чат.'});
-  size();sync();
-});
-$$('.tag[data-prompt]').forEach(button=>button.addEventListener('click',()=>{const text=phrases[button.dataset.prompt]||button.textContent.trim();if(vikMessage){vikMessage.value=text;sizeVikMessage();syncVikCompose();vikMessage.focus();vikMessage.setSelectionRange(vikMessage.value.length,vikMessage.value.length)}sessionStorage.setItem('archaiPrompt',text)}));
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const message=field.value.trim();
+    if(!message){field.focus();return}
+    addChatMessage('user',message);
+    const pending=addChatMessage('assistant','Вик думает…',{pending:true});
+    field.value='';sizeVikMessage(field);sync();
+    setChatDisabled(true);setVikStatus('Вик готовит ответ.');
+    try{
+      const conversationId=sessionStorage.getItem('vikSiteConversationId');
+      const response=await fetch('/api/vik-site/chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,...(conversationId?{conversationId}:{})})});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data.error||`http_${response.status}`);
+      if(data.conversationId)sessionStorage.setItem('vikSiteConversationId',data.conversationId);
+      updateChatMessages(pending,data.message?.content||'Я рядом. Попробуйте ещё раз.');
+      setVikStatus('Ответ получен.');
+    }catch(error){
+      const text=error.message==='rate_limited'?'Слишком быстро 🙂 Дайте мне минутку и напишите ещё раз.':'Я споткнулся на ответе. Попробуйте ещё раз чуть позже.';
+      updateChatMessages(pending,text,{error:true});setVikStatus('Не удалось получить ответ.');
+    }finally{setChatDisabled(false);field.focus()}
+  });
+  sizeVikMessage(field);sync();
+}
+siteForms.forEach(initVikSiteForm);
+const vikMessage=$('[data-vik-message]',siteForms[0]);
+const vikCompose=$('[data-vik-compose]',siteForms[0]);
+function syncVikCompose(){if(vikMessage&&vikCompose)vikCompose.classList.toggle('is-idle',!vikMessage.value&&document.activeElement!==vikMessage)}
+$$('.tag[data-prompt]').forEach(button=>button.addEventListener('click',()=>{const text=phrases[button.dataset.prompt]||button.textContent.trim();if(vikMessage){vikMessage.value=text;sizeVikMessage(vikMessage);syncVikCompose();vikMessage.focus();vikMessage.setSelectionRange(vikMessage.value.length,vikMessage.value.length)}sessionStorage.setItem('archaiPrompt',text)}));
 if('IntersectionObserver' in window){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');io.unobserve(e.target)}}),{threshold:.18});
   $$('.reveal,.card,.node,.price-card,.system-strip,.orbit-schema,.video-box').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=`${Math.min(i%7*70,420)}ms`;io.observe(el)});
@@ -83,7 +100,7 @@ function initBrainVideoCore(){
 }
 initBrainVideoCore();
 function updateSchemaGeometry(){const root=$('[data-schema]'),core=$('.orbit-core'),svg=$('.schema-lines');if(!root||!core||!svg)return;const rootBox=root.getBoundingClientRect();const centerOf=el=>{const r=el.getBoundingClientRect();return{x:r.left-rootBox.left+r.width/2,y:r.top-rootBox.top+r.height/2}};const corePoint=centerOf(core);const width=Math.max(root.clientWidth,1),height=Math.max(root.clientHeight,1);svg.setAttribute('viewBox',`0 0 ${width} ${height}`);svg.setAttribute('width',width);svg.setAttribute('height',height);$$('.orbit-node',root).forEach(node=>{const line=$(`.schema-lines [data-line="${node.dataset.node}"]`,root);if(!line)return;const p=centerOf(node);const dx=p.x-corePoint.x,dy=p.y-corePoint.y,len=Math.hypot(dx,dy)||1,coreRadius=Math.min(core.offsetWidth||0,core.offsetHeight||0)*.42,start={x:corePoint.x+dx/len*coreRadius,y:corePoint.y+dy/len*coreRadius};line.setAttribute('d',`M${start.x.toFixed(1)} ${start.y.toFixed(1)} L${p.x.toFixed(1)} ${p.y.toFixed(1)}`)});const cross=$$('.schema-lines .cross',root),nodes=$$('.orbit-node',root);if(cross[0]&&nodes[7]&&nodes[1]){const a=centerOf(nodes[7]),b=centerOf(nodes[1]);cross[0].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y+35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y+35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}if(cross[1]&&nodes[5]&&nodes[3]){const a=centerOf(nodes[5]),b=centerOf(nodes[3]);cross[1].setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${(a.x+90).toFixed(1)} ${(a.y-35).toFixed(1)} ${(b.x-90).toFixed(1)} ${(b.y-35).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`)}}
-window.addEventListener('DOMContentLoaded',()=>{updateSchemaGeometry();sizeVikMessage();syncVikCompose()});window.addEventListener('resize',updateSchemaGeometry);window.addEventListener('orientationchange',()=>setTimeout(updateSchemaGeometry,120));if(document.readyState!=='loading'){updateSchemaGeometry();sizeVikMessage();syncVikCompose()}
+window.addEventListener('DOMContentLoaded',()=>{updateSchemaGeometry();sizeVikMessage(vikMessage);syncVikCompose()});window.addEventListener('resize',updateSchemaGeometry);window.addEventListener('orientationchange',()=>setTimeout(updateSchemaGeometry,120));if(document.readyState!=='loading'){updateSchemaGeometry();sizeVikMessage(vikMessage);syncVikCompose()}
 
 function initProductCardTouchGlow(){
   const cards=$$('.home-page .product-grid .product-card');
