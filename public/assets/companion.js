@@ -2,6 +2,14 @@
   const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const companionTyping=$('[data-companion-typing]');
+  if(companionTyping){
+    companionTyping.classList.add('typing');
+    const text='Напишите Вику';
+    if(reduced)companionTyping.textContent=text;
+    else (async()=>{while(companionTyping.isConnected){companionTyping.textContent='';for(const char of text){companionTyping.textContent+=char;await new Promise(resolve=>setTimeout(resolve,44))}await new Promise(resolve=>setTimeout(resolve,1400));for(let i=text.length;i>=0;i--){companionTyping.textContent=text.slice(0,i);await new Promise(resolve=>setTimeout(resolve,22))}await new Promise(resolve=>setTimeout(resolve,700))}})();
+  }
+
   const foundationCopy={
     memory:'Сохраняет индивидуальную манеру общения, важный контекст и накопленную историю отношений с владельцем.',
     support:'Помогает проговорить личную ситуацию, разобраться в чувствах и повторяющихся реакциях, увидеть возможные варианты и найти внутреннюю опору.',
