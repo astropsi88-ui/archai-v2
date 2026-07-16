@@ -41,7 +41,7 @@
   }));
 
   function drawLines(schema){
-    if(!schema.map||innerWidth<=800)return;
+    if(!schema.map)return;
     const svg=$('.map-lines',schema.map),core=$('[data-map-core]',schema.map);
     if(!svg||!core)return;
     const root=schema.map.getBoundingClientRect(),center=core.getBoundingClientRect();

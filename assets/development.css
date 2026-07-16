@@ -30,7 +30,7 @@
 .dev-hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0,1fr) minmax(390px,.78fr); gap: clamp(48px,6vw,88px); align-items: center; }
 .dev-hero-copy { min-width: 0; }
 .dev-hero-copy h1 { position: relative; max-width: 650px; padding-bottom: 14px; }
-.dev-hero-copy h1::after { content: ""; position: absolute; left: 0; bottom: 0; width: min(420px,76%); height: 4px; border-radius:999px; background:linear-gradient(90deg,rgba(0,82,255,.18),#00aaff,#f7ffff,#0052ff,rgba(120,104,232,.18)); background-size:240% 100%; box-shadow:0 0 10px rgba(143,241,255,.6),0 0 30px rgba(0,82,255,.52); animation:dev-hero-current 3.2s linear infinite; }
+.dev-hero-copy h1::after { content:""; position:absolute; left:0; bottom:-2px; width:min(470px,84%); height:9px; border-radius:999px; background:linear-gradient(90deg,#0052ff 0%,#00aaff 24%,#f8ffff 42%,#1684ff 58%,#0052ff 78%,#7868e8 100%); background-size:260% 100%; box-shadow:0 0 8px #8ff1ff,0 0 22px rgba(0,138,255,.95),0 0 48px rgba(0,82,255,.72); animation:dev-hero-current 2.6s linear infinite; }
 .dev-hero-points { max-width: 610px; margin-top: 25px; border-top: 1px solid rgba(103,189,207,.11); }
 .dev-hero-points p { position: relative; margin: 0; padding: 10px 10px 10px 22px; border-bottom: 1px solid rgba(103,189,207,.08); color: #d5e2e9; font-size: 17px !important; line-height: 1.45; }
 .dev-hero-points p::before { content: ""; position: absolute; left: 1px; top: 50%; width: 6px; height: 6px; transform: translateY(-50%); border-radius: 50%; background: linear-gradient(135deg,var(--dev-sky),var(--dev-electric-cyan),var(--dev-blue)); box-shadow: 0 0 15px rgba(0,138,255,.58); }
@@ -88,17 +88,13 @@
 .work-section .ability-map { background: radial-gradient(ellipse at 50% 43%, rgba(31,181,200,.09), transparent 43%); }
 .content-section .ability-map { background: radial-gradient(ellipse at 50% 43%, rgba(31,166,211,.11), transparent 44%); }
 .brand-section .ability-map { background: radial-gradient(ellipse at 50% 43%, rgba(77,102,223,.1), transparent 44%); }
-.map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.map-lines .channel-base { stroke-width:2.6; stroke-dasharray:none; opacity:.62; }
-.work-section .channel-base { stroke:rgba(39,159,231,.46); }.content-section .channel-base { stroke:rgba(54,122,235,.48); }.brand-section .channel-base { stroke:rgba(83,101,224,.46); }
-.map-lines .channel-pulse { stroke-width:4.2; stroke-dasharray:18 82; stroke-dashoffset:100; opacity:.9; filter:drop-shadow(0 0 7px rgba(0,138,255,.7)); }
-.work-section .channel-pulse { stroke:#8ff1ff; }.content-section .channel-pulse { stroke:#73bfff; }.brand-section .channel-pulse { stroke:#a6a4ff; }
-.dev-schema-section.is-running .channel-pulse { animation:dev-channel-current 3.6s linear infinite; }
-.map-lines .channel-base.is-active { stroke-width:4; opacity:1; filter:drop-shadow(0 0 8px rgba(0,82,255,.7)); }
-.map-lines .channel-pulse.is-active { stroke-width:7; stroke-dasharray:28 72; opacity:1; animation:dev-channel-current 1.6s linear infinite !important; }
-.work-section .channel-pulse.is-active { stroke:#ecffff; filter:drop-shadow(0 0 8px #8ff1ff) drop-shadow(0 0 20px rgba(0,82,255,.9)); }
-.content-section .channel-pulse.is-active { stroke:#d9f1ff; filter:drop-shadow(0 0 8px #69bfff) drop-shadow(0 0 20px rgba(0,82,255,.9)); }
-.brand-section .channel-pulse.is-active { stroke:#ece8ff; filter:drop-shadow(0 0 8px #9abfff) drop-shadow(0 0 20px rgba(104,76,232,.9)); }
+.map-lines { position:absolute; z-index:1; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
+.map-lines line { vector-effect:non-scaling-stroke; stroke-linecap:round; }
+.map-lines .channel-base { stroke:#0052ff; stroke-width:5.5; stroke-dasharray:none; opacity:.9; filter:drop-shadow(0 0 5px #1684ff) drop-shadow(0 0 15px rgba(0,82,255,.82)); }
+.map-lines .channel-pulse { stroke:#f3ffff; stroke-width:9; stroke-dasharray:20 80; stroke-dashoffset:100; opacity:1; filter:drop-shadow(0 0 7px #8ff1ff) drop-shadow(0 0 18px rgba(0,138,255,.95)); }
+.dev-schema-section.is-running .channel-pulse { animation:dev-channel-current 2.8s linear infinite; }
+.map-lines .channel-base.is-active { stroke:#0878ff; stroke-width:8; opacity:1; filter:drop-shadow(0 0 7px #3ba7ff) drop-shadow(0 0 22px rgba(0,82,255,1)); }
+.map-lines .channel-pulse.is-active { stroke:#fff; stroke-width:13; stroke-dasharray:30 70; opacity:1; filter:drop-shadow(0 0 8px #dffbff) drop-shadow(0 0 16px #00aaff) drop-shadow(0 0 30px rgba(0,82,255,1)); animation:dev-channel-current 1.35s linear infinite !important; }
 .map-core { position: absolute; z-index: 2; left: 50%; top: 42%; width: 190px; height: 190px; display: flex; align-items: center; justify-content: center; flex-direction: column; transform: translate(-50%,-50%); border: 1.5px solid rgba(112,210,229,.4); border-radius: 50%; transition: transform .45s ease; }
 .work-section .map-core { background: radial-gradient(circle,rgba(35,180,196,.27),rgba(9,29,52,.72) 68%,transparent 71%); box-shadow: 0 0 30px rgba(41,205,214,.25),0 0 100px rgba(44,139,220,.22),inset 0 0 45px rgba(111,225,236,.1); }
 .content-section .map-core { background: radial-gradient(circle,rgba(31,153,211,.27),rgba(10,27,61,.72) 68%,transparent 71%); box-shadow: 0 0 32px rgba(51,176,231,.26),0 0 105px rgba(69,96,232,.24),inset 0 0 45px rgba(108,210,239,.1); }
@@ -193,7 +189,7 @@
   .route-line { display: none; }
   .route-caption { text-align: left; }
   .ability-map, .work-section .ability-map, .content-section .ability-map, .brand-section .ability-map { height: auto; padding: 190px 0 15px; background: radial-gradient(ellipse at 50% 20%,rgba(70,130,175,.06),transparent 31%); }
-  .map-lines { display: none; }
+  .map-lines { display:block; }
   .map-core { top: 96px; width: 145px; height: 145px; }
   .map-core strong { font-size: 14px; }
   .work-network, .content-wave { transform: scale(.78); }
@@ -216,6 +212,7 @@
   .development-page * { animation: none !important; transition: none !important; }
   [data-dev-reveal] { opacity: 1; transform: none; }
   .route-line i { left: 42%; }
-  .map-lines .channel-pulse { stroke-dasharray:none; opacity:.7; }
+  .map-lines .channel-base { stroke-width:4; opacity:.78; }
+  .map-lines .channel-pulse { stroke-dasharray:none; stroke-width:5.5; opacity:.72; }
   .map-core { filter: none !important; }
 }
