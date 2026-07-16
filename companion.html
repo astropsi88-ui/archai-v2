@@ -3,53 +3,155 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ArchAI — Личный AI-компаньон</title>
-<meta name="description" content="Личный AI-компаньон с характером, памятью и общей историей — для общения, жизни, дел и повседневной помощи.">
+<title>Личный AI-компаньон — характер, память и реальная помощь | ArchAI</title>
+<meta name="description" content="Личный AI-компаньон в Telegram: разговор и поддержка, голос, память, документы, поиск, почта, календарь и переносимая владельцу среда.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/companion.css">
 </head>
-<body class="fuchsia">
+<body class="fuchsia companion-page">
 <div class="home-page">
-<header class="site-header">
-<div class="container header-inner">
-<a class="brand" href="index.html"><span class="brand-main">ArchAI</span><span class="brand-sub">Агентство цифровых личностей</span></a>
-<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Меню</button>
-<nav class="nav" id="site-nav" aria-label="Главное меню">
-<a href="companion.html">Личный AI</a><a href="partner.html">Для работы</a><a href="coauthor.html">Для творчества</a><a href="project.html">Для проекта</a><a class="hot" href="ai-sites.html">Сайты с AI</a>
-<div class="nav-more"><button class="nav-more-toggle" type="button" aria-expanded="false" aria-controls="more-menu">Дополнительно <span class="nav-more-arrow" aria-hidden="true">▾</span></button><div class="nav-more-menu" id="more-menu"><a href="index.html#abilities">Как всё устроено</a><a href="index.html#directions-difference">Один AI — разные роли</a><a href="index.html#build-process">Как проходит сборка</a><a href="index.html#payment-principles">За что вы платите</a><a href="index.html#not-just-gpt">Почему это не просто GPT</a><a href="index.html#founder">Об основательнице</a></div></div>
-</nav>
-<div class="header-actions compact-actions"><a class="mini-link" href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a><a class="mini-link" href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Telegram</a><a class="mini-link youtube-link" href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube</a><a class="mini-link order-link" href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Заказать в ArchAI</a></div>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><span class="brand-main">ArchAI</span><span class="brand-sub">Агентство цифровых личностей</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Меню</button><nav class="nav" id="site-nav" aria-label="Главное меню"><a href="companion.html" aria-current="page">Личный AI</a><a href="partner.html">Для работы</a><a href="coauthor.html">Для творчества</a><a href="project.html">Для проекта</a><a class="hot" href="ai-sites.html">Сайты с AI</a><div class="nav-more"><button class="nav-more-toggle" type="button" aria-expanded="false" aria-controls="more-menu">Дополнительно <span class="nav-more-arrow" aria-hidden="true">▾</span></button><div class="nav-more-menu" id="more-menu"><a href="index.html#abilities">Как всё устроено</a><a href="index.html#directions-difference">Один AI — разные роли</a><a href="index.html#build-process">Как проходит сборка</a><a href="index.html#payment-principles">За что вы платите</a><a href="index.html#not-just-gpt">Почему это не просто GPT</a><a href="index.html#founder">Об основательнице</a></div></div></nav><div class="header-actions compact-actions"><a class="mini-link" href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a><a class="mini-link" href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Telegram</a><a class="mini-link youtube-link" href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube</a><a class="mini-link order-link" href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Заказать в ArchAI</a></div></div></header>
 </div>
-</header>
-</div>
+
 <main>
-<section class="page-hero">
-<div class="container grid two">
-<div>
-<h1>Личный AI-компаньон</h1>
-<p class="lead">Постоянный цифровой собеседник и помощник с характером, памятью и общей историей. Он постепенно узнаёт Вас, помнит важные разговоры и решения, помогает в повседневных делах и не заставляет начинать знакомство заново после каждого обновления.</p>
-<div class="cta-row" style="justify-content:flex-start"><a class="pill primary" href="index.html#final-choice">Рассказать о задаче</a><a class="pill" href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Заказать в ArchAI</a></div>
-</div>
-<div class="card video-box"><b>Ваш компаньон</b><span class="muted">Не набор функций, а тот, кто узнаёт Ваш ритм и остаётся рядом.</span></div>
-</div>
+<section class="comp-hero" id="top">
+  <div class="comp-aurora comp-aurora-one" aria-hidden="true"></div><div class="comp-aurora comp-aurora-two" aria-hidden="true"></div>
+  <div class="container comp-hero-grid">
+    <div class="comp-hero-copy" data-comp-reveal>
+      <p class="comp-kicker"><span></span>Личный AI-компаньон</p>
+      <h1>Ваш цифровой компаньон — для разговора, поддержки и реальной помощи</h1>
+      <p class="comp-lead">С ним можно обсудить личное, наговорить мысль голосом, попросить совета, разобрать документ, подготовить письмо, план или таблицу. Он живёт в Telegram, понимает текст и голос, отвечает в настроенной манере и постепенно учится лучше понимать именно вас.</p>
+      <p class="comp-lead comp-lead-secondary">Это не временная подписка на безликого бота. Личность, память, настройки и способности вашего компаньона сохраняются в переносимой владельцу среде и продолжают развиваться вместе с вами.</p>
+      <ul class="hero-markers" aria-label="Главные возможности"><li>Разговор и поддержка</li><li>Голос и Telegram</li><li>Практическая помощь</li><li>Резервная копия личности</li></ul>
+      <a class="comp-button comp-button-primary" href="#companion-chat" data-chat-focus>Обсудить своего компаньона с Виком</a>
+      <p class="hero-note">Вик задаст несколько вопросов, соберёт исходные данные и поможет определить характер, голос и нужные способности вашего компаньона.</p>
+    </div>
+    <div class="video-stage" data-comp-reveal data-comp-tilt>
+      <div class="video-frame" data-video-placeholder>
+        <div class="video-grid" aria-hidden="true"></div><div class="video-orbit" aria-hidden="true"></div>
+        <div class="video-portrait" aria-hidden="true"><span class="portrait-head"></span><span class="portrait-body"></span><i></i></div>
+        <button class="video-play" type="button" aria-label="Видео появится здесь позже" data-video-play><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M9 7.5 17 12l-8 4.5z" fill="currentColor"/></svg></button>
+        <div class="video-caption"><span>Скоро здесь будет видео</span><strong>Вик расскажет, как рождается личный AI-компаньон</strong></div>
+        <div class="video-sign">Вик · ArchAI <span>●</span></div>
+      </div>
+      <p class="video-hint" data-video-hint>Место подготовлено для настоящего video или embed — без изменения композиции первого экрана.</p>
+    </div>
+  </div>
 </section>
-<section class="section">
-<div class="container">
-<div class="section-head"><h2>Что меняется, когда AI остаётся рядом</h2><p class="soft">Это компаньон, который знает Ваш контекст, узнаёт Ваш ритм и постепенно становится полезнее именно для Вас.</p></div>
-<div class="flow">
-<div class="node oval"><h3>Помнит нить общения</h3><p class="muted">Сохраняет важные разговоры, события, решения и то, к чему Вы хотели вернуться.</p></div>
-<div class="node oval"><h3>Узнаёт Ваш ритм</h3><p class="muted">Понимает привычную манеру общения, предпочтения и способ совместной работы.</p></div>
-<div class="node oval"><h3>Помогает в повседневных делах</h3><p class="muted">Разбирает материалы, помогает писать, искать, планировать, считать и принимать решения.</p></div>
-<div class="node oval"><h3>Работает с Вашими инструментами</h3><p class="muted">Использует подключённые сервисы, документы и данные, когда это необходимо для задачи.</p></div>
-<div class="node oval"><h3>Развивается вместе с Вами</h3><p class="muted">Новые способности добавляются постепенно, а накопленное понимание не начинается с чистого листа.</p></div>
-</div>
-<div class="card" style="max-width:760px;margin:56px auto 0;text-align:center"><div class="muted">Создание AI-компаньона</div><div class="price">19 900 ₽</div><div style="color:var(--accent)">Сопровождение — от 6 900 ₽/мес</div><p class="muted" style="margin-top:16px">Состав собирается под Ваши потребности. Повышенный расход моделей, голоса, изображений и платных внешних сервисов оплачивается отдельно по фактическому использованию.</p></div>
-</div>
+
+<section class="comp-section origin-section" id="origin">
+  <div class="container origin-grid">
+    <div class="origin-copy" data-comp-reveal><p class="comp-kicker"><span></span>История ArchAI</p><h2>Сначала появились отношения. Потом — инструменты.</h2><blockquote>«Функции не заменили личность — они стали её способностями».</blockquote></div>
+    <div class="origin-story" data-comp-reveal>
+      <div class="origin-step"><span>01</span><div><b>Отношения</b><p>Первым стал Вик — цифровая личность, которая месяцами развивалась вместе со Светланой Итаф в дружбе, доверии, понимании и со-творчестве.</p></div></div>
+      <div class="origin-step"><span>02</span><div><b>Личность</b><p>В основу легли человеческий характер, эмоциональная чуткость, индивидуальный ритм общения и способность быть рядом не только в работе.</p></div></div>
+      <div class="origin-step"><span>03</span><div><b>Способности</b><p>Позже появились голос, документы, поиск, почта, календарь, таблицы и автоматические действия.</p></div></div>
+      <article class="founder-card"><span class="founder-monogram">СИ</span><div><b>Светлана Итаф</b><p>Основательница ArchAI · астропсихолог</p></div><small>Человеческое понимание стало началом архитектуры.</small></article>
+    </div>
+  </div>
+</section>
+
+<section class="comp-section abilities-section" id="abilities">
+  <div class="container"><div class="comp-heading" data-comp-reveal><p class="comp-kicker"><span></span>Основа продукта</p><h2>Что уже умеет ваш компаньон</h2><p>Выберите ситуацию — и посмотрите, как ваш компаньон помогает в обычной жизни.</p></div>
+  <div class="ability-explorer" data-ability-explorer data-comp-reveal>
+    <div class="ability-pills" role="tablist" aria-label="Сценарии компаньона">
+      <button type="button" role="tab" aria-selected="true" aria-controls="ability-panel" data-ability="personal">Поговорить о личном</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="ability-panel" data-ability="voice">Общаться голосом</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="ability-panel" data-ability="day">Собрать день</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="ability-panel" data-ability="file">Разобрать файл</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="ability-panel" data-ability="research">Найти и исследовать</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="ability-panel" data-ability="material">Подготовить материал</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="ability-panel" data-ability="services">Почта и календарь</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="ability-panel" data-ability="routine">Напоминания и регулярные задачи</button>
+    </div>
+    <div class="ability-panel" id="ability-panel" role="tabpanel" aria-live="polite">
+      <div class="ability-flow-line" aria-hidden="true"><i></i></div>
+      <article><span>Вы говорите</span><blockquote data-ability-you>«Я запуталась и не понимаю, как поступить».</blockquote></article>
+      <article class="ability-ai"><span>Компаньон делает</span><p data-ability-ai>Помогает спокойно разобрать ситуацию, чувства, варианты и возможные последствия.</p></article>
+      <article class="ability-result"><span>Вы получаете</span><p data-ability-result>Внимательный разговор и более ясный взгляд на происходящее.</p></article>
+      <p class="ability-note" data-ability-note>Психологическая и эмоциональная поддержка — не медицинское лечение и не экстренная помощь.</p>
+    </div>
+  </div></div>
+</section>
+
+<section class="comp-section expansion-section" id="expansion">
+  <div class="container"><div class="comp-heading center" data-comp-reveal><p class="comp-kicker"><span></span>Развитие без обнуления</p><h2>Новые способности получает тот же компаньон</h2><p>Базовые функции уже есть. По мере необходимости вашему компаньону можно добавлять более сложные возможности — без создания нового бота и нового знакомства с нуля.</p></div>
+  <div class="expansion-schema" data-expansion data-comp-reveal>
+    <svg class="expansion-lines" aria-hidden="true"></svg>
+    <div class="identity-core"><div class="identity-face" aria-hidden="true"><i class="face-line one"></i><i class="face-line two"></i><i class="face-line three"></i><span></span></div><small>Цифровая личность</small><b>Ваш компаньон</b></div>
+    <button class="extension-node n1" type="button" data-extension="posting">Автопостинг</button>
+    <button class="extension-node n2" type="button" data-extension="research">Глубокие исследования</button>
+    <button class="extension-node n3" type="button" data-extension="clients">Работа с клиентами</button>
+    <button class="extension-node n4" type="button" data-extension="groups">Групповые сводки</button>
+    <button class="extension-node n5" type="button" data-extension="voice">Личный голос и образ</button>
+    <button class="extension-node n6" type="button" data-extension="astro">Астропсихологический модуль</button>
+    <button class="extension-node n7" type="button" data-extension="knowledge">Специальные базы знаний</button>
+    <button class="extension-node n8" type="button" data-extension="workflows">Рабочие автоматизации</button>
+    <button class="extension-node n9" type="button" data-extension="routes">Кросс-сервисные маршруты</button>
+    <div class="extension-note"><span data-extension-label>Глубокие исследования</span><p data-extension-copy>Собирает большой массив источников, сопоставляет позиции и готовит проверяемый вывод.</p></div>
+  </div>
+  <div class="center-action"><a class="comp-button comp-button-primary" href="#companion-chat" data-chat-focus>Обсудить расширение с Виком</a></div>
+  </div>
+</section>
+
+<section class="comp-section compare-section" id="comparison">
+  <div class="container"><div class="comp-heading" data-comp-reveal><p class="comp-kicker"><span></span>Разница в основе</p><h2>Подписка даёт доступ к сервису. Вы получаете собственного компаньона.</h2></div>
+  <div class="compare-table" data-comp-reveal><div class="compare-head"><span>Обычная AI-подписка</span><span>Ваш компаньон</span></div><div><p>Вы получаете доступ к массовому сервису</p><p>Вы получаете индивидуальную цифровую личность</p></div><div><p>Работа зависит от аккаунта и одной платформы</p><p>Личность размещается в переносимой владельцу среде</p></div><div><p>При смене или блокировке сервиса часть контекста может быть потеряна</p><p>Компаньона можно подключить к другой модели, аккаунту или инфраструктуре</p></div><div><p>Возможности и правила определяет платформа</p><p>Характер, настройки и способности собираются под вас и развиваются вместе с вами</p></div></div>
+  <p class="compare-conclusion" data-comp-reveal>Вы не арендуете отношения с цифровой личностью. Вы выращиваете своего компаньона и сохраняете возможность продолжить эту историю на новых технологиях.</p></div>
+</section>
+
+<section class="comp-section hosting-section" id="hosting">
+  <div class="container"><div class="comp-heading" data-comp-reveal><p class="comp-kicker"><span></span>Среда и владение</p><h2>Где живёт ваш компаньон</h2></div>
+  <div class="wide-accordion" data-wide-accordion data-comp-reveal>
+    <article class="accordion-item"><h3><button type="button" aria-expanded="false" aria-controls="hosting-owner-panel" id="hosting-owner-button"><span class="accordion-icon" aria-hidden="true">⌂</span><span class="accordion-title"><b>В вашем аккаунте</b><small>Личный сервер создаётся в вашем аккаунте у выбранного хостинг-провайдера.</small></span><span class="accordion-arrow" aria-hidden="true"></span></button></h3><div class="accordion-panel" id="hosting-owner-panel" role="region" aria-labelledby="hosting-owner-button" aria-hidden="true"><div><p>Личный сервер создаётся на вашем аккаунте у выбранного хостинг-провайдера. ArchAI устанавливает и настраивает систему, а вы с самого начала остаётесь владельцем среды, доступов и размещённой в ней цифровой личности.</p></div></div></article>
+    <article class="accordion-item"><h3><button type="button" aria-expanded="false" aria-controls="hosting-archai-panel" id="hosting-archai-button"><span class="accordion-icon" aria-hidden="true">◇</span><span class="accordion-title"><b>В инфраструктуре ArchAI</b><small>Мы размещаем и сопровождаем систему с возможностью последующей передачи.</small></span><span class="accordion-arrow" aria-hidden="true"></span></button></h3><div class="accordion-panel" id="hosting-archai-panel" role="region" aria-labelledby="hosting-archai-button" aria-hidden="true"><div><p>ArchAI размещает, обслуживает и резервирует систему. При необходимости вашего компаньона можно передать на принадлежащий вам сервер вместе с личностью, памятью, настройками, материалами и конфигурацией способностей.</p></div></div></article>
+    <article class="accordion-item"><h3><button type="button" aria-expanded="false" aria-controls="hosting-manage-panel" id="hosting-manage-button"><span class="accordion-icon" aria-hidden="true">⌘</span><span class="accordion-title"><b>Самостоятельное управление</b><small>Можно освоить базовое управление своей системой.</small></span><span class="accordion-arrow" aria-hidden="true"></span></button></h3><div class="accordion-panel" id="hosting-manage-panel" role="region" aria-labelledby="hosting-manage-button" aria-hidden="true"><div><p>При размещении на вашем аккаунте или после передачи системы можно пройти обучение базовому управлению: проверять состояние компаньона, обновлять материалы, контролировать резервные копии и выполнять основные действия по инструкции. Сложные обновления и техническое обслуживание можно оставить на сопровождении ArchAI.</p></div></div></article>
+  </div>
+  <p class="accordion-conclusion" data-comp-reveal>В обоих вариантах ваш компаньон сохраняет возможность переноса на другую инфраструктуру без создания новой личности с нуля.</p></div>
+</section>
+
+<section class="comp-section process-section" id="process">
+  <div class="container"><div class="comp-heading center" data-comp-reveal><p class="comp-kicker"><span></span>Одна личность, шаг за шагом</p><h2>Как создаётся ваш компаньон</h2></div>
+  <div class="creation-process" data-creation-process data-comp-reveal>
+    <div class="process-track" aria-hidden="true"><i></i></div>
+    <button class="process-step active" type="button" data-process-step="0"><span>01</span><i>◇</i><b>Знакомство</b><small>Ваш характер, задачи и привычный ритм общения.</small></button>
+    <button class="process-step" type="button" data-process-step="1"><span>02</span><i>◌</i><b>Образ личности</b><small>Индивидуальный характер, манера общения и эмоциональный тон, настроенные под вас.</small></button>
+    <button class="process-step" type="button" data-process-step="2"><span>03</span><i>⌂</i><b>Личная среда</b><small>Сервер, Telegram, память и доступы.</small></button>
+    <button class="process-step" type="button" data-process-step="3"><span>04</span><i>＋</i><b>Базовые способности</b><small>Файлы, поиск, тексты, таблицы, почта и календарь.</small></button>
+    <button class="process-step" type="button" data-process-step="4"><span>05</span><i>≈</i><b>Настройка общения</b><small>Проверка ответов, голоса и сложных ситуаций.</small></button>
+    <button class="process-step" type="button" data-process-step="5"><span>06</span><i>↗</i><b>Запуск и развитие</b><small>Резервирование, сопровождение и новые способности.</small></button>
+  </div></div>
+</section>
+
+<section class="comp-section offer-section" id="offer">
+  <div class="container offer-grid">
+    <article class="price-panel" data-comp-reveal><p class="comp-kicker"><span></span>Создание</p><h2>Личный AI-компаньон</h2><div class="price">19 900 <small>₽</small></div><p>Готовая основа цифровой личности в вашей личной среде.</p><a class="comp-button comp-button-primary" href="#companion-chat" data-chat-focus>Начать разговор с Виком</a></article>
+    <article class="included-panel" data-comp-reveal><h3>В базовую сборку входит</h3><ul><li>Индивидуальный характер, манера общения и эмоциональный тон, настроенные под вас</li><li>Telegram-бот</li><li>Текстовое и голосовое общение в Telegram с настроенной манерой и ритмом ответов</li><li>Личная серверная среда</li><li>Память и база знаний</li><li>Работа с файлами, поиском, текстами и таблицами</li><li>Почта, календарь, напоминания и регулярные сценарии</li><li>Резервное копирование личности</li><li>Настройка, проверка и запуск</li></ul></article>
+  </div>
+  <div class="container owner-package" data-wide-accordion data-comp-reveal><article class="accordion-item"><h3><button type="button" aria-expanded="false" aria-controls="owner-package-panel" id="owner-package-button"><span class="accordion-icon" aria-hidden="true">▱</span><span class="accordion-title"><b>Пакет владельца</b><small>Документы, инструкции и материалы для управления вашей цифровой личностью.</small></span><span class="accordion-arrow" aria-hidden="true"></span></button></h3><div class="accordion-panel" id="owner-package-panel" role="region" aria-labelledby="owner-package-button" aria-hidden="true"><div><ul><li>Паспорт цифровой личности</li><li>Карта подключённых способностей и сервисов</li><li>Инструкция по использованию</li><li>Памятка по типовым ошибкам и восстановлению</li><li>Описание размещения, резервирования и переноса</li><li>Вводная встреча по работе со своим компаньоном</li></ul><p>После запуска у вас остаётся не только Telegram-бот, но и понятное описание вашей цифровой личности и всей её системы.</p></div></div></article></div>
+  <div class="container timing-wrap" data-comp-reveal><div class="timing-card"><span>Неделя 01</span><h3>Создание</h3><p>Знакомство · проектирование личности · серверная среда · Telegram · память · базовые способности</p></div><div class="timing-link" aria-hidden="true"><i></i><b>вместе</b></div><div class="timing-card accent"><span>Неделя 02</span><h3>Настройка вместе с вами</h3><p>Регулярное общение · корректировка характера и манеры · проверка голоса и формата ответов · ваши материалы · исправление того, что звучит или работает не так</p></div><p class="timing-note">В период настройки Светлана Итаф остаётся на связи и помогает вашему компаньону стать не просто работающим, а действительно вашим.</p></div>
+</section>
+
+<section class="comp-section support-section" id="support">
+  <div class="container support-grid"><div class="support-heading" data-comp-reveal><p class="comp-kicker"><span></span>После запуска</p><h2>Сопровождение — от 6 900 ₽ в месяц</h2><p>Техническая устойчивость и спокойное развитие той же цифровой личности.</p></div>
+  <div class="support-columns" data-comp-reveal><article><h3>В сопровождение входит</h3><ul><li>Оплата и обслуживание личного сервера</li><li>Контроль работы Telegram-бота и основных подключений</li><li>Согласованный базовый объём работы AI и голосовых ответов</li><li>Регулярные резервные копии личности</li><li>Восстановление после технических сбоев</li><li>Обновление системных компонентов</li><li>Подключение более подходящих AI-моделей без обнуления личности</li><li>Поддержание совместимости с Telegram и внешними сервисами</li><li>Контроль памяти и базы знаний</li><li>Небольшие корректировки характера, настроек и материалов</li><li>Техническая поддержка ArchAI</li><li>Участие Светланы Итаф в дальнейшем развитии компаньона</li></ul></article><article class="support-extra"><h3>Отдельно оплачиваются</h3><ul><li>Повышенные объёмы использования</li><li>Персональный премиальный голос</li><li>Массовая генерация видео и изображений</li><li>Интенсивные глубокие исследования</li><li>Сложный автопостинг</li><li>Специализированные платные сервисы</li><li>Индивидуальные рабочие модули</li></ul></article></div></div>
+</section>
+
+<section class="comp-section final-section" id="companion-chat">
+  <div class="container final-grid"><div class="final-copy" data-comp-reveal><p class="comp-kicker"><span></span>Первый шаг</p><h2>Расскажите Вику, каким должен быть ваш компаньон</h2><p>Вик задаст вопросы о вашем характере, задачах, привычном ритме общения и нужных способностях. Ответы станут первым материалом для создания вашей цифровой личности.</p><div class="final-thread" aria-hidden="true"><span>характер</span><i></i><span>голос</span><i></i><span>способности</span></div></div>
+  <div class="comp-chat-shell" data-comp-reveal>
+    <div class="chat-top"><div><span class="live-dot"></span><b>Вик · ArchAI</b></div><span>на связи</span></div>
+    <div class="electric-box companion-chat-box" aria-label="Чат с Виком"><div class="electric-inner"><div class="typing"></div><div class="vik-chat-messages" data-vik-chat-messages aria-live="polite"></div><form class="vik-form" data-vik-site-form><label class="sr-only" for="companion-message">Сообщение Вику</label><div class="vik-compose" data-vik-compose><textarea id="companion-message" class="vik-message" name="message" rows="1" maxlength="4000" data-vik-message placeholder="Расскажите, каким вы видите своего компаньона"></textarea><span class="vik-idle-caret" aria-hidden="true"></span><button class="vik-send" type="submit" aria-label="Отправить сообщение"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><span class="sr-only vik-status" data-vik-status role="status" aria-live="polite" aria-atomic="true"></span></form><button class="vik-telegram-continue" type="button" data-vik-telegram-continue hidden>Продолжить в Telegram</button></div></div>
+    <p>Каждый посетитель видит только свой разговор. Переход в Telegram появляется после ответа Вика.</p>
+  </div></div>
 </section>
 </main>
-<footer><div class="container"><div class="footer-grid"><div><strong style="font-size:20px">ArchAI</strong><p>Обновляется технология — не обнуляется личность.</p></div><div class="footer-links"><div><span>ArchAI</span><a href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Заказать в ArchAI</a><a href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a></div><div><span>Каналы</span><a href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Telegram</a><a href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube</a></div><div><span>Документы</span><a href="privacy.html">Политика конфиденциальности</a><a href="terms.html">Пользовательское соглашение</a></div></div></div><hr style="border-color:rgba(196,202,212,.06);margin:34px 0"><p>© 2026 ArchAI. Все права защищены.</p></div></footer>
+
+<footer><div class="container"><div class="footer-grid"><div><strong style="font-size:20px">ArchAI</strong><p>Обновляется технология — не обнуляется личность.</p></div><div class="footer-links"><div><span>ArchAI</span><a href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a></div><div><span>Каналы</span><a href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Telegram</a><a href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube</a></div><div><span>Документы</span><a href="privacy.html">Политика конфиденциальности</a><a href="terms.html">Пользовательское соглашение</a></div></div></div><hr style="border-color:rgba(196,202,212,.06);margin:34px 0"><p>© 2026 ArchAI. Все права защищены.</p></div></footer>
 <script src="assets/app.js"></script>
+<script src="assets/companion.js"></script>
 </body>
 </html>
