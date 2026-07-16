@@ -31,13 +31,17 @@
         <p>Всё развивается внутри одной цифровой личности</p>
       </div>
     </div>
-    <div class="dev-transform-stage" data-dev-reveal data-loop-slot aria-label="Пространство для будущего видео трансформации">
-      <div class="transform-orbit" aria-hidden="true">
-        <i class="orbit orbit-a"></i><i class="orbit orbit-b"></i><i class="orbit orbit-c"></i>
-        <span class="transform-profile"></span><span class="transform-flow"></span>
-        <b class="transform-node node-a"></b><b class="transform-node node-b"></b><b class="transform-node node-c"></b>
+    <div class="dev-transform-stage" data-dev-reveal data-hero-media>
+      <div class="dev-hero-video-wrap">
+        <video class="dev-hero-video" data-hero-video autoplay muted loop playsinline preload="metadata" poster="assets/video/ai-development-hero-poster.jpg" aria-label="Светящаяся цифровая голова трансформируется в пространстве">
+          <source src="assets/video/ai-development-hero.webm" type="video/webm">
+          <source src="assets/video/ai-development-hero.mp4" type="video/mp4">
+        </video>
       </div>
-      <div class="transform-caption"><span>Пространство трансформации</span><small>будущий авторский loop</small></div>
+      <button class="dev-sound-toggle" type="button" data-sound-toggle aria-label="Включить звук" aria-pressed="false">
+        <svg class="sound-icon sound-icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="m17 9 4 6m0-6-4 6"/></svg>
+        <svg class="sound-icon sound-icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M16 8.2a5 5 0 0 1 0 7.6M18.5 5.7a8.5 8.5 0 0 1 0 12.6"/></svg>
+      </button>
     </div>
   </div>
 </section>

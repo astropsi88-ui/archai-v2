@@ -2,6 +2,22 @@
   const $=(selector,root=document)=>root.querySelector(selector);
   const $$=(selector,root=document)=>[...root.querySelectorAll(selector)];
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const heroVideo=$('[data-hero-video]'),soundToggle=$('[data-sound-toggle]'),heroMedia=$('[data-hero-media]');
+  if(heroVideo&&soundToggle){
+    const setSoundState=enabled=>{
+      heroVideo.muted=!enabled;
+      soundToggle.setAttribute('aria-pressed',String(enabled));
+      soundToggle.setAttribute('aria-label',enabled?'Выключить звук':'Включить звук');
+    };
+    setSoundState(false);
+    soundToggle.addEventListener('click',()=>{
+      const enable=heroVideo.muted;
+      setSoundState(enable);
+      if(heroVideo.paused&&!reduced)heroVideo.play().catch(()=>setSoundState(false));
+    });
+    if(reduced){heroVideo.pause();heroMedia?.classList.add('is-reduced-motion')}
+    else heroVideo.play().catch(()=>{});
+  }
   const copy={
     work:{
       clients:['Клиенты и обращения','Сохраняет контекст общения, помогает разбирать запросы и подготавливает следующий шаг.'],
