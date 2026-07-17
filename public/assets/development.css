@@ -180,6 +180,7 @@
   .development-page p { font-size: 16px; }
   .dev-hero { min-height: auto; padding: 112px 0 68px; }
   .dev-hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  .dev-hero-copy { padding-inline: 7px; }
   .dev-hero-copy h1 { max-width: 355px; }
   .dev-hero-points { margin-top: 27px; }
   .dev-hero-points p { padding-top: 9px; padding-bottom: 9px; font-size: 16px !important; }
@@ -213,6 +214,10 @@
   .dev-price-card { padding: 28px 23px; }
   .dev-price-card h2 { font-size: 28px; }
   .dev-final { padding: 75px 0 88px; }
+}
+
+@media (max-width: 360px) {
+  .development-page h1 { font-size: 30px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
