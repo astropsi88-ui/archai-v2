@@ -163,6 +163,8 @@
 @keyframes dev-ambient-drift { 0% { transform: translate3d(-10px,-5px,0) scale(.98); opacity: .7; } 100% { transform: translate3d(12px,8px,0) scale(1.04); opacity: 1; } }
 @keyframes dev-field-drift { 0% { transform: translate(-51%,-50%) scale(.98); opacity: .7; } 100% { transform: translate(-49%,-50%) scale(1.03); opacity: 1; } }
 @keyframes dev-map-halo { 0%,100% { transform:translate(-50%,-50%) scale(.92); opacity:.62; } 50% { transform:translate(-50%,-50%) scale(1.08); opacity:1; } }
+@property --dev-ray-angle { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+@keyframes dev-frame-ray { to { --dev-ray-angle:360deg; } }
 
 @media (min-width: 801px) {
   .map-node.n6, .map-node.n7 { top: 52%; }
@@ -199,16 +201,23 @@
   .route-caption { text-align: left; }
   .ability-map, .work-section .ability-map, .content-section .ability-map, .brand-section .ability-map { height: auto; padding: 190px 0 15px; background: radial-gradient(ellipse at 50% 20%,rgba(70,130,175,.06),transparent 31%); }
   .map-lines { display:block; }
-  .map-lines .channel-pulse { display:none; }
+  .map-lines .channel-pulse { display:block; stroke:#8ff1ff; stroke-width:3; stroke-dasharray:12 88; opacity:.16; filter:none; animation:none !important; }
+  .map-lines .channel-pulse.is-active { stroke:#f3ffff; stroke-width:4; stroke-dasharray:16 84; opacity:.9; filter:none; animation:dev-channel-current 2.3s linear infinite !important; }
   .map-lines .channel-base,.map-lines .channel-base.is-active { stroke-width:2.5; opacity:.42; filter:none; }
   .dev-schema-section::before,.ability-map::before { animation:none; filter:none; }
   .map-core { top: 96px; width: 145px; height: 145px; }
+  .work-section .map-core,.content-section .map-core,.brand-section .map-core { border:1.5px solid transparent; animation:dev-frame-ray 4.8s linear infinite; box-shadow:0 0 22px rgba(0,138,255,.2),inset 0 0 28px rgba(89,202,255,.08); }
+  .work-section .map-core { background:radial-gradient(circle,rgba(22,115,154,.42),rgba(9,29,52,.96) 69%,rgba(9,29,52,.98) 70%) padding-box,conic-gradient(from var(--dev-ray-angle),transparent 0 69%,#00aaff 76%,#efffff 80%,#0052ff 85%,transparent 93%) border-box; }
+  .content-section .map-core { background:radial-gradient(circle,rgba(23,103,174,.42),rgba(10,27,61,.96) 69%,rgba(10,27,61,.98) 70%) padding-box,conic-gradient(from var(--dev-ray-angle),transparent 0 69%,#00aaff 76%,#efffff 80%,#405cff 86%,transparent 93%) border-box; }
+  .brand-section .map-core { background:radial-gradient(circle,rgba(49,93,174,.4),rgba(22,24,69,.96) 69%,rgba(22,24,69,.98) 70%) padding-box,conic-gradient(from var(--dev-ray-angle),transparent 0 69%,#3ebcff 76%,#f3ffff 80%,#7868e8 86%,transparent 93%) border-box; }
   .dev-schema-section.is-running .map-core,.dev-schema-section.is-running .content-wave i { animation:none; }
   .map-core strong { font-size: 14px; }
   .work-network, .content-wave { transform: scale(.78); }
   .brand-profile { transform: scale(.76); }
   .map-nodes { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
   .map-node, .n1, .n2, .n3, .n4, .n5, .n6, .n7, .n8, .brand-map .n8, .brand-map .n9, .ability-map:not(.brand-map) .n8 { position: static; max-width: none; min-height: 54px; padding: 8px; transform: none !important; border-radius: 15px; background: rgba(10,28,47,.72); font-size: 13px; backdrop-filter:none; }
+  .work-section .map-node[aria-selected="true"],.content-section .map-node[aria-selected="true"],.brand-section .map-node[aria-selected="true"] { border:1.5px solid transparent; color:#fff; background:linear-gradient(145deg,rgba(7,35,66,.98),rgba(9,20,54,.98)) padding-box,conic-gradient(from var(--dev-ray-angle),transparent 0 68%,#00aaff 75%,#f4ffff 80%,#0052ff 86%,transparent 94%) border-box; box-shadow:0 0 15px rgba(0,138,255,.32),inset 0 0 18px rgba(80,173,214,.09); animation:dev-frame-ray 3.6s linear infinite; }
+  .brand-section .map-node[aria-selected="true"] { background:linear-gradient(145deg,rgba(13,32,68,.98),rgba(25,20,62,.98)) padding-box,conic-gradient(from var(--dev-ray-angle),transparent 0 68%,#39bfff 75%,#f4ffff 80%,#7868e8 86%,transparent 94%) border-box; }
   .map-node:last-child:nth-child(odd) { grid-column: 1/-1; }
   .map-note { position: static; width: 100%; min-height: 0; margin-top: 12px; padding: 15px; transform: none; text-align: left; backdrop-filter:none; }
   .map-note p { font-size: 16px; }
