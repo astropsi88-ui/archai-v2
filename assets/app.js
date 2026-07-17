@@ -73,6 +73,16 @@ function initVikSiteForm(form){
   sizeVikMessage(field);sync();
 }
 siteForms.forEach(initVikSiteForm);
+function makeTelegramWebUrl(link){
+  const url=new URL(link);
+  if(!['t.me','www.t.me','telegram.me','www.telegram.me'].includes(url.hostname))throw new Error('invalid_telegram_link');
+  const username=url.pathname.split('/').filter(Boolean)[0];
+  if(!username||!/^[A-Za-z0-9_]+$/.test(username))throw new Error('invalid_telegram_username');
+  const params=new URLSearchParams({domain:username});
+  const start=url.searchParams.get('start');
+  if(start)params.set('start',start);
+  return `https://web.telegram.org/k/#?tgaddr=${encodeURIComponent(`tg://resolve?${params}`)}`;
+}
 telegramContinueButtons.forEach(button=>button.addEventListener('click',async()=>{
   const conversationId=sessionStorage.getItem(vikConversationStorageKey);
   if(!conversationId)return;
@@ -82,9 +92,9 @@ telegramContinueButtons.forEach(button=>button.addEventListener('click',async()=
     const response=await fetch('/api/vik-site/telegram-link',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversationId})});
     const data=await response.json().catch(()=>({}));
     if(!response.ok||typeof data.url!=='string')throw new Error(data.error||`http_${response.status}`);
-    const deepLink=data.url;
+    const webLink=makeTelegramWebUrl(data.url);
     data.url=null;
-    window.location.replace(deepLink);
+    window.location.assign(webLink);
   }catch{
     setVikStatus('Не удалось создать переход. Попробуйте ещё раз.');
     telegramContinueButtons.forEach(item=>{item.disabled=false});
