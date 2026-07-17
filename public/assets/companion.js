@@ -31,7 +31,15 @@
   $$('[data-process-step]',process).forEach(step=>step.addEventListener('click',()=>setProcess(Number(step.dataset.processStep),{manual:true})));
 
   $$('[data-chat-focus]').forEach(link=>link.addEventListener('click',()=>requestAnimationFrame(()=>setTimeout(()=>{const field=$('[data-vik-message]');field?.focus();field?.setSelectionRange(field.value.length,field.value.length)},450))));
-  $('[data-video-play]')?.addEventListener('click',()=>{const hint=$('[data-video-hint]');hint?.classList.add('is-active');if(hint)hint.textContent='Здесь будет настоящее видео Вика. Сейчас это честный визуальный макет будущего блока.'});
+  const introMedia=$('[data-companion-intro-media]'),introVideo=$('[data-companion-intro-video]',introMedia);
+  if(introMedia&&introVideo){
+    let started=false;
+    const syncIntroVideo=()=>{const playing=!introVideo.paused&&!introVideo.ended;introMedia.classList.toggle('is-started',started);introMedia.classList.toggle('is-playing',playing);introMedia.setAttribute('aria-label',playing?'Поставить видео с Виком на паузу':introVideo.ended?'Запустить видео с Виком снова':'Воспроизвести видео с Виком')};
+    const toggleIntroVideo=async()=>{if(!introVideo.paused){introVideo.pause();return}if(!started||introVideo.ended)introVideo.currentTime=0;introVideo.muted=false;introVideo.volume=1;try{await introVideo.play();started=true;syncIntroVideo()}catch{syncIntroVideo()}};
+    introMedia.addEventListener('click',toggleIntroVideo);
+    introMedia.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleIntroVideo()}});
+    introVideo.addEventListener('play',()=>{started=true;syncIntroVideo()});introVideo.addEventListener('pause',syncIntroVideo);introVideo.addEventListener('ended',()=>{started=false;syncIntroVideo()});syncIntroVideo();
+  }
 
   $$('[data-wide-accordion]').forEach(group=>{
     const buttons=$$('.accordion-item>h3>button',group);

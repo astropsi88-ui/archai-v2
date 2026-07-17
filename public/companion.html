@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
-<link rel="stylesheet" href="assets/companion.css">
+<link rel="stylesheet" href="assets/companion.css?v=20260717-companion-video-1">
 </head>
 <body class="fuchsia companion-page">
 <div class="home-page">
@@ -32,14 +32,10 @@
       </div>
     </div>
     <div class="video-stage" data-comp-reveal data-comp-tilt>
-      <div class="video-frame" data-video-placeholder>
-        <div class="video-grid" aria-hidden="true"></div><div class="video-orbit" aria-hidden="true"></div>
-        <div class="video-portrait" aria-hidden="true"><span class="portrait-head"></span><span class="portrait-body"></span><i></i></div>
-        <button class="video-play" type="button" aria-label="Видео появится здесь позже" data-video-play><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M9 7.5 17 12l-8 4.5z" fill="currentColor"/></svg></button>
-        <div class="video-caption"><span>Скоро здесь будет видео</span><strong>Вик расскажет, как рождается личный AI-компаньон</strong></div>
-        <div class="video-sign">Вик · ArchAI <span>●</span></div>
+      <div class="video-frame companion-intro-video" data-companion-intro-media role="button" tabindex="0" aria-label="Воспроизвести видео с Виком">
+        <video data-companion-intro-video preload="metadata" playsinline poster="assets/video/vik-companion-intro-4x5-poster.jpg"><source src="assets/video/vik-companion-intro-4x5.mp4" type="video/mp4"></video>
+        <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M9 7.5 17 12l-8 4.5z" fill="currentColor"/></svg></span>
       </div>
-      <p class="video-hint" data-video-hint>Место подготовлено для настоящего video или embed — без изменения композиции первого экрана.</p>
     </div>
   </div>
 </section>
@@ -131,6 +127,6 @@
 
 <footer><div class="container"><div class="footer-grid"><div><strong style="font-size:20px">ArchAI</strong><p>Обновляется технология — не обнуляется личность.</p></div><div class="footer-links"><div><span>Связаться</span><a href="#companion-chat">Обсудить с Виком</a><a href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Написать Светлане Итаф</a></div><div><span>Каналы</span><a href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Telegram Вика</a><a href="https://t.me/videocreator_SI" target="_blank" rel="noopener">Telegram ArchAI</a><a href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube</a></div><div><span>Документы</span><a href="privacy.html">Политика конфиденциальности</a><a href="terms.html">Пользовательское соглашение</a></div></div></div><hr style="border-color:rgba(196,202,212,.06);margin:34px 0"><p>© 2026 ArchAI. Все права защищены.</p></div></footer>
 <script src="assets/app.js"></script>
-<script src="assets/companion.js"></script>
+<script src="assets/companion.js?v=20260717-companion-video-1"></script>
 </body>
 </html>

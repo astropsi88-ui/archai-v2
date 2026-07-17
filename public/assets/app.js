@@ -147,8 +147,9 @@ initProductCardTouchGlow();
 
 function initVikIntroVideo(){
   const media=$('[data-vik-intro-media]');
+  if(!media)return;
   const video=$('[data-vik-intro-video]',media);
-  if(!media||!video)return;
+  if(!video)return;
   let started=false;
   const sync=()=>{
     media.classList.toggle('is-started',started);
