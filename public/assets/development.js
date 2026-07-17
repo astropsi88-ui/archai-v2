@@ -2,6 +2,7 @@
   const $=(selector,root=document)=>root.querySelector(selector);
   const $$=(selector,root=document)=>[...root.querySelectorAll(selector)];
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compact=matchMedia('(max-width: 800px)').matches;
   const heroVideo=$('[data-hero-video]'),soundToggle=$('[data-sound-toggle]'),heroMedia=$('[data-hero-media]');
   if(heroVideo&&soundToggle){
     const setSoundState=enabled=>{
@@ -17,6 +18,13 @@
     });
     if(reduced){heroVideo.pause();heroMedia?.classList.add('is-reduced-motion')}
     else heroVideo.play().catch(()=>{});
+    if(!reduced&&'IntersectionObserver'in window){
+      const videoObserver=new IntersectionObserver(([entry])=>{
+        if(entry.isIntersecting)heroVideo.play().catch(()=>{});
+        else heroVideo.pause();
+      },{threshold:.05});
+      videoObserver.observe(heroMedia||heroVideo);
+    }
   }
   const copy={
     work:{
@@ -93,13 +101,13 @@
   const routeSection=$('[data-route-section]'),routeItems=$$('.service-route li');let routeIndex=1,routeTimer=null,routeVisible=false;
   function tickRoute(){routeItems.forEach((item,index)=>item.classList.toggle('is-active',index===routeIndex));routeIndex=(routeIndex+1)%routeItems.length}
   function startCycles(){
-    if(reduced||document.hidden)return;
+    if(reduced||compact||document.hidden)return;
     if(routeVisible&&!routeTimer){routeSection.classList.add('is-running');routeTimer=setInterval(tickRoute,2200)}
     schemas.forEach(schema=>{if(schema.visible&&!schema.timer){schema.section.classList.add('is-running');schema.timer=setInterval(()=>{if(Date.now()>=schema.pauseUntil)select(schema,schema.index+1)},4300)}});
   }
   function stopRoute(){clearInterval(routeTimer);routeTimer=null;routeSection?.classList.remove('is-running')}
   function stopSchema(schema){clearInterval(schema.timer);schema.timer=null;schema.section.classList.remove('is-running')}
-  if(!reduced&&'IntersectionObserver'in window){
+  if(!reduced&&!compact&&'IntersectionObserver'in window){
     const cycleObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.target===routeSection){routeVisible=entry.isIntersecting;if(!routeVisible)stopRoute()}else{const schema=schemas.find(item=>item.section===entry.target);if(schema){schema.visible=entry.isIntersecting;if(!schema.visible)stopSchema(schema)}}startCycles()}),{threshold:.16});
     if(routeSection)cycleObserver.observe(routeSection);schemas.forEach(schema=>cycleObserver.observe(schema.section));
     document.addEventListener('visibilitychange',()=>{if(document.hidden){stopRoute();schemas.forEach(stopSchema)}else startCycles()});

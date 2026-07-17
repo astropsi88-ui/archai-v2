@@ -199,14 +199,18 @@
   .route-caption { text-align: left; }
   .ability-map, .work-section .ability-map, .content-section .ability-map, .brand-section .ability-map { height: auto; padding: 190px 0 15px; background: radial-gradient(ellipse at 50% 20%,rgba(70,130,175,.06),transparent 31%); }
   .map-lines { display:block; }
+  .map-lines .channel-pulse { display:none; }
+  .map-lines .channel-base,.map-lines .channel-base.is-active { stroke-width:2.5; opacity:.42; filter:none; }
+  .dev-schema-section::before,.ability-map::before { animation:none; filter:none; }
   .map-core { top: 96px; width: 145px; height: 145px; }
+  .dev-schema-section.is-running .map-core,.dev-schema-section.is-running .content-wave i { animation:none; }
   .map-core strong { font-size: 14px; }
   .work-network, .content-wave { transform: scale(.78); }
   .brand-profile { transform: scale(.76); }
   .map-nodes { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-  .map-node, .n1, .n2, .n3, .n4, .n5, .n6, .n7, .n8, .brand-map .n8, .brand-map .n9, .ability-map:not(.brand-map) .n8 { position: static; max-width: none; min-height: 54px; padding: 8px; transform: none !important; border-radius: 15px; background: rgba(10,28,47,.5); font-size: 13px; }
+  .map-node, .n1, .n2, .n3, .n4, .n5, .n6, .n7, .n8, .brand-map .n8, .brand-map .n9, .ability-map:not(.brand-map) .n8 { position: static; max-width: none; min-height: 54px; padding: 8px; transform: none !important; border-radius: 15px; background: rgba(10,28,47,.72); font-size: 13px; backdrop-filter:none; }
   .map-node:last-child:nth-child(odd) { grid-column: 1/-1; }
-  .map-note { position: static; width: 100%; min-height: 0; margin-top: 12px; padding: 15px; transform: none; text-align: left; }
+  .map-note { position: static; width: 100%; min-height: 0; margin-top: 12px; padding: 15px; transform: none; text-align: left; backdrop-filter:none; }
   .map-note p { font-size: 16px; }
   .gallery-demo { grid-template-columns: 1fr 1fr; }
   .schema-audience, .brand-use { text-align: left; }
