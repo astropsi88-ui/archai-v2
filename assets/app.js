@@ -76,12 +76,6 @@ siteForms.forEach(initVikSiteForm);
 telegramContinueButtons.forEach(button=>button.addEventListener('click',async()=>{
   const conversationId=sessionStorage.getItem(vikConversationStorageKey);
   if(!conversationId)return;
-  const handoffWindow=window.open('about:blank','vikTelegramContinue');
-  if(handoffWindow){
-    handoffWindow.opener=null;
-    handoffWindow.document.title='Открываю Telegram…';
-    handoffWindow.document.body.textContent='Открываю продолжение разговора…';
-  }
   telegramContinueButtons.forEach(item=>{item.disabled=true});
   setVikStatus('Создаю безопасный переход в Telegram.');
   try{
@@ -90,10 +84,8 @@ telegramContinueButtons.forEach(button=>button.addEventListener('click',async()=
     if(!response.ok||typeof data.url!=='string')throw new Error(data.error||`http_${response.status}`);
     const deepLink=data.url;
     data.url=null;
-    if(handoffWindow&&!handoffWindow.closed)handoffWindow.location.replace(deepLink);
-    else window.location.assign(deepLink);
+    window.location.replace(deepLink);
   }catch{
-    if(handoffWindow&&!handoffWindow.closed)handoffWindow.close();
     setVikStatus('Не удалось создать переход. Попробуйте ещё раз.');
     telegramContinueButtons.forEach(item=>{item.disabled=false});
   }
