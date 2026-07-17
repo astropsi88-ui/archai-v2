@@ -81,7 +81,7 @@ function makeTelegramWebUrl(link){
   const params=new URLSearchParams({domain:username});
   const start=url.searchParams.get('start');
   if(start)params.set('start',start);
-  return `https://web.telegram.org/k/#?tgaddr=${encodeURIComponent(`tg://resolve?${params}`)}`;
+  return `https://web.telegram.org/a/#?tgaddr=${encodeURIComponent(`tg://resolve?${params}`)}`;
 }
 telegramContinueButtons.forEach(button=>button.addEventListener('click',async()=>{
   const conversationId=sessionStorage.getItem(vikConversationStorageKey);
