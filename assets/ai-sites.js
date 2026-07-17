@@ -1,70 +1,70 @@
 (()=>{
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const revealItems=[...document.querySelectorAll('[data-reveal]')];
-  const journey=document.querySelector('[data-journey]');
+  const $=(selector,root=document)=>root.querySelector(selector);
+  const $$=(selector,root=document)=>[...root.querySelectorAll(selector)];
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compact=matchMedia('(max-width: 760px)').matches;
 
-  if('IntersectionObserver' in window&&!reduced){
-    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
-      if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}
-    }),{threshold:.14,rootMargin:'0px 0px -40px'});
-    revealItems.forEach(item=>observer.observe(item));
-    if(journey)new IntersectionObserver(([entry],obs)=>{if(entry.isIntersecting){journey.classList.add('is-visible');obs.disconnect()}},{threshold:.35}).observe(journey);
-  }else{
-    revealItems.forEach(item=>item.classList.add('is-visible'));
-    journey?.classList.add('is-visible');
-  }
+  const revealItems=$$('[data-site-reveal]');
+  if('IntersectionObserver'in window&&!reduced){
+    const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
+    }),{threshold:.12,rootMargin:'0px 0px -34px'});
+    revealItems.forEach(item=>revealObserver.observe(item));
+  }else revealItems.forEach(item=>item.classList.add('is-visible'));
 
-  const stage=document.querySelector('[data-tilt]');
-  if(stage&&!reduced&&window.matchMedia('(pointer: fine)').matches){
-    stage.addEventListener('pointermove',event=>{
-      const rect=stage.getBoundingClientRect();
-      const x=(event.clientX-rect.left)/rect.width-.5;
-      const y=(event.clientY-rect.top)/rect.height-.5;
-      stage.style.transform=`rotateX(${-y*3}deg) rotateY(${x*4}deg)`;
-    });
-    stage.addEventListener('pointerleave',()=>{stage.style.transform=''})
-  }
-
-  const scenarios={
-    choose:{person:'«Не понимаю, какая услуга мне подходит».',ai:'Уточняет задачу, аудиторию и желаемый результат.',result:'Понятный вариант без изучения десятков страниц.'},
-    product:{person:'«Чем ваш вариант отличается от обычного чат-бота?»',ai:'Использует реальные материалы проекта и объясняет разницу человеческим языком.',result:'Понимание ценности вместо набора рекламных фраз.'},
-    price:{person:'«Сколько примерно стоит и сколько времени занимает?»',ai:'Уточняет объём, функции и каналы, даёт предварительный ориентир или передаёт вопрос в ArchAI.',result:'Обращение с необходимыми вводными для следующего разговора.'},
-    telegram:{person:'Нажимает «Продолжить в Telegram».',ai:'Связывает текущую беседу с тем же посетителем в Telegram.',result:'Не нужно повторно рассказывать, кто он и что ему нужно.'}
+  const analytics=$('[data-analytics]');
+  let metricTimer=null,metricIndex=0;
+  const metrics=$$('[data-metric]',analytics||document).map(item=>({item,values:(item.dataset.values||'').split(',')}));
+  const updateMetrics=()=>{
+    metricIndex+=1;
+    metrics.forEach(({item,values})=>{if(values.length)item.textContent=values[metricIndex%values.length]});
   };
-  const tabs=document.querySelector('[data-scenario-tabs]');
-  if(tabs){
-    const person=tabs.querySelector('[data-scenario-person]');
-    const ai=tabs.querySelector('[data-scenario-ai]');
-    const result=tabs.querySelector('[data-scenario-result]');
-    tabs.addEventListener('click',event=>{
-      const button=event.target.closest('[data-tab]');
-      if(!button)return;
-      tabs.querySelectorAll('[data-tab]').forEach(tab=>tab.setAttribute('aria-selected',String(tab===button)));
-      const item=scenarios[button.dataset.tab];
-      if(item){person.textContent=item.person;ai.textContent=item.ai;result.textContent=item.result}
-    });
-    tabs.addEventListener('keydown',event=>{
-      if(!['ArrowLeft','ArrowRight'].includes(event.key))return;
-      const buttons=[...tabs.querySelectorAll('[data-tab]')];
-      const current=buttons.indexOf(document.activeElement);
-      if(current<0)return;
-      event.preventDefault();
-      buttons[(current+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length].focus();
-    })
+  const startMetrics=()=>{if(reduced||metricTimer||!metrics.length)return;metricTimer=setInterval(updateMetrics,2600)};
+  const stopMetrics=()=>{clearInterval(metricTimer);metricTimer=null};
+  if(analytics){
+    if('IntersectionObserver'in window){
+      new IntersectionObserver(([entry])=>{
+        if(entry.isIntersecting){analytics.classList.add('is-active');startMetrics()}
+        else stopMetrics();
+      },{threshold:.22}).observe(analytics);
+    }else{analytics.classList.add('is-active');startMetrics()}
   }
 
-  const quickScenarios=document.querySelector('[data-ai-scenarios]');
+  if(reduced)$$('animateMotion').forEach(node=>node.remove());
+
+  if(!reduced&&!compact&&matchMedia('(pointer:fine)').matches){
+    $$('[data-parallax]').forEach(stage=>{
+      stage.addEventListener('pointermove',event=>{
+        const rect=stage.getBoundingClientRect();
+        const x=(event.clientX-rect.left)/rect.width-.5;
+        const y=(event.clientY-rect.top)/rect.height-.5;
+        stage.style.setProperty('--parallax-x',`${x*7}deg`);
+        stage.style.setProperty('--parallax-y',`${-y*5}deg`);
+        stage.style.transform=`rotateX(${-y*1.4}deg) rotateY(${x*1.8}deg)`;
+      });
+      stage.addEventListener('pointerleave',()=>{stage.style.transform=''});
+    });
+  }
+
+  const quickScenarios=$('[data-ai-scenarios]');
   if(quickScenarios){
     quickScenarios.addEventListener('click',event=>{
       const button=event.target.closest('[data-scenario]');
       if(!button)return;
-      const form=document.querySelector('[data-vik-site-form]');
-      const field=form?.querySelector('[data-vik-message]');
+      const form=$('[data-vik-site-form]');
+      const field=$('[data-vik-message]',form||document);
       if(!form||!field)return;
       field.value=button.dataset.scenario;
       field.dispatchEvent(new Event('input',{bubbles:true}));
       quickScenarios.classList.add('is-used');
       form.requestSubmit();
-    })
+    });
   }
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)stopMetrics();
+    else if(analytics?.classList.contains('is-active'))startMetrics();
+  });
 })();
