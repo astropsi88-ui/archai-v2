@@ -144,3 +144,29 @@ function initProductCardTouchGlow(){
   document.addEventListener('visibilitychange',()=>{if(document.hidden)clearGlow()});
 }
 initProductCardTouchGlow();
+
+function initVikIntroVideo(){
+  const media=$('[data-vik-intro-media]');
+  const video=$('[data-vik-intro-video]',media);
+  if(!media||!video)return;
+  let started=false;
+  const sync=()=>{
+    media.classList.toggle('is-started',started);
+    media.classList.toggle('is-playing',!video.paused&&!video.ended);
+    media.setAttribute('aria-label',video.paused?'Воспроизвести видео с Виком':'Поставить видео с Виком на паузу');
+  };
+  const toggle=async()=>{
+    if(!video.paused){video.pause();return}
+    if(!started||video.ended)video.currentTime=0;
+    video.muted=false;
+    video.volume=1;
+    try{await video.play();started=true;sync()}catch{started=false;sync()}
+  };
+  media.addEventListener('click',toggle);
+  media.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle()}});
+  video.addEventListener('play',()=>{started=true;sync()});
+  video.addEventListener('pause',sync);
+  video.addEventListener('ended',()=>{started=false;sync()});
+  sync();
+}
+initVikIntroVideo();
