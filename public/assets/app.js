@@ -38,6 +38,23 @@ function addChatMessage(role,text,{pending=false,error=false}={}){
 }
 function updateChatMessages(items,text,{error=false}={}){items.forEach(item=>{item.classList.remove('is-pending');item.classList.toggle('is-error',error);item.textContent=text})}
 function setChatDisabled(disabled){siteForms.forEach(form=>{const field=$('[data-vik-message]',form),button=$('.vik-send',form);if(field)field.disabled=disabled;if(button)button.disabled=disabled})}
+async function restoreVikHistory(){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
+  try{
+    const response=await fetch('/api/vik-site/history',{method:'GET',credentials:'same-origin',headers:{Accept:'application/json'},signal:controller.signal});
+    if(!response.ok)return;
+    const data=await response.json().catch(()=>null);
+    if(!data||!Array.isArray(data.messages))return;
+    if(typeof data.conversationId!=='string'){
+      sessionStorage.removeItem(vikConversationStorageKey);setChatActive(false);setTelegramContinueVisible(false);return;
+    }
+    sessionStorage.setItem(vikConversationStorageKey,data.conversationId);
+    vikChatMessages.forEach(container=>container.replaceChildren());
+    data.messages.forEach(item=>{if((item?.role==='user'||item?.role==='assistant')&&typeof item.content==='string')addChatMessage(item.role,item.content)});
+    setChatActive(true);setTelegramContinueVisible(true);
+  }catch{}finally{clearTimeout(timer)}
+}
+const vikHistoryReady=restoreVikHistory();
 function initVikSiteForm(form){
   const field=$('[data-vik-message]',form),compose=$('[data-vik-compose]',form);
   if(!field||!compose)return;
@@ -50,6 +67,7 @@ function initVikSiteForm(form){
     e.preventDefault();
     const message=field.value.trim();
     if(!message){field.focus();return}
+    await vikHistoryReady;
     setChatActive();
     const sensitiveCandidate=/(?:светочк|светлана\s+итаф|владель|секретн.{0,12}фраз)/iu.test(message.normalize('NFC'));
     const userItems=sensitiveCandidate?[]:addChatMessage('user',message);
@@ -103,6 +121,12 @@ telegramContinueButtons.forEach(button=>button.addEventListener('click',async()=
 const vikMessage=$('[data-vik-message]',siteForms[0]);
 const vikCompose=$('[data-vik-compose]',siteForms[0]);
 function syncVikCompose(){if(vikMessage&&vikCompose)vikCompose.classList.toggle('is-idle',!vikMessage.value&&document.activeElement!==vikMessage)}
+$$('[data-vik-direct]').forEach(link=>link.addEventListener('click',event=>{
+  event.preventDefault();
+  closeMenu();
+  document.querySelector('#top')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  setTimeout(()=>vikMessage?.focus({preventScroll:true}),420);
+}));
 $$('.tag[data-prompt]').forEach(button=>button.addEventListener('click',()=>{const text=phrases[button.dataset.prompt]||button.textContent.trim();if(vikMessage){vikMessage.value=text;sizeVikMessage(vikMessage);syncVikCompose();vikMessage.focus();vikMessage.setSelectionRange(vikMessage.value.length,vikMessage.value.length)}sessionStorage.setItem('archaiPrompt',text)}));
 if('IntersectionObserver' in window){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');io.unobserve(e.target)}}),{threshold:.18});
