@@ -363,3 +363,22 @@
 @media(prefers-reduced-motion:reduce){
   .home-page #vik-chat .vik-primary-actions .pill.primary{animation:none}
 }
+
+/* Returning Vik conversation: keep history visible without stretching the page. */
+.home-page .vik-chat-messages:not(:empty){
+  height:168px;
+  min-height:168px;
+  max-height:168px;
+  flex:0 0 168px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+@media(max-width:640px){
+  .home-page .vik-chat-messages:not(:empty){
+    height:148px;
+    min-height:148px;
+    max-height:148px;
+    flex-basis:148px;
+  }
+}
