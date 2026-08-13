@@ -366,19 +366,19 @@
 
 /* Returning Vik conversation: keep history visible without stretching the page. */
 .home-page .vik-chat-messages:not(:empty){
-  height:96px;
-  min-height:96px;
-  max-height:96px;
-  flex:0 0 96px;
+  height:168px;
+  min-height:168px;
+  max-height:168px;
+  flex:0 0 168px;
   overflow-y:auto;
   overscroll-behavior:contain;
   scrollbar-gutter:stable;
 }
 @media(max-width:640px){
   .home-page .vik-chat-messages:not(:empty){
-    height:88px;
-    min-height:88px;
-    max-height:88px;
-    flex-basis:88px;
+    height:148px;
+    min-height:148px;
+    max-height:148px;
+    flex-basis:148px;
   }
 }
