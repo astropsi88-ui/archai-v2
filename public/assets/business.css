@@ -1160,6 +1160,16 @@ section h2 {
   display: grid;
   place-items: center;
   transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.employee-brain-section .orbit-core::before,
+.employee-brain-section .orbit-core::after {
+  content: none;
+  display: none;
 }
 .employee-brain-section .brain-core {
   width: 220px;
