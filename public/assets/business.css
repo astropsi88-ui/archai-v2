@@ -2357,3 +2357,87 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
   .voice-card strong{font-size:14px!important;line-height:1.22!important}
   .voice-card small{font-size:10px!important;line-height:1.32!important}
 }
+
+/* 2026-08-18 compact hero v9: +10% width, -30% height. */
+@media(min-width:961px){
+  .hero-contact-row{
+    width:630px!important;
+    max-width:630px!important;
+    grid-template-columns:473px 141px!important;
+    gap:16px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  .voice-card{
+    width:141px!important;
+    min-width:141px!important;
+    max-width:141px!important;
+    height:178px!important;
+    min-height:178px!important;
+    max-height:178px!important;
+    padding:12px 9px!important;
+  }
+  .voice-icon{
+    width:44px!important;
+    height:44px!important;
+    margin-bottom:10px!important;
+    font-size:21px!important;
+  }
+  .voice-card strong{font-size:13.5px!important;line-height:1.18!important}
+  .voice-card small{margin-top:6px!important;font-size:9.5px!important;line-height:1.25!important}
+  .home-page .hero-electric,
+  .home-page.chat-active .hero-electric{
+    height:178px!important;
+    min-height:178px!important;
+    max-height:178px!important;
+  }
+  .home-page .hero-electric .electric-inner,
+  .home-page.chat-active .hero-electric .electric-inner{
+    height:168px!important;
+    min-height:168px!important;
+    max-height:168px!important;
+    padding:14px 18px!important;
+  }
+  .home-page .typing{
+    flex:0 0 62px!important;
+    height:62px!important;
+    min-height:62px!important;
+    max-height:62px!important;
+    padding:6px 8px 0!important;
+    font-size:clamp(15px,1.35vw,18px)!important;
+    line-height:1.35!important;
+  }
+  .home-page .vik-chat-messages{
+    max-height:52px!important;
+    margin-bottom:4px!important;
+  }
+  .home-page .vik-form,
+  .home-page.chat-active .vik-form,
+  .home-page .vik-compose,
+  .home-page.chat-active .vik-compose{
+    height:49px!important;
+    min-height:49px!important;
+    max-height:49px!important;
+    flex-basis:49px!important;
+  }
+  .home-page .vik-message,
+  .home-page.chat-active .vik-message{
+    height:35px!important;
+    min-height:35px!important;
+    max-height:35px!important;
+    padding:6px 9px!important;
+  }
+  .home-page .vik-send{
+    width:40px!important;
+    min-width:40px!important;
+    max-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
+  }
+  .home-page .vik-compose,
+  .home-page.chat-active .vik-compose{
+    grid-template-columns:minmax(0,1fr) 40px!important;
+    gap:8px!important;
+  }
+}
