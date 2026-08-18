@@ -9,11 +9,15 @@ const requiredPublicFiles = [
   'coauthor.html',
   'project.html',
   'ai-sites.html',
+  'digital-office.html',
+  'pricing.html',
   'privacy.html',
   'terms.html',
   '404.html',
   'assets/styles.css',
   'assets/app.js',
+  'assets/business.css',
+  'assets/pricing-data.js',
 ];
 const forbiddenPublicEntries = [
   'ArchAI_Codex_CLEAN_2026-07-10 (1).md',
@@ -26,6 +30,32 @@ let ok = true;
 
 if (!fs.existsSync(publicDir)) {
   console.error('Missing public directory');
+  ok = false;
+}
+
+const businessPages = ['index.html', 'companion.html', 'partner.html', 'ai-sites.html', 'digital-office.html', 'pricing.html'];
+for (const file of businessPages) {
+  const html = fs.readFileSync(path.join(publicDir, file), 'utf8');
+  for (const expected of ['companion.html', 'ai-sites.html', 'digital-office.html', 'pricing.html', 'assets/business.css']) {
+    if (!html.includes(expected)) {
+      console.error(file, 'missing business navigation or asset:', expected);
+      ok = false;
+    }
+  }
+  if (/29\s*000|65\s*000|9\s*000|15\s*000/.test(html)) {
+    console.error(file, 'contains a retired public price');
+    ok = false;
+  }
+}
+
+const home = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+const productPages = businessPages.slice(1).map((file) => fs.readFileSync(path.join(publicDir, file), 'utf8')).join('\n');
+if ((home.match(/vik-intro-4x5\.mp4/g) || []).length !== 1 || productPages.includes('vik-intro-4x5.mp4')) {
+  console.error('The primary Vik video must appear exactly once, on the homepage');
+  ok = false;
+}
+if (!fs.readFileSync(path.join(publicDir, 'partner.html'), 'utf8').includes('ai-development-hero')) {
+  console.error('Development transformation film is missing');
   ok = false;
 }
 

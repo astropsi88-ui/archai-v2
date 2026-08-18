@@ -1,21 +1,12 @@
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const phrases={companion:'Хочу создать личного AI с характером, памятью и общей историей. Помоги понять, каким он должен быть.',partner:'Хочу развить моего AI для работы, проектов, документов и клиентов. Помоги продумать нужные подключения.',coauthor:'Хочу развить моего AI для творчества, контента, постинга и общения с аудиторией.',project:'Хочу создать личность проекта с собственным образом, голосом, памятью и публичной ролью.',start:'Я пока не знаю, какой вариант мне нужен. Задай мне несколько вопросов и помоги определиться.'};
-const typingText='Расскажите, каким должен стать ваш AI — или выберите одну из ролей ниже.';
+const phrases={administrator:'Нужен AI-администратор: принимать обращения, вести заявки и помогать с записью. С чего начать?',seller:'Нужен AI-продавец для квалификации обращений и follow-up. Помоги определить первый сценарий.',service:'Хочу улучшить работу с существующими клиентами с помощью AI. Помоги выбрать роль и каналы.',routine:'Хочу автоматизировать повторяющуюся работу в бизнесе. Помоги найти лучший первый процесс.',start:'Я пока не знаю, какой AI-сотрудник мне нужен. Задай несколько вопросов и помоги определиться.'};
+const typingText='Расскажите, где бизнес теряет время или клиентов — я помогу найти первую роль для AI.';
 const vikConversationStorageKey='vikSiteConversationId';
 function setChatActive(active=true){document.body.classList.toggle('chat-active',active)}
 setChatActive(Boolean(sessionStorage.getItem(vikConversationStorageKey)));
 const telegramContinueButtons=$$('[data-vik-telegram-continue]');
 function setTelegramContinueVisible(visible){telegramContinueButtons.forEach(button=>{button.hidden=!visible})}
 setTelegramContinueVisible(Boolean(sessionStorage.getItem(vikConversationStorageKey)));
-const heroTitle=$('.home-page .hero h1');
-if(heroTitle){heroTitle.textContent='AI с характером, памятью и общей историей';heroTitle.style.fontFamily='"Onest",Inter,system-ui,sans-serif'}
-const heroEyebrow=$('.home-page .hero .eyebrow');
-if(heroEyebrow){heroEyebrow.style.fontFamily='"Onest",Inter,system-ui,sans-serif';heroEyebrow.style.fontWeight='600';heroEyebrow.style.letterSpacing='.045em';heroEyebrow.style.textTransform='none'}
-$$('.nav-more').forEach(item=>{item.innerHTML='<a href="abilities.html">Дополнительно</a>'});
-const companionCardTitle=$('.product-card[href="companion.html"] h3');
-if(companionCardTitle)companionCardTitle.textContent='Личный AI-компаньон';
-const coauthorCardLast=$('.product-card[href="coauthor.html"] li:last-child');
-if(coauthorCardLast)coauthorCardLast.textContent='планирует публикации, размещает материалы и помогает отвечать аудитории.';
 function typeLoop(el,text){
   if(!el)return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=text;return}
@@ -28,7 +19,7 @@ function typeLoop(el,text){
   tick();
 }
 typeLoop($('.typing'),typingText);
-$$('.typing').slice(1).forEach(el=>typeLoop(el,'Расскажите, каким должен быть ваш AI.'));
+$$('.typing').slice(1).forEach(el=>typeLoop(el,'Расскажите о задаче вашего бизнеса.'));
 function sizeVikMessage(field){if(!field)return;field.style.height='auto';field.style.height=`${Math.min(field.scrollHeight,112)}px`}
 const siteForms=$$('[data-vik-site-form]');
 const vikChatMessages=$$('[data-vik-chat-messages]');
@@ -54,7 +45,7 @@ async function restoreVikHistory(){
     setChatActive(true);setTelegramContinueVisible(true);
   }catch{}finally{clearTimeout(timer)}
 }
-const vikHistoryReady=restoreVikHistory();
+const vikHistoryReady=siteForms.length?restoreVikHistory():Promise.resolve();
 function initVikSiteForm(form){
   const field=$('[data-vik-message]',form),compose=$('[data-vik-compose]',form);
   if(!field||!compose)return;
