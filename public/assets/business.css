@@ -2441,3 +2441,82 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
     gap:8px!important;
   }
 }
+
+/* 2026-08-18 hero finish v10: 3+2 intents under chat only + electric voice-card trace. */
+.quick-tags .quick-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.quick-tags .quick-row + .quick-row{margin-top:8px}
+@media(min-width:961px){
+  .home-page .quick-tags{
+    width:473px!important;
+    max-width:473px!important;
+    display:block!important;
+    margin:14px auto 0!important;
+    transform:translateX(-78px)!important;
+  }
+  .home-page .quick-tags .tag{
+    flex:0 0 auto!important;
+    padding:7px 11px!important;
+    font-size:11.5px!important;
+  }
+  .home-page .disclaimer{
+    width:473px!important;
+    max-width:473px!important;
+    margin:10px auto 0!important;
+    transform:translateX(-78px)!important;
+    text-align:center!important;
+  }
+}
+@media(min-width:761px) and (max-width:960px){
+  .home-page .quick-tags,
+  .home-page .disclaimer{
+    width:min(100% - 48px,650px)!important;
+    max-width:650px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    transform:none!important;
+  }
+}
+@media(max-width:760px){
+  .quick-tags .quick-row{flex-wrap:wrap}
+  .home-page .quick-tags{display:block!important}
+  .home-page .quick-tags .tag{flex:0 0 auto!important}
+}
+
+.voice-card{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  padding:2px!important;
+  background:linear-gradient(90deg,rgba(52,111,192,.55),#5caef0,#8dcfff,#7167d8,rgba(52,111,192,.55))!important;
+  box-shadow:0 0 24px rgba(76,145,218,.16),0 16px 36px rgba(2,22,50,.28)!important;
+}
+.voice-card::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:-62%;
+  background:conic-gradient(from 0deg,transparent 0 68%,rgba(255,255,255,.98) 72%,#8edfff 75%,#756ce2 78%,transparent 83%);
+  animation:spin 8.8s linear infinite;
+  pointer-events:none;
+}
+.voice-card-inner{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+  border-radius:calc(26px - 2px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:10px 8px;
+  background:linear-gradient(145deg,#09294a 0%,#0c4668 42%,#285b8d 72%,#403c7a 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),inset 0 0 28px rgba(77,144,218,.12);
+}
+@media(prefers-reduced-motion:reduce){.voice-card::before{animation:none}}

@@ -22,8 +22,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Onest:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="assets/styles.css?v=20260818-visualfinal-9" />
-    <link rel="stylesheet" href="assets/business.css?v=20260818-visualfinal-9" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260818-visualfinal-10" />
+    <link rel="stylesheet" href="assets/business.css?v=20260818-visualfinal-10" />
   </head>
   <body class="business-page home-page">
     <a class="skip-link" href="#main">К содержанию</a>
@@ -119,17 +119,23 @@
               </div>
           </div>
           <button class="voice-card" type="button" disabled aria-label="Поговорить с Виком — голосовой запуск готовится">
-            <span class="voice-icon" aria-hidden="true">☎</span>
-            <strong>Поговорить с Виком</strong>
-            <small>Голосовой запуск готовится</small>
+            <span class="voice-card-inner">
+              <span class="voice-icon" aria-hidden="true">☎</span>
+              <strong>Поговорить с Виком</strong>
+              <small>Голосовой запуск готовится</small>
+            </span>
           </button>
           </div>
           <div class="quick-tags" aria-label="Быстрые темы">
-            <button class="tag" type="button" data-prompt="administrator">AI-администратор</button>
-            <button class="tag" type="button" data-prompt="seller">AI-продавец</button>
-            <button class="tag" type="button" data-prompt="service">Работа с клиентами</button>
-            <button class="tag" type="button" data-prompt="routine">Автоматизировать рутину</button>
-            <button class="tag" type="button" data-prompt="start">Не знаю, с чего начать</button>
+            <div class="quick-row quick-row-main">
+              <button class="tag" type="button" data-prompt="administrator">AI-администратор</button>
+              <button class="tag" type="button" data-prompt="seller">AI-продавец</button>
+              <button class="tag" type="button" data-prompt="service">Работа с клиентами</button>
+            </div>
+            <div class="quick-row quick-row-secondary">
+              <button class="tag" type="button" data-prompt="routine">Автоматизировать рутину</button>
+              <button class="tag" type="button" data-prompt="start">Не знаю, с чего начать</button>
+            </div>
           </div>
           <p class="disclaimer">Вик поможет определить первую роль и подходящие каналы.</p>
         </div>
@@ -329,6 +335,6 @@
         <hr class="footer-rule"><p class="footer-copyright">© 2026 ArchAI. Все права защищены.</p>
       </div>
     </footer>
-    <script src="assets/app.js?v=20260818-visualfinal-9"></script>
+    <script src="assets/app.js?v=20260818-visualfinal-10"></script>
   </body>
 </html>
