@@ -2242,3 +2242,24 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
     padding-top:10px!important;
   }
 }
+
+/* Final proportion polish: narrower desktop hero pair, unchanged height and mechanics. */
+@media(min-width:761px){
+  .hero-contact-row{
+    width:880px!important;
+    max-width:880px!important;
+    grid-template-columns:680px 184px!important;
+    gap:16px!important;
+    transform:translateX(-10px)!important;
+  }
+  .voice-card{
+    width:184px!important;
+    min-width:184px!important;
+    max-width:184px!important;
+    padding-left:14px!important;
+    padding-right:14px!important;
+  }
+  .home-page .quick-tags{
+    width:min(100%,920px)!important;
+  }
+}
