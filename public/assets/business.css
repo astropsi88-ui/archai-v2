@@ -2191,3 +2191,54 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
     max-height:224px!important;
   }
 }
+
+/* Final vertical chat layout: Vik text stays at the top; compose is pinned to the bottom. */
+.home-page .hero-electric .electric-inner,
+.home-page.chat-active .hero-electric .electric-inner{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  gap:0!important;
+}
+.home-page .typing{
+  flex:0 0 86px!important;
+  width:100%!important;
+  height:86px!important;
+  min-height:86px!important;
+  max-height:86px!important;
+  padding:12px 10px 0!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+.home-page .vik-chat-messages{
+  flex:1 1 auto!important;
+  width:100%!important;
+  min-height:0!important;
+  max-height:86px!important;
+  margin:0 0 8px!important;
+  overflow-y:auto!important;
+}
+.home-page .vik-form,
+.home-page.chat-active .vik-form{
+  flex:0 0 57px!important;
+  margin-top:auto!important;
+}
+.home-page.chat-active .typing{
+  display:none!important;
+  visibility:hidden!important;
+  flex-basis:0!important;
+  height:0!important;
+  min-height:0!important;
+  max-height:0!important;
+  padding:0!important;
+}
+@media(max-width:760px){
+  .home-page .typing{
+    flex-basis:78px!important;
+    height:78px!important;
+    min-height:78px!important;
+    max-height:78px!important;
+    padding-top:10px!important;
+  }
+}
