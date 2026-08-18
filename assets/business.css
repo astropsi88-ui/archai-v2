@@ -2153,3 +2153,41 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
   min-width:0!important;
   max-width:100%!important;
 }
+
+/* Final hero shell lock: chat-active must never override the idle shell geometry. */
+.home-page .hero-electric,
+.home-page.chat-active .hero-electric{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:254px!important;
+  min-height:254px!important;
+  max-height:254px!important;
+}
+.home-page .hero-electric .electric-inner,
+.home-page.chat-active .hero-electric .electric-inner{
+  width:calc(100% - 6px)!important;
+  min-width:0!important;
+  max-width:calc(100% - 6px)!important;
+  height:244px!important;
+  min-height:244px!important;
+  max-height:244px!important;
+}
+@media(max-width:760px){
+  .home-page .hero-electric,
+  .home-page.chat-active .hero-electric{
+    width:100%!important;
+    height:234px!important;
+    min-height:234px!important;
+    max-height:234px!important;
+  }
+  .home-page .hero-electric .electric-inner,
+  .home-page.chat-active .hero-electric .electric-inner{
+    width:calc(100% - 6px)!important;
+    max-width:calc(100% - 6px)!important;
+    height:224px!important;
+    min-height:224px!important;
+    max-height:224px!important;
+  }
+}
