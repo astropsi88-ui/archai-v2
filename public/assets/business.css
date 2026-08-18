@@ -1795,3 +1795,113 @@ body.business-page:not(.home-page) main>section.tone-violet{background:radial-gr
 body.business-page:not(.home-page) main>section.tone-blue{background:radial-gradient(ellipse at 35% 52%,rgba(0,137,255,.2),transparent 40%),linear-gradient(180deg,#08213a,#10152e)}
 body.development-page main>section.tone-violet{background:radial-gradient(ellipse at 74% 45%,rgba(92,71,225,.24),transparent 40%),linear-gradient(180deg,#111b32,#17142f)}
 body.ai-sites-page main>section.tone-violet{background:radial-gradient(ellipse at 78% 38%,rgba(100,75,230,.22),transparent 38%),linear-gradient(180deg,#121633,#19142f)}
+
+/* 2026-08-18 targeted visual regression fixes. */
+.home-page .hero-electric {
+  width: min(82vw, 780px);
+  max-width: 780px;
+}
+.home-page .hero-electric .electric-inner {
+  box-sizing: border-box;
+  width: 100%;
+  height: 180px;
+  min-height: 180px;
+  max-height: 180px;
+}
+.home-page .vik-compose {
+  width: 100%;
+  min-height: 57px;
+  max-height: 57px;
+}
+.home-page .vik-message {
+  height: 39px !important;
+  min-height: 39px;
+  max-height: 39px;
+  overflow-y: auto;
+}
+.home-page.chat-active .hero-electric,
+.home-page.chat-active .hero-electric .electric-inner {
+  width: min(82vw, 780px);
+  height: 180px;
+  min-height: 180px;
+  max-height: 180px;
+}
+
+body.business-page:not(.home-page) .page-hero h1 {
+  max-width: 920px;
+  margin: 10px 0 18px;
+  font-family: var(--display);
+  font-size: clamp(3.125rem, 5vw, 4rem);
+  font-weight: 680;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+body.business-page:not(.home-page) .page-hero .eyebrow {
+  color: #79c9d3;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.82;
+}
+
+.site-footer {
+  padding: 64px 0 32px;
+}
+.site-footer .footer-grid {
+  gap: 32px;
+}
+.site-footer .footer-brand {
+  max-width: 300px;
+}
+.site-footer .footer-brand strong {
+  color: #fff;
+  font: 700 20px/1.2 var(--display);
+}
+.site-footer .footer-brand p,
+.site-footer .footer-copyright {
+  color: var(--muted);
+  font-size: 14px;
+}
+.site-footer .footer-links {
+  gap: 48px;
+}
+.site-footer .footer-links > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.site-footer .footer-links span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.site-footer .footer-links a {
+  color: var(--muted);
+  font-size: 14px;
+}
+.site-footer .footer-rule {
+  margin: 34px 0;
+  border: 0;
+  border-top: 1px solid rgba(196, 202, 212, 0.06);
+}
+
+@media (max-width: 760px) {
+  .home-page .hero-electric,
+  .home-page.chat-active .hero-electric {
+    width: calc(100% - 20px);
+  }
+  .home-page .hero-electric .electric-inner,
+  .home-page.chat-active .hero-electric .electric-inner {
+    height: 184px;
+    min-height: 184px;
+    max-height: 184px;
+  }
+  body.business-page:not(.home-page) .page-hero h1 {
+    max-width: 640px;
+    font-size: clamp(2.25rem, 10vw, 3rem);
+    line-height: 1.08;
+  }
+}

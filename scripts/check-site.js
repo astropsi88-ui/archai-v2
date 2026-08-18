@@ -50,6 +50,41 @@ for (const file of businessPages) {
 
 const home = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
 const productPages = businessPages.slice(1).map((file) => fs.readFileSync(path.join(publicDir, file), 'utf8')).join('\n');
+const businessCss = fs.readFileSync(path.join(publicDir, 'assets/business.css'), 'utf8');
+const footerRequirements = [
+  'Обсудить с Виком',
+  'Написать Светлане Итаф',
+  'Telegram Вика',
+  'Telegram ArchAI',
+  'YouTube',
+  'Политика конфиденциальности',
+  'Пользовательское соглашение',
+];
+for (const file of businessPages) {
+  const html = fs.readFileSync(path.join(publicDir, file), 'utf8');
+  for (const expected of footerRequirements) {
+    if (!html.includes(expected)) {
+      console.error(file, 'missing restored footer item:', expected);
+      ok = false;
+    }
+  }
+  if (!html.includes('v=20260818-visualfix-3')) {
+    console.error(file, 'missing current cache-busting asset version');
+    ok = false;
+  }
+}
+for (const expected of [
+  '.home-page.chat-active .hero-electric',
+  'height: 180px',
+  'body.business-page:not(.home-page) .page-hero h1',
+  'font-size: clamp(3.125rem, 5vw, 4rem)',
+  '.site-footer .footer-links > div',
+]) {
+  if (!businessCss.includes(expected)) {
+    console.error('business.css missing visual regression lock:', expected);
+    ok = false;
+  }
+}
 if ((home.match(/vik-intro-4x5\.mp4/g) || []).length !== 1 || productPages.includes('vik-intro-4x5.mp4')) {
   console.error('The primary Vik video must appear exactly once, on the homepage');
   ok = false;
