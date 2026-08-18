@@ -68,7 +68,7 @@ for (const file of businessPages) {
       ok = false;
     }
   }
-  if (!html.includes('v=20260818-visualfinal-10')) {
+  if (!html.includes('v=20260818-pricing-v1')) {
     console.error(file, 'missing current cache-busting asset version');
     ok = false;
   }
