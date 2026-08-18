@@ -2559,3 +2559,13 @@ img.creator-photo {
 /* 2026-08-19 final Vik intro: native 16:9 HeyGen render. */
 .home-page .video-section .video-frame{aspect-ratio:16/9!important}
 .home-page .video-section .video-frame video{object-fit:contain!important;background:#02050b}
+
+/* Explicit video affordance: a still frame must not read as a photo. */
+.home-page .video-section .video-frame{cursor:pointer}
+.home-page .video-section .vik-video-play{position:absolute;z-index:3;left:50%;top:50%;display:flex;align-items:center;flex-direction:column;gap:10px;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.home-page .video-section .vik-video-play-icon{display:block;width:66px;height:66px;border:1px solid rgba(213,241,255,.7);border-radius:50%;background:rgba(4,12,25,.58);box-shadow:0 0 28px rgba(67,179,255,.45),0 0 65px rgba(110,75,255,.28);backdrop-filter:blur(8px)}
+.home-page .video-section .vik-video-play-icon::after{content:"";position:absolute;left:50%;top:33px;margin-left:3px;transform:translate(-50%,-50%);border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid #f2fbff;filter:drop-shadow(0 0 5px rgba(131,220,255,.8))}
+.home-page .video-section .vik-video-play-label{padding:5px 10px;border-radius:999px;color:#edfaff;background:rgba(2,9,20,.58);font-size:13px;font-weight:600;letter-spacing:.01em;text-shadow:0 1px 8px rgba(0,0,0,.85);backdrop-filter:blur(7px)}
+.home-page .video-section .video-frame.is-playing .vik-video-play{opacity:0;transform:translate(-50%,-50%) scale(.88)}
+.home-page .video-section .video-frame:hover .vik-video-play-icon{transform:scale(1.06)}
+@media(max-width:640px){.home-page .video-section .vik-video-play-icon{width:58px;height:58px}.home-page .video-section .vik-video-play-icon::after{top:29px}.home-page .video-section .vik-video-play-label{font-size:12px}}

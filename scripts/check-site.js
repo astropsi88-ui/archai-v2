@@ -68,7 +68,7 @@ for (const file of businessPages) {
       ok = false;
     }
   }
-  if (!html.includes('v=20260819-vik-video-1')) {
+  if (!html.includes('v=20260819-vik-play-1')) {
     console.error(file, 'missing current cache-busting asset version');
     ok = false;
   }
