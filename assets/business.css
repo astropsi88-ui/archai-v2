@@ -2329,3 +2329,31 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
     justify-content:center!important;
   }
 }
+
+/* 2026-08-18 compact hero v8: ~30% narrower chat + voice card, mechanics unchanged. */
+@media(min-width:961px){
+  .hero-contact-row{
+    width:574px!important;
+    max-width:574px!important;
+    grid-template-columns:430px 128px!important;
+    gap:16px!important;
+    transform:none!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  .voice-card{
+    width:128px!important;
+    min-width:128px!important;
+    max-width:128px!important;
+    padding-left:9px!important;
+    padding-right:9px!important;
+  }
+  .voice-icon{
+    width:50px!important;
+    height:50px!important;
+    margin-bottom:13px!important;
+    font-size:24px!important;
+  }
+  .voice-card strong{font-size:14px!important;line-height:1.22!important}
+  .voice-card small{font-size:10px!important;line-height:1.32!important}
+}
