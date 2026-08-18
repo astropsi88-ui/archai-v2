@@ -2554,3 +2554,8 @@ img.creator-photo {
     max-width:320px!important;
   }
 }
+
+
+/* 2026-08-19 final Vik intro: native 16:9 HeyGen render. */
+.home-page .video-section .video-frame{aspect-ratio:16/9!important}
+.home-page .video-section .video-frame video{object-fit:contain!important;background:#02050b}

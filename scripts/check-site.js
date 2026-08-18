@@ -68,7 +68,7 @@ for (const file of businessPages) {
       ok = false;
     }
   }
-  if (!html.includes('v=20260818-creator-v2')) {
+  if (!html.includes('v=20260819-vik-video-1')) {
     console.error(file, 'missing current cache-busting asset version');
     ok = false;
   }
@@ -96,7 +96,7 @@ for (const expected of ['AI-администратор', 'AI-продавец', 
     ok = false;
   }
 }
-if ((home.match(/vik-intro-4x5\.mp4/g) || []).length !== 1 || productPages.includes('vik-intro-4x5.mp4')) {
+if ((home.match(/vik-intro-16x9\.mp4/g) || []).length !== 1 || productPages.includes('vik-intro-16x9.mp4')) {
   console.error('The primary Vik video must appear exactly once, on the homepage');
   ok = false;
 }
