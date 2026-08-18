@@ -374,6 +374,36 @@ $$(".orbit-node").forEach((node) => {
 });
 const firstSchemaNode = $("[data-schema] .orbit-node");
 if (firstSchemaNode) setSchemaNode(firstSchemaNode.dataset.node);
+function initBrainVideoCore() {
+  const core = $("#abilities .orbit-core");
+  if (!core) return;
+  const video = $(".brain-video", core),
+    poster = $(".brain-poster", core);
+  if (!video) return;
+  const showPoster = () => {
+    video.hidden = true;
+    if (poster) poster.hidden = false;
+  };
+  video.addEventListener("error", showPoster);
+  let failedSources = 0;
+  const sources = [...video.querySelectorAll("source")];
+  sources.forEach((source) => source.addEventListener("error", () => {
+    failedSources += 1;
+    if (failedSources === sources.length) showPoster();
+  }));
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    video.pause();
+    showPoster();
+  } else {
+    video.play().catch(() => {});
+  }
+}
+initBrainVideoCore();
+const sectionTonePages = ["companion-page", "development-page", "ai-sites-page", "office-page", "pricing-page"];
+if (sectionTonePages.some((name) => document.body.classList.contains(name))) {
+  const tones = ["tone-deep", "tone-violet", "tone-blue"];
+  $$("main > section").forEach((section, index) => section.classList.add(tones[index % tones.length]));
+}
 const siteHeader = $(".site-header"),
   menuToggle = $(".menu-toggle"),
   moreToggle = $(".nav-more-toggle"),

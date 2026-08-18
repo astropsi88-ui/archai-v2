@@ -61,16 +61,15 @@
               <thead>
                 <tr>
                   <th>Решение</th>
-                  <th>Что входит</th>
                   <th>Внедрение</th>
-                  <th>Сопровождение</th>
+                  <th>Сопровождение / мес</th>
+                  <th>Что входит</th>
                   <th>Доп. расходы</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>AI-администратор</td>
-                  <td class="short-includes">Звонки, сообщения, запись, CRM</td>
                   <td>
                     <span
                       class="money"
@@ -83,13 +82,11 @@
                       >— ₽/мес</span
                     >
                   </td>
+                  <td class="short-includes">Звонки, сообщения, запись, CRM</td>
                   <td data-price-key="administrator.expenses">по факту</td>
                 </tr>
                 <tr>
                   <td>AI-продавец</td>
-                  <td class="short-includes">
-                    Квалификация, консультация, передача менеджеру
-                  </td>
                   <td>
                     <span class="money" data-price-key="seller.implementation"
                       >от — ₽</span
@@ -100,13 +97,11 @@
                       >— ₽/мес</span
                     >
                   </td>
+                  <td class="short-includes">Квалификация, консультация, передача менеджеру</td>
                   <td data-price-key="seller.expenses">по факту</td>
                 </tr>
                 <tr>
                   <td>Клиентский сервис</td>
-                  <td class="short-includes">
-                    База знаний, статусы, эскалация
-                  </td>
                   <td>
                     <span class="money" data-price-key="service.implementation"
                       >от — ₽</span
@@ -117,13 +112,11 @@
                       >— ₽/мес</span
                     >
                   </td>
+                  <td class="short-includes">База знаний, статусы, эскалация</td>
                   <td data-price-key="service.expenses">по факту</td>
                 </tr>
                 <tr>
                   <td>AI-команда + Цифровой офис</td>
-                  <td class="short-includes">
-                    Несколько ролей, общие данные и контроль
-                  </td>
                   <td>
                     <span class="money" data-price-key="office.implementation"
                       >от — ₽</span
@@ -134,6 +127,7 @@
                       >— ₽/мес</span
                     >
                   </td>
+                  <td class="short-includes">Несколько ролей, общие данные и контроль</td>
                   <td data-price-key="office.expenses">по составу системы</td>
                 </tr>
               </tbody>
@@ -146,7 +140,32 @@
           </div>
         </div>
       </section>
-      <section id="formats">
+      <section class="price-examples-section">
+        <div class="container">
+          <div class="section-head">
+            <p class="kicker">Конфигурации</p>
+            <h2>Примеры расчёта стоимости</h2>
+          </div>
+          <div class="price-calculation-grid">
+            <article class="price-calculation-card">
+              <span class="scenario-label">Пример расчёта стоимости</span>
+              <h3>AI-администратор: телефон + сайт + запись + CRM</h3>
+              <dl><div><dt>Внедрение</dt><dd data-price-key="administrator.implementation">от — ₽</dd></div><div><dt>Сопровождение</dt><dd data-price-key="administrator.support">— ₽/мес</dd></div><div><dt>Голос / телефония</dt><dd>по факту</dd></div></dl>
+            </article>
+            <article class="price-calculation-card">
+              <span class="scenario-label">Пример расчёта стоимости</span>
+              <h3>AI-продавец: сайт + мессенджер + CRM + повторный контакт</h3>
+              <dl><div><dt>Внедрение</dt><dd data-price-key="seller.implementation">от — ₽</dd></div><div><dt>Сопровождение</dt><dd data-price-key="seller.support">— ₽/мес</dd></div><div><dt>Каналы / сервисы</dt><dd>по факту</dd></div></dl>
+            </article>
+            <article class="price-calculation-card">
+              <span class="scenario-label">Пример расчёта стоимости</span>
+              <h3>AI-команда: администратор + продавец + Цифровой офис</h3>
+              <dl><div><dt>Проект</dt><dd data-price-key="office.implementation">от — ₽</dd></div><div><dt>Сопровождение</dt><dd data-price-key="office.support">— ₽/мес</dd></div><div><dt>Инфраструктура</dt><dd>по составу системы</dd></div></dl>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section id="formats" class="delivery-section">
         <div class="container">
           <div class="section-head">
             <p class="kicker">Формат поставки</p>
@@ -163,69 +182,7 @@
             </article>
             <article class="mode-card">
               <h3>Полная передача</h3>
-              <p>
-                Система, документация и контроль переходят в контур клиента.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-      <section>
-        <div class="container">
-          <div class="section-head">
-            <p class="kicker">Примеры внедрения</p>
-            <h2>Как решение выглядит в работе</h2>
-            <p>
-              Это типовые сценарии, а не заявленные результаты реальных
-              клиентов.
-            </p>
-          </div>
-          <div class="implementation-grid">
-            <article class="implementation-card">
-              <span class="scenario-label">Пример внедрения</span>
-              <h3>Клиника / салон / сервис</h3>
-              <p>
-                <b>Ситуация:</b> обращения идут сразу из нескольких каналов, а
-                запись и повторный контакт теряются.
-              </p>
-              <ul>
-                <li>Принимает звонки и сообщения</li>
-                <li>Записывает, переносит и напоминает</li>
-                <li>Обновляет CRM и перезванивает по пропущенным</li>
-              </ul>
-              <p class="channels">
-                <b>Каналы:</b> телефон, сайт, мессенджеры, CRM, календарь
-              </p>
-            </article>
-            <article class="implementation-card">
-              <span class="scenario-label">Пример внедрения</span>
-              <h3>Компания с продажами</h3>
-              <p>
-                <b>Ситуация:</b> входящие лиды требуют быстрой квалификации и
-                последовательного продолжения.
-              </p>
-              <ul>
-                <li>Отвечает на вопросы и выявляет потребность</li>
-                <li>Работает с базовыми возражениями и повторным контактом</li>
-                <li>Фиксирует всё в CRM и передаёт менеджеру</li>
-              </ul>
-              <p class="channels"><b>Каналы:</b> сайт, мессенджеры, CRM</p>
-            </article>
-            <article class="implementation-card">
-              <span class="scenario-label">Пример внедрения</span>
-              <h3>Растущий бизнес</h3>
-              <p>
-                <b>Ситуация:</b> нескольким ролям нужна общая история клиента и
-                единый управляемый процесс.
-              </p>
-              <ul>
-                <li>Администратор и продавец работают как команда</li>
-                <li>Цифровой офис собирает задачи и статусы</li>
-                <li>Человек видит историю и сохраняет контроль</li>
-              </ul>
-              <p class="channels">
-                <b>Каналы:</b> телефон, сайт, мессенджеры, CRM, Цифровой офис
-              </p>
+              <p>Система, документация и контроль переходят в контур клиента.</p>
             </article>
           </div>
         </div>

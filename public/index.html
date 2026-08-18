@@ -53,23 +53,10 @@
     </header>
     <main id="main">
       <section class="hero" id="top">
-        <div class="container hero-grid">
+        <div class="container hero-inner">
           <p class="eyebrow">Рабочий AI для бизнеса</p>
           <h1>Ваш AI-сотрудник</h1>
-          <p class="hero-copy">
-            Принимает обращения, работает с клиентами, заявками и системами
-            бизнеса — в нужных каналах и по вашим правилам.
-          </p>
-          <div class="hero-actions">
-            <a class="btn primary" href="#vik-chat">Написать Вику</a
-            ><a class="btn" href="companion.html">Посмотреть роли</a>
-          </div>
-          <div class="hero-stack">
-            <div
-              class="electric-box"
-              id="vik-chat"
-              aria-label="Живой текстовый чат с Виком"
-            >
+          <div class="electric-box hero-electric" id="vik-chat" aria-label="Живой текстовый чат с Виком">
               <div class="electric-inner">
                 <div class="typing" aria-label="Подсказка для разговора"></div>
                 <div
@@ -128,33 +115,17 @@
                 >
                   Продолжить в Telegram
                 </button>
-                <div class="intent-tags" aria-label="Быстрые темы">
-                  <button class="tag" type="button" data-prompt="administrator">
-                    AI-администратор</button
-                  ><button class="tag" type="button" data-prompt="seller">
-                    AI-продавец</button
-                  ><button class="tag" type="button" data-prompt="service">
-                    Работа с клиентами</button
-                  ><button class="tag" type="button" data-prompt="routine">
-                    Автоматизировать рутину</button
-                  ><button class="tag" type="button" data-prompt="start">
-                    Не знаю, с чего начать
-                  </button>
-                </div>
               </div>
-            </div>
-            <div class="voice-card">
-              <div class="phone-icon" aria-hidden="true">☎</div>
-              <div>
-                <h2>Поговорить с Виком</h2>
-                <p>Отдельный голосовой канал</p>
-              </div>
-              <div class="voice-state">
-                Голосовой запуск готовится. Сейчас Вик отвечает в живом
-                текстовом чате.
-              </div>
-            </div>
           </div>
+          <div class="quick-tags" aria-label="Быстрые темы">
+            <button class="tag" type="button" data-prompt="administrator">AI-администратор</button>
+            <button class="tag" type="button" data-prompt="seller">AI-продавец</button>
+            <button class="tag" type="button" data-prompt="service">Работа с клиентами</button>
+            <button class="tag" type="button" data-prompt="routine">Автоматизировать рутину</button>
+            <button class="tag" type="button" data-prompt="start">Не знаю, с чего начать</button>
+          </div>
+          <button class="voice-pill" type="button" disabled><span aria-hidden="true">☎</span> Поговорить с Виком <small>голосовой запуск готовится</small></button>
+          <p class="disclaimer">Вик поможет определить первую роль и подходящие каналы.</p>
         </div>
       </section>
       <section class="video-section" aria-labelledby="vik-video-title">
@@ -317,11 +288,7 @@
           <div>
             <p class="kicker">Кто создаёт ARCH_AI</p>
             <h2>Светлана Итаф</h2>
-            <p class="lede">
-              Создательница ARCH_AI. Вместе с Виком превращает возможности AI в
-              работающих сотрудников, понятные процессы и живые продукты для
-              бизнеса.
-            </p>
+            <p class="lede">Светлана Итаф — создательница ARCH_AI. Проект соединяет практическую работу с AI, архитектуру памяти и контекста, интеграции и визуальный подход к цифровым сотрудникам.</p>
           </div>
         </div>
       </section>
