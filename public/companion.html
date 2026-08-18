@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="assets/styles.css?v=20260818-visual-2" />
     <link rel="stylesheet" href="assets/business.css?v=20260818-targeted-1" />
   </head>
-  <body class="business-page">
+  <body class="business-page companion-page">
     <a class="skip-link" href="#main">К содержанию</a>
     <header class="site-header">
       <div class="container header-inner">
@@ -86,7 +86,12 @@
               <path class="cross" d="M165 430 C300 395 455 395 592 430" />
             </svg>
             <div class="core orbit-core" aria-label="Живое ядро ARCH_AI">
-              <svg class="brain-core" viewBox="0 0 260 190" aria-hidden="true">
+              <video class="brain-video" autoplay muted loop playsinline preload="metadata" poster="https://iarch.ai/archai-assets/archai-brain-grok-square-loop-20260712.webp" aria-hidden="true">
+                <source src="https://iarch.ai/archai-assets/archai-brain-grok-square-loop-20260712.webm" type="video/webm" />
+                <source src="https://iarch.ai/archai-assets/archai-brain-grok-square-loop-20260712-silent.mp4" type="video/mp4" />
+              </video>
+              <img class="brain-poster" src="https://iarch.ai/archai-assets/archai-brain-grok-square-loop-20260712.webp" alt="" aria-hidden="true" />
+              <svg class="brain-core legacy-fallback" viewBox="0 0 260 190" aria-hidden="true">
                 <defs>
                   <linearGradient
                     id="brainStroke"
@@ -199,7 +204,7 @@
             ><button class="orbit-node n7" data-node="knowledge">
               База знаний</button
             ><button class="orbit-node n8" data-node="functions">
-              Дополнительные функции
+              Доп. функции
             </button>
           </div>
           <p class="schema-note" id="schema-note">
