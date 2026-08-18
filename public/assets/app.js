@@ -56,8 +56,7 @@ $$(".typing")
   .forEach((el) => typeLoop(el, "Расскажите о задаче вашего бизнеса."));
 function sizeVikMessage(field) {
   if (!field) return;
-  field.style.height = "auto";
-  field.style.height = `${Math.min(field.scrollHeight, 112)}px`;
+  field.style.removeProperty("height");
 }
 const siteForms = $$("[data-vik-site-form]");
 const vikChatMessages = $$("[data-vik-chat-messages]");
@@ -623,3 +622,50 @@ function initVikIntroVideo() {
   sync();
 }
 initVikIntroVideo();
+
+function initDigitalOfficeDemo() {
+  const demo = $("[data-office-demo]");
+  if (!demo) return;
+  const roles = {
+    administrator: {
+      title: "AI-администратор", heading: "Обращения и записи", progress: "78%",
+      metrics: [["Звонки", "18"], ["Записи", "7"], ["Напоминания", "12"]],
+      feed: [["Входящий звонок", "Клиент записан на 16:30", "готово"], ["Сообщение с сайта", "Создана карточка в CRM", "готово"], ["Напоминание", "Подтверждение встречи отправлено", "в работе"]],
+    },
+    seller: {
+      title: "AI-продавец", heading: "Лиды и продолжения", progress: "84%",
+      metrics: [["Новые лиды", "14"], ["Уточнено", "9"], ["Передано", "4"]],
+      feed: [["Лид с сайта", "Потребность и бюджет уточнены", "готово"], ["Повторный контакт", "Предложение отправлено", "в работе"], ["Горячий лид", "Передан менеджеру", "человек"]],
+    },
+    marketer: {
+      title: "AI-маркетолог", heading: "Контент и кампании", progress: "71%",
+      metrics: [["Материалы", "8"], ["Кампании", "3"], ["Охват", "+24%"]],
+      feed: [["Контент-план", "Темы на неделю подготовлены", "готово"], ["Кампания", "Варианты объявлений собраны", "в работе"], ["Аудитория", "Срез отклика обновлён", "готово"]],
+    },
+    analyst: {
+      title: "AI-аналитик", heading: "Исследования и отчёты", progress: "66%",
+      metrics: [["В очереди", "6"], ["Источники", "42"], ["Отчёты", "3"]],
+      feed: [["Исследование рынка", "24 источника собрано", "готово"], ["Проверка данных", "Сверка фактов продолжается", "в работе"], ["Краткий отчёт", "Черновик готов к просмотру", "человек"]],
+    },
+  };
+  const tabs = $$('[data-office-role]', demo);
+  let active = 0, timer;
+  const render = (key, focus = false) => {
+    const role = roles[key]; if (!role) return;
+    tabs.forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.officeRole === key)));
+    $("[data-office-title]", demo).textContent = role.title;
+    $("[data-office-heading]", demo).textContent = role.heading;
+    $("[data-office-progress]", demo).textContent = role.progress;
+    $("[data-office-metrics]", demo).innerHTML = role.metrics.map(([label,value]) => `<div class="metric"><small>${label}</small><b>${value}</b></div>`).join("");
+    $("[data-office-feed]", demo).innerHTML = role.feed.map(([title,note,status],i) => `<div class="work-item"><span>0${i+1}</span><div><b>${title}</b><small>${note}</small></div><span class="status">${status}</span></div>`).join("");
+    active = tabs.findIndex((tab) => tab.dataset.officeRole === key);
+    if (focus) tabs[active]?.focus();
+  };
+  const stop = () => clearInterval(timer);
+  const start = () => { if (matchMedia("(prefers-reduced-motion: reduce)").matches) return; stop(); timer = setInterval(() => render(tabs[(active + 1) % tabs.length].dataset.officeRole), 4000); };
+  tabs.forEach((tab) => tab.addEventListener("click", () => { render(tab.dataset.officeRole); start(); }));
+  demo.addEventListener("mouseenter", stop); demo.addEventListener("mouseleave", start);
+  demo.addEventListener("focusin", stop); demo.addEventListener("focusout", start);
+  render("administrator"); start();
+}
+initDigitalOfficeDemo();

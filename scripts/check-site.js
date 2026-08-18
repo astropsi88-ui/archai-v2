@@ -68,20 +68,31 @@ for (const file of businessPages) {
       ok = false;
     }
   }
-  if (!html.includes('v=20260818-visualfix-3')) {
+  if (!html.includes('v=20260818-visualfinal-1')) {
     console.error(file, 'missing current cache-busting asset version');
     ok = false;
   }
 }
 for (const expected of [
-  '.home-page.chat-active .hero-electric',
-  'height: 180px',
+  '.hero-contact-row',
+  'height:244px',
+  'resize:none!important',
+  '.light-flow-track i',
+  '@keyframes flow-signal',
+  '.office-dashboard',
   'body.business-page:not(.home-page) .page-hero h1',
-  'font-size: clamp(3.125rem, 5vw, 4rem)',
+  'font-size:clamp(50px,5.2vw,64px)',
   '.site-footer .footer-links > div',
 ]) {
   if (!businessCss.includes(expected)) {
     console.error('business.css missing visual regression lock:', expected);
+    ok = false;
+  }
+}
+const office = fs.readFileSync(path.join(publicDir, 'digital-office.html'), 'utf8');
+for (const expected of ['AI-администратор', 'AI-продавец', 'AI-маркетолог', 'AI-аналитик', 'data-office-demo', 'Открывается в браузере — на компьютере и телефоне.']) {
+  if (!office.includes(expected)) {
+    console.error('digital-office.html missing interactive demo element:', expected);
     ok = false;
   }
 }
