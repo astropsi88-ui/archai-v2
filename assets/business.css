@@ -2530,3 +2530,9 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
 .pricing-table-note{max-width:1040px;margin:14px auto 0;color:rgba(215,225,237,.78);font-size:13px;line-height:1.55;text-align:center}
 .pricing-table-note strong{color:#edf6ff;font-weight:700}
 @media(max-width:760px){.pricing-table-note{text-align:left;font-size:12.5px;margin-top:12px}.site-price-lines{min-width:175px}}
+
+img.creator-photo {
+  display: block;
+  padding: 0;
+  object-fit: cover;
+}
