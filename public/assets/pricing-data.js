@@ -15,6 +15,12 @@ const ARCHAI_PUBLIC_PRICING = {
     support: "от 19 900 ₽/мес",
     expenses: "API и каналы — по факту",
   },
+  site: {
+    existing: "от 45 000 ₽",
+    new: "от 90 000 ₽",
+    support: "по необходимости",
+    expenses: "нестандартные сервисы — отдельно",
+  },
   office: {
     implementation: "от 350 000 ₽",
     support: "от 49 900 ₽/мес",

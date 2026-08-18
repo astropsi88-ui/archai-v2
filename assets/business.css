@@ -2520,3 +2520,13 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
   box-shadow:inset 0 1px 0 rgba(255,255,255,.11),inset 0 0 28px rgba(77,144,218,.12);
 }
 @media(prefers-reduced-motion:reduce){.voice-card::before{animation:none}}
+
+
+/* 2026-08-18 pricing v3: AI-site row and explanatory note. */
+.site-price-lines{display:grid;gap:8px;min-width:190px}
+.site-price-lines span{display:grid;gap:2px}
+.site-price-lines small{font-size:11px;line-height:1.25;color:rgba(215,225,237,.72);font-weight:500}
+.site-price-lines strong{font-size:15px;line-height:1.25}
+.pricing-table-note{max-width:1040px;margin:14px auto 0;color:rgba(215,225,237,.78);font-size:13px;line-height:1.55;text-align:center}
+.pricing-table-note strong{color:#edf6ff;font-weight:700}
+@media(max-width:760px){.pricing-table-note{text-align:left;font-size:12.5px;margin-top:12px}.site-price-lines{min-width:175px}}
