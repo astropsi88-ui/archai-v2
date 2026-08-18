@@ -2138,3 +2138,18 @@ body.business-page:not(.home-page) .page-hero .eyebrow {
   .glass-card p,.product-card p,.role-card p,.mode-card p,.price-example p,.compare-card p,.process-card p,.route-card p,.story-card p,.formula-part p{font-size:16px!important;line-height:1.6!important}
   .home-page .vik-form,.home-page.chat-active .vik-form,.home-page .vik-compose,.home-page.chat-active .vik-compose{width:100%!important;max-width:100%!important}
 }
+
+/* Hero compose width regression: old justify-content:space-between shrank the implicit grid column to content. */
+.home-page .hero-electric .electric-inner,
+.home-page.chat-active .hero-electric .electric-inner{
+  box-sizing:border-box!important;
+  width:100%!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  justify-content:stretch!important;
+  justify-items:stretch!important;
+}
+.home-page .hero-electric .electric-inner > *,
+.home-page.chat-active .hero-electric .electric-inner > *{
+  min-width:0!important;
+  max-width:100%!important;
+}
