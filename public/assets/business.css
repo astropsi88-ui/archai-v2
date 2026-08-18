@@ -2536,3 +2536,21 @@ img.creator-photo {
   padding: 0;
   object-fit: cover;
 }
+
+/* 2026-08-18 creator photo fix: keep the square asset square on page. */
+.home-page img.creator-photo{
+  width:min(100%,340px)!important;
+  height:auto!important;
+  aspect-ratio:1/1!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  min-width:280px!important;
+  max-width:340px!important;
+}
+@media(max-width:760px){
+  .home-page img.creator-photo{
+    width:min(100%,320px)!important;
+    min-width:0!important;
+    max-width:320px!important;
+  }
+}
