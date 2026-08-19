@@ -755,7 +755,7 @@ function initVikVoicePrototype() {
         state.cursor = batch.cursor || state.cursor;
         for (const item of batch.events || []) {
           if (item.channel !== "telegram") continue;
-          events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "message", role: "system", content: [{ type: "input_text", text: `Свежие Telegram owner-events: ${item.role}: ${item.content}` }] } }));
+          events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "message", role: "user", content: [{ type: "input_text", text: `[Свежий Telegram owner-event; учти как контекст и не отвечай отдельно] ${item.role}: ${item.content}` }] } }));
         }
       }, 2000);
       active = state;
