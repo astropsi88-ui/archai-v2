@@ -51,6 +51,7 @@ for (const file of businessPages) {
 const home = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
 const productPages = businessPages.slice(1).map((file) => fs.readFileSync(path.join(publicDir, file), 'utf8')).join('\n');
 const businessCss = fs.readFileSync(path.join(publicDir, 'assets/business.css'), 'utf8');
+const appJs = fs.readFileSync(path.join(publicDir, 'assets/app.js'), 'utf8');
 const footerRequirements = [
   'Обсудить с Виком',
   'Написать Светлане Итаф',
@@ -99,6 +100,16 @@ for (const expected of ['AI-администратор', 'AI-продавец', 
 if ((home.match(/vik-intro-16x9\.mp4/g) || []).length !== 1 || productPages.includes('vik-intro-16x9.mp4')) {
   console.error('The primary Vik video must appear exactly once, on the homepage');
   ok = false;
+}
+if (!home.includes('disabled aria-label="Поговорить с Виком — голосовой запуск готовится" data-vik-voice-prototype')) {
+  console.error('The public Vik voice card must remain disabled in HTML');
+  ok = false;
+}
+for (const expected of ['params.get("vik_voice_test") !== "1"', '/api/vik-site/voice/session', 'mode: "transport_only"']) {
+  if (!appJs.includes(expected)) {
+    console.error('app.js missing closed ONE VIK voice scaffold lock:', expected);
+    ok = false;
+  }
 }
 if (!fs.readFileSync(path.join(publicDir, 'partner.html'), 'utf8').includes('ai-development-hero')) {
   console.error('Development transformation film is missing');

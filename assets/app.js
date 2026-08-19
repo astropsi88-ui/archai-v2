@@ -623,6 +623,51 @@ function initVikIntroVideo() {
 }
 initVikIntroVideo();
 
+function initVikVoicePrototype() {
+  const button = $("[data-vik-voice-prototype]");
+  if (!button) return;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("vik_voice_test") !== "1") return;
+
+  const status = $("[data-vik-voice-status]", button);
+  button.disabled = false;
+  button.classList.add("is-test-enabled");
+  button.setAttribute("aria-label", "Проверить закрытый голосовой прототип Вика");
+  if (status) status.textContent = "Закрытый тест · проверить транспорт";
+
+  button.addEventListener("click", async () => {
+    const startedAt = performance.now();
+    button.disabled = true;
+    if (status) status.textContent = "Проверяю ONE VIK transport…";
+    try {
+      const response = await fetch("/api/vik-site/voice/session", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-Vik-Voice-Prototype": "1",
+        },
+        body: JSON.stringify({ mode: "transport_only" }),
+      });
+      if (!response.ok) throw new Error(`http_${response.status}`);
+      throw new Error("unexpected_transport_response");
+    } catch (error) {
+      const latencyMs = Math.round(performance.now() - startedAt);
+      console.info("vik_voice_prototype_transport", {
+        ok: false,
+        latencyMs,
+        error: error.message,
+      });
+      if (status)
+        status.textContent = "Transport ещё не подключён · ONE VIK сохранён";
+    } finally {
+      button.disabled = false;
+    }
+  });
+}
+initVikVoicePrototype();
+
 function initDigitalOfficeDemo() {
   const demo = $("[data-office-demo]");
   if (!demo) return;
