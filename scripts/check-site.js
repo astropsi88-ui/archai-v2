@@ -105,7 +105,7 @@ if (!home.includes('disabled aria-label="Поговорить с Виком — 
   console.error('The public Vik voice card must remain disabled in HTML');
   ok = false;
 }
-for (const expected of ['params.get("vik_voice_test") !== "1"', '/api/vik-site/voice/session', '/api/vik-site/voice/turn', 'mode: "transcription_only"', 'new RTCPeerConnection()', 'conversation.item.input_audio_transcription.completed', 'input_audio_buffer.commit']) {
+for (const expected of ['params.get("vik_voice_test") !== "1"', '/api/vik-site/voice/session', '/api/vik-site/voice/deep', 'mode: "speech_to_speech"', 'new RTCPeerConnection()', 'response.output_audio_transcript.delta', 'function_call_output', '/api/vik-site/voice/events']) {
   if (!appJs.includes(expected)) {
     console.error('app.js missing closed ONE VIK voice scaffold lock:', expected);
     ok = false;

@@ -644,57 +644,100 @@ function initVikVoicePrototype() {
     if (status) status.textContent = text;
     setVikStatus(text);
   };
-  const stopMedia = (stream, pc) => {
-    stream?.getTracks().forEach((track) => track.stop());
-    if (pc && pc.connectionState !== "closed") pc.close();
+  let active = null;
+
+  const post = async (path, body) => {
+    const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: prototypeHeaders, body: JSON.stringify(body) });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "voice_request_failed");
+    return data;
   };
-  const audioFromBase64 = ({ base64, mimeType }) => {
-    const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
-    return new Audio(URL.createObjectURL(new Blob([bytes], { type: mimeType })));
+
+  const closeSession = () => {
+    if (!active) return;
+    clearInterval(active.pollTimer);
+    active.stream.getTracks().forEach((track) => track.stop());
+    if (active.pc.connectionState !== "closed") active.pc.close();
+    active = null;
+    button.classList.remove("is-listening");
+    setStatus("Закрытый тест · нажмите, чтобы снова подключиться");
   };
 
   button.addEventListener("click", async () => {
     button.disabled = true;
-    let stream;
-    let pc;
-    let stopVad = () => {};
+    if (active) {
+      closeSession();
+      button.disabled = false;
+      return;
+    }
     try {
-      setStatus("Разрешите микрофон — я слушаю только одну реплику");
-      stream = await navigator.mediaDevices.getUserMedia({
+      setStatus("Разрешите микрофон — подключаю живой голос Вика");
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
-      setStatus("Подключаю защищённую расшифровку…");
-      const tokenResponse = await fetch("/api/vik-site/voice/session", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: prototypeHeaders,
-        body: JSON.stringify({ mode: "transcription_only" }),
-      });
-      const token = await tokenResponse.json().catch(() => ({}));
-      if (!tokenResponse.ok || typeof token.clientSecret !== "string")
-        throw new Error(token.error || "transcription_unavailable");
+      const token = await post("/api/vik-site/voice/session", { mode: "speech_to_speech" });
+      if (typeof token.clientSecret !== "string") throw new Error("realtime_unavailable");
 
-      pc = new RTCPeerConnection();
+      const pc = new RTCPeerConnection();
+      const remoteAudio = document.createElement("audio");
+      remoteAudio.autoplay = true;
+      pc.addEventListener("track", (event) => { remoteAudio.srcObject = event.streams[0]; });
       stream.getTracks().forEach((track) => pc.addTrack(track, stream));
       const events = pc.createDataChannel("oai-events");
-      let speechStoppedAt = null;
-      const transcriptReady = new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error("transcription_timeout")), 45000);
-        events.addEventListener("message", (event) => {
-          let data;
-          try { data = JSON.parse(event.data); } catch { return; }
-          if (data.type === "conversation.item.input_audio_transcription.completed") {
-            clearTimeout(timeout);
-            stopVad();
-            const transcript = String(data.transcript || "").trim();
-            if (!transcript) reject(new Error("empty_transcript"));
-            else resolve({ transcript, sttMs: speechStoppedAt ? Math.round(performance.now() - speechStoppedAt) : null });
+      const state = { pc, stream, events, cursor: token.eventCursor || "0", pollTimer: 0, speechEndedAt: null, firstAudioAt: null, responseStartedAt: null, transcript: "", assistantTranscript: "" };
+
+      remoteAudio.addEventListener("playing", () => {
+        if (!state.firstAudioAt && state.speechEndedAt) {
+          state.firstAudioAt = performance.now();
+          const firstMs = Math.round(state.firstAudioAt - state.speechEndedAt);
+          setStatus(`Вик отвечает · speech-end → first-audio ${firstMs} мс`);
+        }
+      });
+
+      events.addEventListener("message", async (event) => {
+        let data;
+        try { data = JSON.parse(event.data); } catch { return; }
+        if (data.type === "input_audio_buffer.speech_started") {
+          state.speechEndedAt = null;
+          state.firstAudioAt = null;
+          state.assistantTranscript = "";
+          setStatus("Слышу тебя…");
+        }
+        if (data.type === "input_audio_buffer.speech_stopped") {
+          state.speechEndedAt = performance.now();
+          setStatus("Пауза · отвечаю");
+        }
+        if (data.type === "conversation.item.input_audio_transcription.completed") {
+          const transcript = String(data.transcript || "").trim();
+          if (transcript) {
+            state.transcript = transcript;
+            setChatActive();
+            addChatMessage("user", transcript);
+            await post("/api/vik-site/voice/event", { role: "user", content: transcript }).catch(() => {});
           }
-          if (data.type === "conversation.item.input_audio_transcription.failed" || data.type === "error") {
-            clearTimeout(timeout);
-            reject(new Error("transcription_unavailable"));
+        }
+        if (data.type === "response.output_audio_transcript.delta") state.assistantTranscript += String(data.delta || "");
+        if (data.type === "response.done") {
+          const calls = (data.response?.output || []).filter((item) => item.type === "function_call" && item.name === "deep_vik");
+          for (const call of calls) {
+            let args = {};
+            try { args = JSON.parse(call.arguments || "{}"); } catch {}
+            setStatus("Передал тяжёлую задачу глубокому Вику…");
+            const deep = await post("/api/vik-site/voice/deep", { request: String(args.request || state.transcript || "") });
+            events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: call.call_id, output: JSON.stringify(deep) } }));
+            events.send(JSON.stringify({ type: "response.create" }));
           }
-        });
+          if (!calls.length && state.assistantTranscript.trim()) {
+            const reply = state.assistantTranscript.trim();
+            addChatMessage("assistant", reply);
+            await post("/api/vik-site/voice/event", { role: "assistant", content: reply }).catch(() => {});
+            const totalMs = state.speechEndedAt ? Math.round(performance.now() - state.speechEndedAt) : null;
+            const firstMs = state.firstAudioAt && state.speechEndedAt ? Math.round(state.firstAudioAt - state.speechEndedAt) : null;
+            setStatus(`Готов к следующей реплике · first ${firstMs ?? "—"} · total ${totalMs ?? "—"} мс`);
+          }
+          state.assistantTranscript = "";
+        }
+        if (data.type === "error") console.info("vik_realtime_error", { code: data.error?.code || "unknown" });
       });
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
@@ -703,87 +746,31 @@ function initVikVoicePrototype() {
         headers: { Authorization: `Bearer ${token.clientSecret}`, "Content-Type": "application/sdp" },
         body: offer.sdp,
       });
-      if (!sdpResponse.ok) throw new Error("transcription_unavailable");
+      if (!sdpResponse.ok) throw new Error("realtime_unavailable");
       await pc.setRemoteDescription({ type: "answer", sdp: await sdpResponse.text() });
-      setStatus("Говорите — пауза завершит реплику автоматически");
-
-      const audioContext = new AudioContext();
-      const source = audioContext.createMediaStreamSource(stream);
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 1024;
-      source.connect(analyser);
-      const levels = new Float32Array(analyser.fftSize);
-      let raf = 0;
-      let speechStartedAt = null;
-      let lastVoiceAt = null;
-      let committed = false;
-      const watchVoice = () => {
-        analyser.getFloatTimeDomainData(levels);
-        const rms = Math.sqrt(levels.reduce((sum, value) => sum + value * value, 0) / levels.length);
-        const now = performance.now();
-        if (rms > 0.025) {
-          if (!speechStartedAt) {
-            speechStartedAt = now;
-            setStatus("Слышу вас… говорите");
-          }
-          lastVoiceAt = now;
+      state.pollTimer = setInterval(async () => {
+        const response = await fetch(`/api/vik-site/voice/events?after=${encodeURIComponent(state.cursor)}`, { credentials: "same-origin", headers: { Accept: "application/json", "X-Vik-Voice-Prototype": "1" } }).catch(() => null);
+        if (!response?.ok) return;
+        const batch = await response.json();
+        state.cursor = batch.cursor || state.cursor;
+        for (const item of batch.events || []) {
+          if (item.channel !== "telegram") continue;
+          events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "message", role: "system", content: [{ type: "input_text", text: `Свежие Telegram owner-events: ${item.role}: ${item.content}` }] } }));
         }
-        if (!committed && speechStartedAt && lastVoiceAt && now - speechStartedAt > 450 && now - lastVoiceAt > 1100) {
-          committed = true;
-          speechStoppedAt = now;
-          setStatus("Реплика закончена · расшифровываю");
-          events.send(JSON.stringify({ type: "input_audio_buffer.commit" }));
-        }
-        if (!committed) raf = requestAnimationFrame(watchVoice);
-      };
-      stopVad = () => {
-        cancelAnimationFrame(raf);
-        source.disconnect();
-        analyser.disconnect();
-        audioContext.close().catch(() => {});
-      };
-      raf = requestAnimationFrame(watchVoice);
-
-      const { transcript, sttMs } = await transcriptReady;
-      stopMedia(stream, pc);
-      stream = null;
-      pc = null;
-      setChatActive();
-      addChatMessage("user", transcript);
-      const pending = addChatMessage("assistant", "Вик думает…", { pending: true });
-      setStatus("Вик готовит свой ответ…");
-      const turnResponse = await fetch("/api/vik-site/voice/turn", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: prototypeHeaders,
-        body: JSON.stringify({ transcript, sttMs }),
-      });
-      const turn = await turnResponse.json().catch(() => ({}));
-      if (!turnResponse.ok || typeof turn.reply !== "string")
-        throw new Error(turn.error || "vik_runner_error");
-      updateChatMessages(pending, turn.reply);
-      if (!turn.audio?.base64) {
-        setStatus("Ответ Вика получен · голос временно недоступен");
-        throw new Error("tts_unavailable");
-      }
-      const audio = audioFromBase64(turn.audio);
-      audio.addEventListener("ended", () => setStatus("Готов к следующей реплике"), { once: true });
-      await audio.play();
-      setStatus(`Вик отвечает голосом · STT ${turn.latencyMs?.stt ?? "—"} · Vik ${turn.latencyMs?.vik ?? "—"} · TTS ${turn.latencyMs?.tts ?? "—"} мс`);
+      }, 2000);
+      active = state;
+      button.classList.add("is-listening");
+      setStatus(`Живой Вик подключён · ${token.model} · ${token.voice} · говори свободно`);
     } catch (error) {
       const micDenied = error?.name === "NotAllowedError" || error?.name === "SecurityError";
       const text = micDenied
         ? "Микрофон не разрешён · включите доступ и попробуйте снова"
-        : error.message === "tts_unavailable"
-          ? "Текст Вика готов · озвучивание временно недоступно"
-          : error.message === "vik_runner_error"
-            ? "Вик сейчас не смог ответить · попробуйте ещё раз"
-            : "Расшифровка недоступна · попробуйте ещё раз";
+        : error.message === "owner_session_required"
+          ? "Сначала войдите как подтверждённая Светочка в этом браузере"
+          : "Живой голос сейчас не подключился · старый голосовой путь сохранён для отката";
       setStatus(text);
       console.info("vik_voice_prototype_error", { stage: micDenied ? "mic" : error.message });
     } finally {
-      stopVad();
-      stopMedia(stream, pc);
       button.disabled = false;
     }
   });
