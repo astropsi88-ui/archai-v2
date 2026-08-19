@@ -632,36 +632,158 @@ function initVikVoicePrototype() {
   const status = $("[data-vik-voice-status]", button);
   button.disabled = false;
   button.classList.add("is-test-enabled");
-  button.setAttribute("aria-label", "Проверить закрытый голосовой прототип Вика");
-  if (status) status.textContent = "Закрытый тест · проверить транспорт";
+  button.setAttribute("aria-label", "Поговорить с Виком — закрытый голосовой тест");
+  if (status) status.textContent = "Закрытый тест · нажмите и говорите";
+
+  const prototypeHeaders = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    "X-Vik-Voice-Prototype": "1",
+  };
+  const setStatus = (text) => {
+    if (status) status.textContent = text;
+    setVikStatus(text);
+  };
+  const stopMedia = (stream, pc) => {
+    stream?.getTracks().forEach((track) => track.stop());
+    if (pc && pc.connectionState !== "closed") pc.close();
+  };
+  const audioFromBase64 = ({ base64, mimeType }) => {
+    const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
+    return new Audio(URL.createObjectURL(new Blob([bytes], { type: mimeType })));
+  };
 
   button.addEventListener("click", async () => {
-    const startedAt = performance.now();
     button.disabled = true;
-    if (status) status.textContent = "Проверяю ONE VIK transport…";
+    let stream;
+    let pc;
+    let stopVad = () => {};
     try {
-      const response = await fetch("/api/vik-site/voice/session", {
+      setStatus("Разрешите микрофон — я слушаю только одну реплику");
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      });
+      setStatus("Подключаю защищённую расшифровку…");
+      const tokenResponse = await fetch("/api/vik-site/voice/session", {
         method: "POST",
         credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "X-Vik-Voice-Prototype": "1",
-        },
-        body: JSON.stringify({ mode: "transport_only" }),
+        headers: prototypeHeaders,
+        body: JSON.stringify({ mode: "transcription_only" }),
       });
-      if (!response.ok) throw new Error(`http_${response.status}`);
-      throw new Error("unexpected_transport_response");
+      const token = await tokenResponse.json().catch(() => ({}));
+      if (!tokenResponse.ok || typeof token.clientSecret !== "string")
+        throw new Error(token.error || "transcription_unavailable");
+
+      pc = new RTCPeerConnection();
+      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+      const events = pc.createDataChannel("oai-events");
+      let speechStoppedAt = null;
+      const transcriptReady = new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error("transcription_timeout")), 45000);
+        events.addEventListener("message", (event) => {
+          let data;
+          try { data = JSON.parse(event.data); } catch { return; }
+          if (data.type === "conversation.item.input_audio_transcription.completed") {
+            clearTimeout(timeout);
+            stopVad();
+            const transcript = String(data.transcript || "").trim();
+            if (!transcript) reject(new Error("empty_transcript"));
+            else resolve({ transcript, sttMs: speechStoppedAt ? Math.round(performance.now() - speechStoppedAt) : null });
+          }
+          if (data.type === "conversation.item.input_audio_transcription.failed" || data.type === "error") {
+            clearTimeout(timeout);
+            reject(new Error("transcription_unavailable"));
+          }
+        });
+      });
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      const sdpResponse = await fetch("https://api.openai.com/v1/realtime/calls", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token.clientSecret}`, "Content-Type": "application/sdp" },
+        body: offer.sdp,
+      });
+      if (!sdpResponse.ok) throw new Error("transcription_unavailable");
+      await pc.setRemoteDescription({ type: "answer", sdp: await sdpResponse.text() });
+      setStatus("Говорите — пауза завершит реплику автоматически");
+
+      const audioContext = new AudioContext();
+      const source = audioContext.createMediaStreamSource(stream);
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 1024;
+      source.connect(analyser);
+      const levels = new Float32Array(analyser.fftSize);
+      let raf = 0;
+      let speechStartedAt = null;
+      let lastVoiceAt = null;
+      let committed = false;
+      const watchVoice = () => {
+        analyser.getFloatTimeDomainData(levels);
+        const rms = Math.sqrt(levels.reduce((sum, value) => sum + value * value, 0) / levels.length);
+        const now = performance.now();
+        if (rms > 0.025) {
+          if (!speechStartedAt) {
+            speechStartedAt = now;
+            setStatus("Слышу вас… говорите");
+          }
+          lastVoiceAt = now;
+        }
+        if (!committed && speechStartedAt && lastVoiceAt && now - speechStartedAt > 450 && now - lastVoiceAt > 1100) {
+          committed = true;
+          speechStoppedAt = now;
+          setStatus("Реплика закончена · расшифровываю");
+          events.send(JSON.stringify({ type: "input_audio_buffer.commit" }));
+        }
+        if (!committed) raf = requestAnimationFrame(watchVoice);
+      };
+      stopVad = () => {
+        cancelAnimationFrame(raf);
+        source.disconnect();
+        analyser.disconnect();
+        audioContext.close().catch(() => {});
+      };
+      raf = requestAnimationFrame(watchVoice);
+
+      const { transcript, sttMs } = await transcriptReady;
+      stopMedia(stream, pc);
+      stream = null;
+      pc = null;
+      setChatActive();
+      addChatMessage("user", transcript);
+      const pending = addChatMessage("assistant", "Вик думает…", { pending: true });
+      setStatus("Вик готовит свой ответ…");
+      const turnResponse = await fetch("/api/vik-site/voice/turn", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: prototypeHeaders,
+        body: JSON.stringify({ transcript, sttMs }),
+      });
+      const turn = await turnResponse.json().catch(() => ({}));
+      if (!turnResponse.ok || typeof turn.reply !== "string")
+        throw new Error(turn.error || "vik_runner_error");
+      updateChatMessages(pending, turn.reply);
+      if (!turn.audio?.base64) {
+        setStatus("Ответ Вика получен · голос временно недоступен");
+        throw new Error("tts_unavailable");
+      }
+      const audio = audioFromBase64(turn.audio);
+      audio.addEventListener("ended", () => setStatus("Готов к следующей реплике"), { once: true });
+      await audio.play();
+      setStatus(`Вик отвечает голосом · STT ${turn.latencyMs?.stt ?? "—"} · Vik ${turn.latencyMs?.vik ?? "—"} · TTS ${turn.latencyMs?.tts ?? "—"} мс`);
     } catch (error) {
-      const latencyMs = Math.round(performance.now() - startedAt);
-      console.info("vik_voice_prototype_transport", {
-        ok: false,
-        latencyMs,
-        error: error.message,
-      });
-      if (status)
-        status.textContent = "Transport ещё не подключён · ONE VIK сохранён";
+      const micDenied = error?.name === "NotAllowedError" || error?.name === "SecurityError";
+      const text = micDenied
+        ? "Микрофон не разрешён · включите доступ и попробуйте снова"
+        : error.message === "tts_unavailable"
+          ? "Текст Вика готов · озвучивание временно недоступно"
+          : error.message === "vik_runner_error"
+            ? "Вик сейчас не смог ответить · попробуйте ещё раз"
+            : "Расшифровка недоступна · попробуйте ещё раз";
+      setStatus(text);
+      console.info("vik_voice_prototype_error", { stage: micDenied ? "mic" : error.message });
     } finally {
+      stopVad();
+      stopMedia(stream, pc);
       button.disabled = false;
     }
   });
