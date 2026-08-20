@@ -640,7 +640,8 @@ function initVikVoicePrototype() {
     setVikStatus(text);
   };
   let active = null;
-  const elevenLabsTestMode = new URLSearchParams(window.location.search).get("vik_voice_engine") === "elevenlabs";
+  const requestedVoiceEngine = new URLSearchParams(window.location.search).get("vik_voice_engine");
+  const forceOpenAI = requestedVoiceEngine === "openai";
 
   const post = async (path, body) => {
     const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: prototypeHeaders, body: JSON.stringify(body) });
@@ -757,7 +758,7 @@ function initVikVoicePrototype() {
       source.addEventListener("ended", () => state.scheduled.delete(source), { once: true });
       if (!state.firstAudioAt && state.speechEndedAt) {
         state.firstAudioAt = performance.now();
-        setStatus(`Вик отвечает · ElevenLabs Vic 2 · ${Math.round(state.firstAudioAt - state.speechEndedAt)} мс`);
+        setStatus(`Вик отвечает · ElevenLabs Vladimir · ${Math.round(state.firstAudioAt - state.speechEndedAt)} мс`);
       }
     };
 
@@ -770,7 +771,7 @@ function initVikVoicePrototype() {
     ws.addEventListener("message", (event) => {
       let data;
       try { data = JSON.parse(event.data); } catch { return; }
-      if (data.type === "conversation_initiation_metadata") setStatus("ElevenLabs Vic 2 подключён · говори свободно");
+      if (data.type === "conversation_initiation_metadata") setStatus("ElevenLabs Vladimir подключён · говори свободно");
       if (data.type === "ping") ws.send(JSON.stringify({ type: "pong", event_id: data.ping_event?.event_id }));
       if (data.type === "vad_score" && Number(data.vad_score_event?.vad_score || 0) > 0.75) {
         stopPlayback();
@@ -805,7 +806,7 @@ function initVikVoicePrototype() {
         if (state.assistantItems && state.assistantText) updateChatMessages(state.assistantItems, state.assistantText);
         state.assistantItems = null;
         state.assistantText = "";
-        setStatus("Готов к следующей реплике · ElevenLabs Vic 2");
+        setStatus("Готов к следующей реплике · ElevenLabs Vladimir");
       }
       if (data.type === "error") console.info("vik_elevenlabs_error", { code: data.error?.code || data.error_event?.code || "unknown" });
     });
@@ -825,7 +826,7 @@ function initVikVoicePrototype() {
 
     active = state;
     button.classList.add("is-listening");
-    setStatus("Живой Вик подключён · ElevenLabs · Vic 2 · говори свободно");
+    setStatus("Живой Вик подключён · ElevenLabs · Vladimir · говори свободно");
   };
 
   button.addEventListener("click", async () => {
@@ -840,7 +841,7 @@ function initVikVoicePrototype() {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
-      if (elevenLabsTestMode) {
+      if (!forceOpenAI) {
         await startElevenLabsVoice(stream);
         return;
       }
