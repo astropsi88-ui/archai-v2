@@ -111,6 +111,16 @@ for (const expected of ['params.get("vik_voice_test") !== "1"', '/api/vik-site/v
     ok = false;
   }
 }
+for (const expected of ['params.get("vik_owner") === "1"', 'params.get("vik_owner_rotate") === "1"', '/api/vik-site/owner/auth', '/api/vik-site/owner/secret-rotation', 'window.location.replace(target.href)']) {
+  if (!appJs.includes(expected)) {
+    console.error('app.js missing closed owner browser flow lock:', expected);
+    ok = false;
+  }
+}
+if (fs.readFileSync(path.join(__dirname, '..', 'assets/app.js'), 'utf8') !== appJs) {
+  console.error('Source and public app.js must remain synchronized');
+  ok = false;
+}
 if (/addChatMessage\((?:"|')user(?:"|'), transcript\)/.test(appJs) || /addChatMessage\((?:"|')assistant(?:"|'), reply\)/.test(appJs)) {
   console.error('Realtime transcript must persist through the backend without rendering in the main chat UI');
   ok = false;

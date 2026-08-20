@@ -820,3 +820,91 @@ function initDigitalOfficeDemo() {
   render("administrator"); start();
 }
 initDigitalOfficeDemo();
+
+function initVikOwnerBrowserFlow() {
+  const params = new URLSearchParams(window.location.search);
+  const ownerAuthRequested = params.get("vik_owner") === "1";
+  const ownerRotationRequested = params.get("vik_owner_rotate") === "1";
+  if (!ownerAuthRequested && !ownerRotationRequested) return;
+
+  const readJson = (response) => response.json().catch(() => ({}));
+  const postJson = async (path, body) => {
+    const response = await fetch(path, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const result = await readJson(response);
+    if (!response.ok) throw new Error(result.error || "owner_request_failed");
+    return result;
+  };
+
+  const authenticate = async () => {
+    let phrase = window.prompt("Введите owner phrase");
+    if (phrase === null) return;
+    try {
+      await postJson("/api/vik-site/owner/auth", { phrase });
+      const target = new URL(window.location.href);
+      target.search = "?vik_voice_test=1";
+      window.location.replace(target.href);
+    } finally {
+      phrase = "";
+    }
+  };
+
+  const rotate = async () => {
+    const pendingResponse = await fetch("/api/vik-site/owner/secret-rotation", {
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    });
+    const pendingResult = await readJson(pendingResponse);
+    if (!pendingResponse.ok) throw new Error(pendingResult.error || "owner_session_required");
+    if (!pendingResult.pending?.requestId) throw new Error("no_pending_rotation");
+
+    let phrase = window.prompt("Введите новую owner phrase (минимум 12 символов)");
+    if (phrase === null) return;
+    try {
+      await postJson("/api/vik-site/owner/secret-rotation", {
+        requestId: pendingResult.pending.requestId,
+        phrase,
+      });
+      window.alert("Owner phrase обновлена");
+    } finally {
+      phrase = "";
+    }
+  };
+
+  (ownerRotationRequested ? rotate() : authenticate()).catch(() => {
+    window.alert("Owner-действие не выполнено. Проверьте сессию или введённое значение.");
+  });
+}
+initVikOwnerBrowserFlow();
+
+// Kept for existing owner sessions that already use the console bridge.
+window.VikOwner = Object.freeze({
+  async authenticate() {
+    let phrase = window.prompt("Введите owner phrase");
+    if (phrase === null) return { ok: false, cancelled: true };
+    try {
+      const response = await fetch("/api/vik-site/owner/auth", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phrase }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "owner_auth_failed");
+      return result;
+    } finally { phrase = ""; }
+  },
+  async rotateOwnerPhrase() {
+    const pendingResponse = await fetch("/api/vik-site/owner/secret-rotation", { credentials: "same-origin", headers: { Accept: "application/json" } });
+    const pendingResult = await pendingResponse.json();
+    if (!pendingResponse.ok) throw new Error(pendingResult.error || "owner_session_required");
+    if (!pendingResult.pending) throw new Error("no_pending_rotation");
+    let phrase = window.prompt("Введите новую owner phrase (минимум 12 символов)");
+    if (phrase === null) return { ok: false, cancelled: true };
+    try {
+      const response = await fetch("/api/vik-site/owner/secret-rotation", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ requestId: pendingResult.pending.requestId, phrase }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "rotation_failed");
+      return result;
+    } finally { phrase = ""; }
+  },
+});
