@@ -111,6 +111,10 @@ for (const expected of ['params.get("vik_voice_test") !== "1"', '/api/vik-site/v
     ok = false;
   }
 }
+if (/addChatMessage\((?:"|')user(?:"|'), transcript\)/.test(appJs) || /addChatMessage\((?:"|')assistant(?:"|'), reply\)/.test(appJs)) {
+  console.error('Realtime transcript must persist through the backend without rendering in the main chat UI');
+  ok = false;
+}
 if (!fs.readFileSync(path.join(publicDir, 'partner.html'), 'utf8').includes('ai-development-hero')) {
   console.error('Development transformation film is missing');
   ok = false;

@@ -711,8 +711,6 @@ function initVikVoicePrototype() {
           const transcript = String(data.transcript || "").trim();
           if (transcript) {
             state.transcript = transcript;
-            setChatActive();
-            addChatMessage("user", transcript);
             await post("/api/vik-site/voice/event", { role: "user", content: transcript }).catch(() => {});
           }
         }
@@ -729,7 +727,6 @@ function initVikVoicePrototype() {
           }
           if (!calls.length && state.assistantTranscript.trim()) {
             const reply = state.assistantTranscript.trim();
-            addChatMessage("assistant", reply);
             await post("/api/vik-site/voice/event", { role: "assistant", content: reply }).catch(() => {});
             const totalMs = state.speechEndedAt ? Math.round(performance.now() - state.speechEndedAt) : null;
             const firstMs = state.firstAudioAt && state.speechEndedAt ? Math.round(state.firstAudioAt - state.speechEndedAt) : null;
