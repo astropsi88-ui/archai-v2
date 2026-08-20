@@ -820,3 +820,32 @@ function initDigitalOfficeDemo() {
   render("administrator"); start();
 }
 initDigitalOfficeDemo();
+
+// Intentionally no public UI: these commands are available only when an owner
+// explicitly opens the browser console in her already authenticated session.
+window.VikOwner = Object.freeze({
+  async authenticate() {
+    let phrase = window.prompt("Введите owner phrase");
+    if (phrase === null) return { ok: false, cancelled: true };
+    try {
+      const response = await fetch("/api/vik-site/owner/auth", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phrase }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "owner_auth_failed");
+      return result;
+    } finally { phrase = ""; }
+  },
+  async rotateOwnerPhrase() {
+    const pendingResponse = await fetch("/api/vik-site/owner/secret-rotation", { credentials: "same-origin", headers: { Accept: "application/json" } });
+    const pendingResult = await pendingResponse.json();
+    if (!pendingResponse.ok) throw new Error(pendingResult.error || "owner_session_required");
+    if (!pendingResult.pending) throw new Error("no_pending_rotation");
+    let phrase = window.prompt("Введите новую owner phrase (минимум 12 символов)");
+    if (phrase === null) return { ok: false, cancelled: true };
+    try {
+      const response = await fetch("/api/vik-site/owner/secret-rotation", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ requestId: pendingResult.pending.requestId, phrase }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "rotation_failed");
+      return result;
+    } finally { phrase = ""; }
+  },
+});
