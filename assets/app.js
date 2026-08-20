@@ -623,19 +623,17 @@ initVikIntroVideo();
 function initVikVoicePrototype() {
   const button = $("[data-vik-voice-prototype]");
   if (!button) return;
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("vik_voice_test") !== "1") return;
 
   const status = $("[data-vik-voice-status]", button);
   button.disabled = false;
   button.classList.add("is-test-enabled");
-  button.setAttribute("aria-label", "Поговорить с Виком — закрытый голосовой тест");
-  if (status) status.textContent = "Закрытый тест · нажмите и говорите";
+  button.setAttribute("aria-label", "Поговорить с Виком голосом");
+  if (status) status.textContent = "Нажмите и говорите";
 
   const prototypeHeaders = {
     Accept: "application/json",
     "Content-Type": "application/json",
-    "X-Vik-Voice-Prototype": "1",
+    "X-Vik-Voice": "1",
   };
   const setStatus = (text) => {
     if (status) status.textContent = text;
@@ -657,7 +655,7 @@ function initVikVoicePrototype() {
     if (active.pc.connectionState !== "closed") active.pc.close();
     active = null;
     button.classList.remove("is-listening");
-    setStatus("Закрытый тест · нажмите, чтобы снова подключиться");
+    setStatus("Нажмите, чтобы снова поговорить с Виком");
   };
 
   button.addEventListener("click", async () => {
@@ -674,6 +672,10 @@ function initVikVoicePrototype() {
       });
       const token = await post("/api/vik-site/voice/session", { mode: "speech_to_speech" });
       if (typeof token.clientSecret !== "string") throw new Error("realtime_unavailable");
+      if (typeof token.conversationId === "string") {
+        sessionStorage.setItem(vikConversationStorageKey, token.conversationId);
+        setTelegramContinueVisible(true);
+      }
 
       const pc = new RTCPeerConnection();
       const remoteAudio = document.createElement("audio");
@@ -711,7 +713,7 @@ function initVikVoicePrototype() {
             state.transcript = transcript;
             setChatActive();
             addChatMessage("user", transcript);
-            await post("/api/vik-site/voice/event", { role: "user", content: transcript }).catch(() => {});
+            await post("/api/vik-site/voice/event", { role: "user", content: transcript, conversationId: token.conversationId }).catch(() => {});
           }
         }
         if (data.type === "response.output_audio_transcript.delta") {
@@ -737,7 +739,7 @@ function initVikVoicePrototype() {
             let args = {};
             try { args = JSON.parse(call.arguments || "{}"); } catch {}
             setStatus("Передал тяжёлую задачу глубокому Вику…");
-            const deep = await post("/api/vik-site/voice/deep", { request: String(args.request || state.transcript || "") });
+            const deep = await post("/api/vik-site/voice/deep", { request: String(args.request || state.transcript || ""), conversationId: token.conversationId });
             events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: call.call_id, output: JSON.stringify(deep) } }));
             events.send(JSON.stringify({ type: "response.create" }));
           }
@@ -745,7 +747,7 @@ function initVikVoicePrototype() {
             const reply = state.assistantTranscript.trim();
             if (responseId) state.persistedResponseIds.add(responseId);
             if (state.assistantItems) updateChatMessages(state.assistantItems, reply);
-            await post("/api/vik-site/voice/event", { role: "assistant", content: reply }).catch(() => {});
+            await post("/api/vik-site/voice/event", { role: "assistant", content: reply, conversationId: token.conversationId }).catch(() => {});
             if (!calls.length) {
               const totalMs = state.speechEndedAt ? Math.round(performance.now() - state.speechEndedAt) : null;
               const firstMs = state.firstAudioAt && state.speechEndedAt ? Math.round(state.firstAudioAt - state.speechEndedAt) : null;
@@ -768,7 +770,7 @@ function initVikVoicePrototype() {
       if (!sdpResponse.ok) throw new Error("realtime_unavailable");
       await pc.setRemoteDescription({ type: "answer", sdp: await sdpResponse.text() });
       state.pollTimer = setInterval(async () => {
-        const response = await fetch(`/api/vik-site/voice/events?after=${encodeURIComponent(state.cursor)}`, { credentials: "same-origin", headers: { Accept: "application/json", "X-Vik-Voice-Prototype": "1" } }).catch(() => null);
+        const response = await fetch(`/api/vik-site/voice/events?after=${encodeURIComponent(state.cursor)}`, { credentials: "same-origin", headers: { Accept: "application/json", "X-Vik-Voice": "1" } }).catch(() => null);
         if (!response?.ok) return;
         const batch = await response.json();
         state.cursor = batch.cursor || state.cursor;
@@ -784,9 +786,7 @@ function initVikVoicePrototype() {
       const micDenied = error?.name === "NotAllowedError" || error?.name === "SecurityError";
       const text = micDenied
         ? "Микрофон не разрешён · включите доступ и попробуйте снова"
-        : error.message === "owner_session_required"
-          ? "Сначала войдите как подтверждённая Светочка в этом браузере"
-          : "Живой голос сейчас не подключился · старый голосовой путь сохранён для отката";
+        : "Живой голос сейчас не подключился · попробуйте ещё раз чуть позже";
       setStatus(text);
       console.info("vik_voice_prototype_error", { stage: micDenied ? "mic" : error.message });
     } finally {
@@ -868,7 +868,7 @@ function initVikOwnerBrowserFlow() {
     try {
       await postJson("/api/vik-site/owner/auth", { phrase });
       const target = new URL(window.location.href);
-      target.search = "?vik_voice_test=1";
+      target.search = "";
       window.location.replace(target.href);
     } finally {
       phrase = "";

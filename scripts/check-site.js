@@ -101,15 +101,19 @@ if ((home.match(/vik-intro-16x9\.mp4/g) || []).length !== 1 || productPages.incl
   console.error('The primary Vik video must appear exactly once, on the homepage');
   ok = false;
 }
-if (!home.includes('disabled aria-label="Поговорить с Виком — голосовой запуск готовится" data-vik-voice-prototype')) {
-  console.error('The public Vik voice card must remain disabled in HTML');
+if (!home.includes('aria-label="Поговорить с Виком голосом" data-vik-voice-prototype') || home.includes('disabled aria-label="Поговорить с Виком')) {
+  console.error('The public Vik voice card must be enabled in normal homepage HTML');
   ok = false;
 }
-for (const expected of ['params.get("vik_voice_test") !== "1"', '/api/vik-site/voice/session', '/api/vik-site/voice/deep', 'mode: "speech_to_speech"', 'new RTCPeerConnection()', 'response.output_audio_transcript.delta', 'function_call_output', '/api/vik-site/voice/events']) {
+for (const expected of ['"X-Vik-Voice": "1"', '/api/vik-site/voice/session', '/api/vik-site/voice/deep', 'mode: "speech_to_speech"', 'new RTCPeerConnection()', 'response.output_audio_transcript.delta', 'function_call_output', '/api/vik-site/voice/events', 'sessionStorage.setItem(vikConversationStorageKey, token.conversationId)']) {
   if (!appJs.includes(expected)) {
-    console.error('app.js missing closed ONE VIK voice scaffold lock:', expected);
+    console.error('app.js missing public ONE VIK voice production lock:', expected);
     ok = false;
   }
+}
+if (appJs.includes('params.get("vik_voice_test") !== "1"') || appJs.includes('Закрытый тест ·')) {
+  console.error('Normal public voice must not require the legacy test query gate');
+  ok = false;
 }
 for (const expected of ['params.get("vik_owner") === "1"', 'params.get("vik_owner_rotate") === "1"', '/api/vik-site/owner/auth', '/api/vik-site/owner/secret-rotation', 'window.location.replace(target.href)']) {
   if (!appJs.includes(expected)) {
