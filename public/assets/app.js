@@ -640,7 +640,8 @@ function initVikVoicePrototype() {
     setVikStatus(text);
   };
   let active = null;
-  const elevenLabsTestMode = new URLSearchParams(window.location.search).get("vik_voice_engine") === "elevenlabs";
+  const requestedVoiceEngine = new URLSearchParams(window.location.search).get("vik_voice_engine");
+  const forceOpenAI = requestedVoiceEngine === "openai";
 
   const post = async (path, body) => {
     const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: prototypeHeaders, body: JSON.stringify(body) });
@@ -840,9 +841,13 @@ function initVikVoicePrototype() {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
-      if (elevenLabsTestMode) {
-        await startElevenLabsVoice(stream);
-        return;
+      if (!forceOpenAI) {
+        try {
+          await startElevenLabsVoice(stream);
+          return;
+        } catch (error) {
+          if (error.message !== "owner_session_required") throw error;
+        }
       }
       const token = await post("/api/vik-site/voice/session", { mode: "speech_to_speech" });
       if (typeof token.clientSecret !== "string") throw new Error("realtime_unavailable");
