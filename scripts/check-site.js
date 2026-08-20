@@ -117,6 +117,18 @@ for (const expected of ['params.get("vik_owner") === "1"', 'params.get("vik_owne
     ok = false;
   }
 }
+for (const expected of ['url.protocol !== "https:"', '["t.me", "telegram.me"].includes(url.hostname)', 'url.searchParams.get("start")', 'window.location.assign(data.url)']) {
+  if (!appJs.includes(expected)) {
+    console.error('Telegram handoff must validate and use the fresh backend t.me URL directly:', expected);
+    ok = false;
+  }
+}
+for (const forbidden of ['makeTelegramWebUrl', 'web.telegram.org/a/#?tgaddr']) {
+  if (appJs.includes(forbidden)) {
+    console.error('Telegram handoff must not transform the fresh backend URL:', forbidden);
+    ok = false;
+  }
+}
 if (fs.readFileSync(path.join(__dirname, '..', 'assets/app.js'), 'utf8') !== appJs) {
   console.error('Source and public app.js must remain synchronized');
   ok = false;

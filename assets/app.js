@@ -212,21 +212,19 @@ function initVikSiteForm(form) {
   sync();
 }
 siteForms.forEach(initVikSiteForm);
-function makeTelegramWebUrl(link) {
+function validateTelegramHandoffUrl(link) {
   const url = new URL(link);
   if (
-    !["t.me", "www.t.me", "telegram.me", "www.telegram.me"].includes(
-      url.hostname,
-    )
+    url.protocol !== "https:" ||
+    !["t.me", "telegram.me"].includes(url.hostname)
   )
     throw new Error("invalid_telegram_link");
   const username = url.pathname.split("/").filter(Boolean)[0];
   if (!username || !/^[A-Za-z0-9_]+$/.test(username))
     throw new Error("invalid_telegram_username");
-  const params = new URLSearchParams({ domain: username });
   const start = url.searchParams.get("start");
-  if (start) params.set("start", start);
-  return `https://web.telegram.org/a/#?tgaddr=${encodeURIComponent(`tg://resolve?${params}`)}`;
+  if (!start) throw new Error("invalid_telegram_start");
+  return url;
 }
 telegramContinueButtons.forEach((button) =>
   button.addEventListener("click", async () => {
@@ -246,9 +244,8 @@ telegramContinueButtons.forEach((button) =>
       const data = await response.json().catch(() => ({}));
       if (!response.ok || typeof data.url !== "string")
         throw new Error(data.error || `http_${response.status}`);
-      const webLink = makeTelegramWebUrl(data.url);
-      data.url = null;
-      window.location.assign(webLink);
+      validateTelegramHandoffUrl(data.url);
+      window.location.assign(data.url);
     } catch {
       setVikStatus("Не удалось создать переход. Попробуйте ещё раз.");
       telegramContinueButtons.forEach((item) => {
