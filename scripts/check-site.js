@@ -105,7 +105,7 @@ if (!home.includes('aria-label="Поговорить с Виком голосо�
   console.error('The public Vik voice card must be enabled in normal homepage HTML');
   ok = false;
 }
-for (const expected of ['"X-Vik-Voice": "1"', '/api/vik-site/voice/session', '/api/vik-site/voice/deep', 'mode: "speech_to_speech"', 'new RTCPeerConnection()', 'response.output_audio_transcript.delta', 'function_call_output', '/api/vik-site/voice/events', 'sessionStorage.setItem(vikConversationStorageKey, token.conversationId)']) {
+for (const expected of ['"X-Vik-Voice": "1"', '/api/vik-site/voice/session', 'mode: "transcription_only"', '/api/vik-site/voice/turn', 'new RTCPeerConnection()', 'input_audio_buffer.commit', 'audioFromBase64', 'sessionStorage.setItem(vikConversationStorageKey, turn.conversationId)']) {
   if (!appJs.includes(expected)) {
     console.error('app.js missing public ONE VIK voice production lock:', expected);
     ok = false;
@@ -137,9 +137,9 @@ if (fs.readFileSync(path.join(__dirname, '..', 'assets/app.js'), 'utf8') !== app
   console.error('Source and public app.js must remain synchronized');
   ok = false;
 }
-for (const expected of ['addChatMessage("user", transcript)', 'addChatMessage("assistant", state.assistantTranscript', 'updateChatMessages(state.assistantItems, state.assistantTranscript)', 'post("/api/vik-site/voice/event", { role: "user"', 'post("/api/vik-site/voice/event", { role: "assistant"']) {
+for (const expected of ['addChatMessage("user", transcript)', 'addChatMessage("assistant", "Вик думает…"', 'updateChatMessages(pending, turn.reply)', 'turn.audio?.base64', 'ElevenLabs ВИК-2']) {
   if (!appJs.includes(expected)) {
-    console.error('Realtime transcript must render live and remain backend-persisted:', expected);
+    console.error('VIK-2 transcript/answer/playback pipeline is incomplete:', expected);
     ok = false;
   }
 }
