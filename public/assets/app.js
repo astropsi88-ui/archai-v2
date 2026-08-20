@@ -684,7 +684,7 @@ function initVikVoicePrototype() {
       pc.addEventListener("track", (event) => { remoteAudio.srcObject = event.streams[0]; });
       stream.getTracks().forEach((track) => pc.addTrack(track, stream));
       const events = pc.createDataChannel("oai-events");
-      const state = { pc, stream, events, cursor: token.eventCursor || "0", pollTimer: 0, speechEndedAt: null, firstAudioAt: null, responseStartedAt: null, transcript: "", assistantTranscript: "" };
+      const state = { pc, stream, events, cursor: token.eventCursor || "0", pollTimer: 0, speechEndedAt: null, firstAudioAt: null, responseStartedAt: null, transcript: "", assistantTranscript: "", assistantItems: null, assistantResponseId: null, renderedInputItems: new Set(), persistedResponseIds: new Set() };
 
       remoteAudio.addEventListener("playing", () => {
         if (!state.firstAudioAt && state.speechEndedAt) {
@@ -700,7 +700,6 @@ function initVikVoicePrototype() {
         if (data.type === "input_audio_buffer.speech_started") {
           state.speechEndedAt = null;
           state.firstAudioAt = null;
-          state.assistantTranscript = "";
           setStatus("Слышу тебя…");
         }
         if (data.type === "input_audio_buffer.speech_stopped") {
@@ -709,13 +708,33 @@ function initVikVoicePrototype() {
         }
         if (data.type === "conversation.item.input_audio_transcription.completed") {
           const transcript = String(data.transcript || "").trim();
-          if (transcript) {
+          const itemId = String(data.item_id || "");
+          if (transcript && (!itemId || !state.renderedInputItems.has(itemId))) {
+            if (itemId) state.renderedInputItems.add(itemId);
             state.transcript = transcript;
+            setChatActive();
+            addChatMessage("user", transcript);
             await post("/api/vik-site/voice/event", { role: "user", content: transcript }).catch(() => {});
           }
         }
-        if (data.type === "response.output_audio_transcript.delta") state.assistantTranscript += String(data.delta || "");
+        if (data.type === "response.output_audio_transcript.delta") {
+          const responseId = String(data.response_id || "active");
+          if (state.assistantResponseId !== responseId) {
+            state.assistantResponseId = responseId;
+            state.assistantTranscript = "";
+            state.assistantItems = null;
+          }
+          state.assistantTranscript += String(data.delta || "");
+          if (!state.assistantItems) {
+            setChatActive();
+            state.assistantItems = addChatMessage("assistant", state.assistantTranscript, { pending: true });
+          } else {
+            updateChatMessages(state.assistantItems, state.assistantTranscript);
+            state.assistantItems.forEach((item) => item.classList.add("is-pending"));
+          }
+        }
         if (data.type === "response.done") {
+          const responseId = String(data.response?.id || state.assistantResponseId || "");
           const calls = (data.response?.output || []).filter((item) => item.type === "function_call" && item.name === "deep_vik");
           for (const call of calls) {
             let args = {};
@@ -725,14 +744,20 @@ function initVikVoicePrototype() {
             events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: call.call_id, output: JSON.stringify(deep) } }));
             events.send(JSON.stringify({ type: "response.create" }));
           }
-          if (!calls.length && state.assistantTranscript.trim()) {
+          if (state.assistantTranscript.trim() && (!responseId || !state.persistedResponseIds.has(responseId))) {
             const reply = state.assistantTranscript.trim();
+            if (responseId) state.persistedResponseIds.add(responseId);
+            if (state.assistantItems) updateChatMessages(state.assistantItems, reply);
             await post("/api/vik-site/voice/event", { role: "assistant", content: reply }).catch(() => {});
-            const totalMs = state.speechEndedAt ? Math.round(performance.now() - state.speechEndedAt) : null;
-            const firstMs = state.firstAudioAt && state.speechEndedAt ? Math.round(state.firstAudioAt - state.speechEndedAt) : null;
-            setStatus(`Готов к следующей реплике · first ${firstMs ?? "—"} · total ${totalMs ?? "—"} мс`);
+            if (!calls.length) {
+              const totalMs = state.speechEndedAt ? Math.round(performance.now() - state.speechEndedAt) : null;
+              const firstMs = state.firstAudioAt && state.speechEndedAt ? Math.round(state.firstAudioAt - state.speechEndedAt) : null;
+              setStatus(`Готов к следующей реплике · first ${firstMs ?? "—"} · total ${totalMs ?? "—"} мс`);
+            }
           }
           state.assistantTranscript = "";
+          state.assistantItems = null;
+          state.assistantResponseId = null;
         }
         if (data.type === "error") console.info("vik_realtime_error", { code: data.error?.code || "unknown" });
       });

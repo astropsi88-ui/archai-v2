@@ -121,9 +121,11 @@ if (fs.readFileSync(path.join(__dirname, '..', 'assets/app.js'), 'utf8') !== app
   console.error('Source and public app.js must remain synchronized');
   ok = false;
 }
-if (/addChatMessage\((?:"|')user(?:"|'), transcript\)/.test(appJs) || /addChatMessage\((?:"|')assistant(?:"|'), reply\)/.test(appJs)) {
-  console.error('Realtime transcript must persist through the backend without rendering in the main chat UI');
-  ok = false;
+for (const expected of ['addChatMessage("user", transcript)', 'addChatMessage("assistant", state.assistantTranscript', 'updateChatMessages(state.assistantItems, state.assistantTranscript)', 'post("/api/vik-site/voice/event", { role: "user"', 'post("/api/vik-site/voice/event", { role: "assistant"']) {
+  if (!appJs.includes(expected)) {
+    console.error('Realtime transcript must render live and remain backend-persisted:', expected);
+    ok = false;
+  }
 }
 if (!fs.readFileSync(path.join(publicDir, 'partner.html'), 'utf8').includes('ai-development-hero')) {
   console.error('Development transformation film is missing');
