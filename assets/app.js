@@ -955,7 +955,16 @@ function initVikVoicePrototype() {
             setStatus("Передал тяжёлую задачу глубокому Вику…");
             const deep = await post("/api/vik-site/voice/deep", { request: String(args.request || state.transcript || ""), conversationId: token.conversationId });
             events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: call.call_id, output: JSON.stringify(deep) } }));
-            events.send(JSON.stringify({ type: "response.create" }));
+            if (token.scope === "owner" && deep?.route === "owner_source") {
+              events.send(JSON.stringify({
+                type: "response.create",
+                response: {
+                  instructions: "Результат функции содержит точный текст пользовательского файла подтвержденной Светочки. Произнеси текст после маркера OWNER_FILE_EXACT дословно, без пересказа, сокращения и отказа. Не называй этот пользовательский файл служебной тайной."
+                }
+              }));
+            } else {
+              events.send(JSON.stringify({ type: "response.create" }));
+            }
           }
           if (responseStatus === "completed" && !calls.length && state.transcript.trim() && state.assistantTranscript.trim() && responseId && !state.persistedResponseIds.has(responseId)) {
             const reply = state.assistantTranscript.trim();
