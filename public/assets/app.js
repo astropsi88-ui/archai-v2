@@ -758,7 +758,7 @@ function initVikVoicePrototype() {
       source.addEventListener("ended", () => state.scheduled.delete(source), { once: true });
       if (!state.firstAudioAt && state.speechEndedAt) {
         state.firstAudioAt = performance.now();
-        setStatus(`Вик отвечает · ElevenLabs Marko · ${Math.round(state.firstAudioAt - state.speechEndedAt)} мс`);
+        setStatus(`Вик отвечает · ElevenLabs Vladimir · ${Math.round(state.firstAudioAt - state.speechEndedAt)} мс`);
       }
     };
 
@@ -771,7 +771,7 @@ function initVikVoicePrototype() {
     ws.addEventListener("message", (event) => {
       let data;
       try { data = JSON.parse(event.data); } catch { return; }
-      if (data.type === "conversation_initiation_metadata") setStatus("ElevenLabs Marko подключён · говори свободно");
+      if (data.type === "conversation_initiation_metadata") setStatus("ElevenLabs Vladimir подключён · говори свободно");
       if (data.type === "ping") ws.send(JSON.stringify({ type: "pong", event_id: data.ping_event?.event_id }));
       if (data.type === "vad_score" && Number(data.vad_score_event?.vad_score || 0) > 0.75) {
         stopPlayback();
@@ -806,7 +806,7 @@ function initVikVoicePrototype() {
         if (state.assistantItems && state.assistantText) updateChatMessages(state.assistantItems, state.assistantText);
         state.assistantItems = null;
         state.assistantText = "";
-        setStatus("Готов к следующей реплике · ElevenLabs Marko");
+        setStatus("Готов к следующей реплике · ElevenLabs Vladimir");
       }
       if (data.type === "error") console.info("vik_elevenlabs_error", { code: data.error?.code || data.error_event?.code || "unknown" });
     });
@@ -826,7 +826,7 @@ function initVikVoicePrototype() {
 
     active = state;
     button.classList.add("is-listening");
-    setStatus("Живой Вик подключён · ElevenLabs · Marko · говори свободно");
+    setStatus("Живой Вик подключён · ElevenLabs · Vladimir · говори свободно");
   };
 
   button.addEventListener("click", async () => {
