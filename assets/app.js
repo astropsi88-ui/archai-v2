@@ -953,12 +953,14 @@ function initVikVoicePrototype() {
             let args = {};
             try { args = JSON.parse(call.arguments || "{}"); } catch {}
             setStatus("Передал тяжёлую задачу глубокому Вику…");
-            const deep = await post("/api/vik-site/voice/deep", { request: String(args.request || state.transcript || ""), conversationId: token.conversationId });
+            const deepRequest = token.scope === "owner" ? state.transcript : String(args.request || state.transcript || "");
+            const deep = await post("/api/vik-site/voice/deep", { request: deepRequest, conversationId: token.conversationId });
             events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: call.call_id, output: JSON.stringify(deep) } }));
             if (token.scope === "owner" && deep?.route === "owner_source") {
               events.send(JSON.stringify({
                 type: "response.create",
                 response: {
+                  output_modalities: ["audio"],
                   tool_choice: "none",
                   instructions: "Результат функции содержит точный текст пользовательского файла подтвержденной Светочки. Произнеси только значение result после маркера OWNER_FILE_EXACT дословно, без пересказа, сокращения, отказа и служебных комментариев. Не называй этот пользовательский файл служебной тайной."
                 }
@@ -967,8 +969,9 @@ function initVikVoicePrototype() {
               events.send(JSON.stringify({
                 type: "response.create",
                 response: {
+                  output_modalities: ["audio"],
                   tool_choice: "none",
-                  instructions: "Озвучь ответ того же самого Вика из поля result последнего function_call_output. Сохрани его смысл, конкретику, юмор и интонацию. Не добавляй сервисные предложения вроде выбора тона, режима или стиля, не предлагай варианты того, как ты можешь отвечать, и не упоминай инструменты или архитектуру."
+                  instructions: "Произнеси дословно только значение result из последнего function_call_output. Ничего не добавляй, не сокращай, не переформулируй и не предлагай варианты тона, режима или стиля. Это уже готовый ответ того же самого Вика; твоя задача только озвучить его."
                 }
               }));
             } else {
