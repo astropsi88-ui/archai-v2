@@ -137,9 +137,9 @@ if (fs.readFileSync(path.join(__dirname, '..', 'assets/app.js'), 'utf8') !== app
   console.error('Source and public app.js must remain synchronized');
   ok = false;
 }
-for (const expected of ['addChatMessage("user", transcript)', 'addChatMessage("assistant", state.assistantTranscript', 'updateChatMessages(state.assistantItems, state.assistantTranscript)', 'post("/api/vik-site/voice/event", { role: "user"', 'post("/api/vik-site/voice/event", { role: "assistant"']) {
+for (const expected of ['addChatMessage("user", transcript)', 'addChatMessage("assistant", state.assistantTranscript', 'updateChatMessages(state.assistantItems, state.assistantTranscript)', 'vikVoiceCompletedTurnOutboxV1', 'persistCompletedTurn({ type: "completed_turn", status: "completed"', 'responseStatus === "completed"', 'pendingClientTurnId']) {
   if (!appJs.includes(expected)) {
-    console.error('Realtime transcript must render live and remain backend-persisted:', expected);
+    console.error('Realtime transcript must render live and completed turns must remain durably queued:', expected);
     ok = false;
   }
 }

@@ -646,9 +646,46 @@ function initVikVoicePrototype() {
   const post = async (path, body) => {
     const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: prototypeHeaders, body: JSON.stringify(body) });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || "voice_request_failed");
+    if (!response.ok) {
+      const error = new Error(data.error || "voice_request_failed");
+      error.status = response.status;
+      throw error;
+    }
     return data;
   };
+  const completedTurnOutboxKey = "vikVoiceCompletedTurnOutboxV1";
+  const readCompletedTurnOutbox = () => {
+    try {
+      const value = JSON.parse(localStorage.getItem(completedTurnOutboxKey) || "[]");
+      return Array.isArray(value) ? value.slice(-20) : [];
+    } catch { return []; }
+  };
+  const writeCompletedTurnOutbox = (items) => localStorage.setItem(completedTurnOutboxKey, JSON.stringify(items.slice(-20)));
+  let completedTurnFlushRunning = false;
+  const flushCompletedTurnOutbox = async () => {
+    if (completedTurnFlushRunning) return;
+    completedTurnFlushRunning = true;
+    try {
+      const pending = readCompletedTurnOutbox();
+      const passSize = pending.length;
+      for (let index = 0; index < passSize && pending.length; index += 1) {
+        const item = pending.shift();
+        try {
+          await post("/api/vik-site/voice/event", item);
+        } catch (error) {
+          if (!(error.status >= 400 && error.status < 500)) pending.push(item);
+        }
+        writeCompletedTurnOutbox(pending);
+      }
+    } catch {} finally { completedTurnFlushRunning = false; }
+  };
+  const persistCompletedTurn = async (payload) => {
+    const pending = readCompletedTurnOutbox();
+    if (!pending.some((item) => item.turnId === payload.turnId)) pending.push(payload);
+    writeCompletedTurnOutbox(pending);
+    await flushCompletedTurnOutbox();
+  };
+  void flushCompletedTurnOutbox();
 
   const closeSession = () => {
     if (!active) return;
@@ -858,7 +895,7 @@ function initVikVoicePrototype() {
       pc.addEventListener("track", (event) => { remoteAudio.srcObject = event.streams[0]; });
       stream.getTracks().forEach((track) => pc.addTrack(track, stream));
       const events = pc.createDataChannel("oai-events");
-      const state = { pc, stream, events, cursor: token.eventCursor || "0", pollTimer: 0, speechEndedAt: null, firstAudioAt: null, responseStartedAt: null, transcript: "", assistantTranscript: "", assistantItems: null, assistantResponseId: null, renderedInputItems: new Set(), persistedResponseIds: new Set() };
+      const state = { pc, stream, events, cursor: token.eventCursor || "0", pollTimer: 0, speechEndedAt: null, firstAudioAt: null, responseStartedAt: null, transcript: "", pendingUserEventId: "", pendingClientTurnId: "", assistantTranscript: "", assistantItems: null, assistantResponseId: null, renderedInputItems: new Set(), persistedResponseIds: new Set() };
 
       remoteAudio.addEventListener("playing", () => {
         if (!state.firstAudioAt && state.speechEndedAt) {
@@ -886,9 +923,10 @@ function initVikVoicePrototype() {
           if (transcript && (!itemId || !state.renderedInputItems.has(itemId))) {
             if (itemId) state.renderedInputItems.add(itemId);
             state.transcript = transcript;
+            state.pendingUserEventId = itemId;
+            if (!state.pendingClientTurnId) state.pendingClientTurnId = crypto.randomUUID();
             setChatActive();
             addChatMessage("user", transcript);
-            await post("/api/vik-site/voice/event", { role: "user", content: transcript, conversationId: token.conversationId }).catch(() => {});
           }
         }
         if (data.type === "response.output_audio_transcript.delta") {
@@ -909,6 +947,7 @@ function initVikVoicePrototype() {
         }
         if (data.type === "response.done") {
           const responseId = String(data.response?.id || state.assistantResponseId || "");
+          const responseStatus = String(data.response?.status || "");
           const calls = (data.response?.output || []).filter((item) => item.type === "function_call" && item.name === "deep_vik");
           for (const call of calls) {
             let args = {};
@@ -918,11 +957,11 @@ function initVikVoicePrototype() {
             events.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: call.call_id, output: JSON.stringify(deep) } }));
             events.send(JSON.stringify({ type: "response.create" }));
           }
-          if (state.assistantTranscript.trim() && (!responseId || !state.persistedResponseIds.has(responseId))) {
+          if (responseStatus === "completed" && !calls.length && state.transcript.trim() && state.assistantTranscript.trim() && responseId && !state.persistedResponseIds.has(responseId)) {
             const reply = state.assistantTranscript.trim();
-            if (responseId) state.persistedResponseIds.add(responseId);
+            state.persistedResponseIds.add(responseId);
             if (state.assistantItems) updateChatMessages(state.assistantItems, reply);
-            await post("/api/vik-site/voice/event", { role: "assistant", content: reply, conversationId: token.conversationId }).catch(() => {});
+            await persistCompletedTurn({ type: "completed_turn", status: "completed", turnId: state.pendingClientTurnId || crypto.randomUUID(), userEventId: state.pendingUserEventId, responseId, userContent: state.transcript.trim(), assistantContent: reply, conversationId: token.conversationId });
             if (!calls.length) {
               const totalMs = state.speechEndedAt ? Math.round(performance.now() - state.speechEndedAt) : null;
               const firstMs = state.firstAudioAt && state.speechEndedAt ? Math.round(state.firstAudioAt - state.speechEndedAt) : null;
@@ -932,6 +971,11 @@ function initVikVoicePrototype() {
           state.assistantTranscript = "";
           state.assistantItems = null;
           state.assistantResponseId = null;
+          if (responseStatus === "completed" && !calls.length) {
+            state.transcript = "";
+            state.pendingUserEventId = "";
+            state.pendingClientTurnId = "";
+          }
         }
         if (data.type === "error") console.info("vik_realtime_error", { code: data.error?.code || "unknown" });
       });
