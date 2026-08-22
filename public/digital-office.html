@@ -17,6 +17,16 @@
     />
     <link rel="stylesheet" href="assets/styles.css?v=20260819-vik-play-1" />
     <link rel="stylesheet" href="assets/business.css?v=20260819-vik-play-1" />
+      <style>
+      .office-live-demo-section{padding:18px 0 72px}
+      .office-live-demo-copy{display:flex;align-items:end;justify-content:space-between;gap:28px;margin:0 0 22px}
+      .office-live-demo-copy span{display:block;margin-bottom:9px;color:#56d9ff;font:700 12px/1.2 Inter,sans-serif;letter-spacing:.13em}
+      .office-live-demo-copy h2{margin:0 0 8px;font:700 clamp(28px,4vw,48px)/1.05 Onest,sans-serif;color:#fff}
+      .office-live-demo-copy p{max-width:760px;margin:0;color:rgba(235,244,255,.72);font:400 16px/1.55 Inter,sans-serif}
+      .office-live-demo-shell{overflow:hidden;border:1px solid rgba(104,221,255,.23);border-radius:28px;background:#06101f;box-shadow:0 32px 90px rgba(0,0,0,.44)}
+      .office-live-demo-shell iframe{display:block;width:100%;height:min(940px,88vh);min-height:720px;border:0;background:#06101f}
+      @media(max-width:760px){.office-live-demo-copy{align-items:flex-start;flex-direction:column}.office-live-demo-shell{border-radius:20px}.office-live-demo-shell iframe{height:780px;min-height:780px}}
+    </style>
   </head>
   <body class="business-page office-page">
     <a class="skip-link" href="#main">К содержанию</a>
@@ -49,35 +59,18 @@
           <p class="lede">Все AI-сотрудники и их работа — в одном интерфейсе.</p>
         </div>
       </section>
-      <section class="office-demo-section">
+      <section class="office-demo-section office-live-demo-section" data-office-live-preview>
         <div class="container">
-          <div class="office-window office-app" data-office-demo aria-label="Интерактивная демонстрация цифрового офиса">
-            <div class="office-top"><i></i><i></i><i></i><span>office.archai · Рабочее пространство</span><b>● Онлайн</b></div>
-            <div class="office-tabs" role="tablist" aria-label="AI-сотрудники">
-              <button role="tab" aria-selected="true" data-office-role="administrator">AI-администратор</button>
-              <button role="tab" aria-selected="false" data-office-role="seller">AI-продавец</button>
-              <button role="tab" aria-selected="false" data-office-role="marketer">AI-маркетолог</button>
-              <button role="tab" aria-selected="false" data-office-role="analyst">AI-аналитик</button>
+          <div class="office-live-demo-copy">
+            <div>
+              <span>ИНТЕРАКТИВНАЯ ДЕМОНСТРАЦИЯ</span>
+              <h2>Зайдите внутрь цифрового офиса</h2>
+              <p>Переключайте сотрудников, смотрите общий разговор, задачи, аналитику и голосовые возможности.</p>
             </div>
-            <div class="office-dashboard">
-              <aside class="office-rail">
-                <strong data-office-title>AI-администратор</strong>
-                <span><i class="live-dot"></i> Работает сейчас</span>
-                <nav aria-label="Разделы офиса"><b>Обзор</b><span>Задачи</span><span>История</span><span>Интеграции</span></nav>
-              </aside>
-              <div class="office-main">
-                <div class="office-main-head"><div><small>Работа сегодня</small><strong data-office-heading>Обращения и записи</strong></div><time>18 августа</time></div>
-                <div class="metric-row" data-office-metrics></div>
-                <div class="work-list" data-office-feed></div>
-              </div>
-              <aside class="office-status-panel">
-                <small>Статус</small><div class="office-ring"><b data-office-progress>78%</b></div>
-                <strong>Задачи по плану</strong>
-                <div class="mini-chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                <button type="button">Открыть отчёт</button>
-              </aside>
-            </div>
-            <span class="demo-cursor" aria-hidden="true"></span>
+            <a class="header-cta" href="office-demo.html">Открыть интерактивный Office</a>
+          </div>
+          <div class="office-live-demo-shell">
+            <iframe src="office-demo.html" title="Интерактивная демонстрация ARCH_AI Office" loading="eager"></iframe>
           </div>
           <p class="device-note">Открывается в браузере — на компьютере и телефоне.</p>
         </div>
@@ -104,6 +97,6 @@
         <hr class="footer-rule"><p class="footer-copyright">© 2026 ArchAI. Все права защищены.</p>
       </div>
     </footer>
-    <script src="assets/app.js?v=20260820-public-voice-1"></script>
+    <script src="assets/app.js?v=20260822-idle-recovery-3"></script>
   </body>
 </html>

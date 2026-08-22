@@ -10,6 +10,7 @@ const requiredPublicFiles = [
   'project.html',
   'ai-sites.html',
   'digital-office.html',
+  'office-demo.html',
   'pricing.html',
   'privacy.html',
   'terms.html',
@@ -18,6 +19,9 @@ const requiredPublicFiles = [
   'assets/app.js',
   'assets/business.css',
   'assets/pricing-data.js',
+  'assets/office-demo.css',
+  'assets/office-demo.js',
+  'assets/images/adam-room.png',
 ];
 const forbiddenPublicEntries = [
   'ArchAI_Codex_CLEAN_2026-07-10 (1).md',
@@ -91,9 +95,23 @@ for (const expected of [
   }
 }
 const office = fs.readFileSync(path.join(publicDir, 'digital-office.html'), 'utf8');
-for (const expected of ['AI-администратор', 'AI-продавец', 'AI-маркетолог', 'AI-аналитик', 'data-office-demo', 'Открывается в браузере — на компьютере и телефоне.']) {
+for (const expected of ['office-demo.html', 'data-office-live-preview', 'Открыть интерактивный Office', 'Открывается в браузере — на компьютере и телефоне.']) {
   if (!office.includes(expected)) {
-    console.error('digital-office.html missing interactive demo element:', expected);
+    console.error('digital-office.html missing live Office demo element:', expected);
+    ok = false;
+  }
+}
+const officeDemo = fs.readFileSync(path.join(publicDir, 'office-demo.html'), 'utf8');
+const officeDemoJs = fs.readFileSync(path.join(publicDir, 'assets/office-demo.js'), 'utf8');
+for (const expected of ['Вся команда', 'Голосовой режим', 'Прослушать', 'assets/images/adam-room.png', 'assets/office-demo.css', 'assets/office-demo.js']) {
+  if (!officeDemo.includes(expected) && !officeDemoJs.includes(expected)) {
+    console.error('office-demo.html missing interactive capability:', expected);
+    ok = false;
+  }
+}
+for (const forbidden of ['getUserMedia', 'MediaRecorder', 'speechSynthesis', 'new Audio(', 'fetch(', 'XMLHttpRequest', 'WebSocket']) {
+  if (officeDemoJs.includes(forbidden)) {
+    console.error('Office public demo must remain side-effect free:', forbidden);
     ok = false;
   }
 }
@@ -164,7 +182,7 @@ for (const entry of forbiddenPublicEntries) {
   }
 }
 
-for (const file of requiredPublicFiles.filter((file) => file.endsWith('.html'))) {
+for (const file of requiredPublicFiles.filter((file) => file.endsWith('.html') && file !== 'office-demo.html')) {
   const html = fs.readFileSync(path.join(publicDir, file), 'utf8');
   if (!html.includes('assets/styles.css')) {
     console.error(file, 'does not reference assets/styles.css');

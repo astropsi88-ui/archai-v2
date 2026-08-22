@@ -1,0 +1,19 @@
+{
+  "name": "Вик — ArchAI",
+  "short_name": "Вик",
+  "description": "Прямой вход в разговор с Виком на ArchAI.",
+  "lang": "ru",
+  "start_url": "/#top",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#071020",
+  "theme_color": "#071020",
+  "icons": [
+    {
+      "src": "/assets/vik-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

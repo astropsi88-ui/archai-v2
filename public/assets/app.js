@@ -731,8 +731,8 @@ function initVikVoicePrototype() {
     return output;
   };
 
-  const startElevenLabsVoice = async (stream, suppliedToken = null) => {
-    const token = suppliedToken || await post("/api/vik-site/voice/session", { mode: "elevenlabs_speech_engine" });
+  const startElevenLabsVoice = async (stream, suppliedToken = <redacted> => {
+    const token = <redacted> || await post("/api/vik-site/voice/session", { mode: "elevenlabs_speech_engine" });
     const voiceLabel = typeof token.voice === "string" && token.voice ? token.voice : "Marcel - South African";
     if (typeof token.signedUrl !== "string" || !token.signedUrl.startsWith("wss://")) throw new Error("elevenlabs_unavailable");
     if (typeof token.conversationId === "string") {
@@ -767,6 +767,11 @@ function initVikVoicePrototype() {
       firstAudioAt: null,
       assistantItems: null,
       assistantText: "",
+      suppressAgentAudio: false,
+      suppressRecoveryAudio: false,
+      heardVoiceSinceAgent: false,
+      waitingForInterruptedTranscript: false,
+      waitingForInterruptedReply: false,
     };
 
     const stopPlayback = () => {
@@ -776,7 +781,15 @@ function initVikVoicePrototype() {
     };
     state.stopPlayback = stopPlayback;
 
+    const beginBargeIn = () => {
+      stopPlayback();
+      state.suppressAgentAudio = true;
+      if (!state.waitingForInterruptedReply) state.waitingForInterruptedTranscript = true;
+    };
+
     const playPcm16 = (base64) => {
+      if (state.suppressAgentAudio) return;
+      if (outputContext.state !== "running") void outputContext.resume().catch(() => {});
       const binary = atob(base64);
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
@@ -810,15 +823,32 @@ function initVikVoicePrototype() {
       try { data = JSON.parse(event.data); } catch { return; }
       if (data.type === "conversation_initiation_metadata") setStatus(`ElevenLabs ${voiceLabel} подключён · говори свободно`);
       if (data.type === "ping") ws.send(JSON.stringify({ type: "pong", event_id: data.ping_event?.event_id }));
-      if (data.type === "vad_score" && Number(data.vad_score_event?.vad_score || 0) > 0.75) {
-        stopPlayback();
+      if (data.type === "interruption") {
+        state.heardVoiceSinceAgent = true;
+        beginBargeIn();
         state.speechEndedAt = null;
         state.firstAudioAt = null;
-        setStatus("Слышу тебя…");
+        setStatus("Остановился · слушаю тебя");
+      }
+      if (data.type === "vad_score") {
+        const vadScore = Number(data.vad_score_event?.vad_score || 0);
+        if (vadScore > 0.12) state.heardVoiceSinceAgent = true;
+        if (vadScore > 0.35 && state.scheduled.size) {
+          beginBargeIn();
+          state.speechEndedAt = null;
+          state.firstAudioAt = null;
+          setStatus("Слышу тебя…");
+        }
       }
       if (data.type === "user_transcript") {
         const transcript = String(data.user_transcription_event?.user_transcript || "").trim();
         if (transcript) {
+          state.heardVoiceSinceAgent = true;
+          if (state.scheduled.size && !state.suppressAgentAudio) beginBargeIn();
+          if (state.waitingForInterruptedTranscript || state.suppressAgentAudio) {
+            state.waitingForInterruptedTranscript = false;
+            state.waitingForInterruptedReply = true;
+          }
           state.speechEndedAt = performance.now();
           state.firstAudioAt = null;
           setChatActive();
@@ -829,6 +859,16 @@ function initVikVoicePrototype() {
       if (data.type === "agent_response") {
         const reply = String(data.agent_response_event?.agent_response || "").trim();
         if (reply) {
+          const idleRecovery = reply === "Я не расслышал. Повторите, пожалуйста." && !state.heardVoiceSinceAgent;
+          if (idleRecovery) {
+            state.suppressRecoveryAudio = true;
+            state.suppressAgentAudio = true;
+            return;
+          }
+          if (state.waitingForInterruptedReply) {
+            state.suppressAgentAudio = false;
+            state.waitingForInterruptedReply = false;
+          }
           state.assistantText = reply;
           setChatActive();
           if (!state.assistantItems) state.assistantItems = addChatMessage("assistant", reply, { pending: true });
@@ -840,9 +880,19 @@ function initVikVoicePrototype() {
         if (audio) playPcm16(audio);
       }
       if (data.type === "agent_response_end" || data.type === "agent_response_complete") {
+        if (state.suppressRecoveryAudio) {
+          state.suppressRecoveryAudio = false;
+          state.suppressAgentAudio = false;
+          state.assistantItems = null;
+          state.assistantText = "";
+          state.heardVoiceSinceAgent = false;
+          setStatus(`Готов к следующей реплике · ElevenLabs ${voiceLabel}`);
+          return;
+        }
         if (state.assistantItems && state.assistantText) updateChatMessages(state.assistantItems, state.assistantText);
         state.assistantItems = null;
         state.assistantText = "";
+        state.heardVoiceSinceAgent = false;
         setStatus(`Готов к следующей реплике · ElevenLabs ${voiceLabel}`);
       }
       if (data.type === "error") console.info("vik_elevenlabs_error", { code: data.error?.code || data.error_event?.code || "unknown" });
@@ -878,15 +928,15 @@ function initVikVoicePrototype() {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
-      let preferredToken = null;
+      let preferredToken = <redacted>;
       if (usePreferredVoiceEngine) {
-        preferredToken = await post("/api/vik-site/voice/session", { mode: "preferred" });
+        preferredToken = <redacted> post("/api/vik-site/voice/session", { mode: "preferred" });
         if (preferredToken.mode === "elevenlabs_speech_engine") {
           await startElevenLabsVoice(stream, preferredToken);
           return;
         }
       }
-      const token = preferredToken || await post("/api/vik-site/voice/session", { mode: "speech_to_speech" });
+      const token = <redacted> || await post("/api/vik-site/voice/session", { mode: "speech_to_speech" });
       if (typeof token.clientSecret !== "string") throw new Error("realtime_unavailable");
       if (typeof token.conversationId === "string") {
         sessionStorage.setItem(vikConversationStorageKey, token.conversationId);
@@ -1008,7 +1058,7 @@ function initVikVoicePrototype() {
       await pc.setLocalDescription(offer);
       const sdpResponse = await fetch("https://api.openai.com/v1/realtime/calls", {
         method: "POST",
-        headers: { Authorization: `Bearer ${token.clientSecret}`, "Content-Type": "application/sdp" },
+        headers: { Authorization: <redacted> ${token.clientSecret}`, "Content-Type": "application/sdp" },
         body: offer.sdp,
       });
       if (!sdpResponse.ok) throw new Error("realtime_unavailable");
