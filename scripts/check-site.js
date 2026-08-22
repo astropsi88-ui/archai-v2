@@ -56,6 +56,20 @@ const home = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
 const productPages = businessPages.slice(1).map((file) => fs.readFileSync(path.join(publicDir, file), 'utf8')).join('\n');
 const businessCss = fs.readFileSync(path.join(publicDir, 'assets/business.css'), 'utf8');
 const appJs = fs.readFileSync(path.join(publicDir, 'assets/app.js'), 'utf8');
+try {
+  new Function(appJs);
+} catch (error) {
+  console.error('app.js contains invalid JavaScript:', error.message);
+  ok = false;
+}
+if (appJs.includes('<' + 'redacted>')) {
+  console.error('app.js contains a redaction placeholder');
+  ok = false;
+}
+if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20260822-runtime-repair-1')) {
+  console.error('Homepage missing restored idle caret or repaired app cache version');
+  ok = false;
+}
 const footerRequirements = [
   'Обсудить с Виком',
   'Написать Светлане Итаф',
