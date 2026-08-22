@@ -66,7 +66,7 @@ if (appJs.includes('<' + 'redacted>')) {
   console.error('app.js contains a redaction placeholder');
   ok = false;
 }
-if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20260822-runtime-repair-1')) {
+if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20260822-runtime-repair-2')) {
   console.error('Homepage missing restored idle caret or repaired app cache version');
   ok = false;
 }
