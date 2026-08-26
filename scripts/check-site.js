@@ -66,7 +66,7 @@ if (appJs.includes('<' + 'redacted>')) {
   console.error('app.js contains a redaction placeholder');
   ok = false;
 }
-if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20260822-runtime-repair-2')) {
+if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20260826-vik-greeting-1')) {
   console.error('Homepage missing restored idle caret or repaired app cache version');
   ok = false;
 }
@@ -137,7 +137,7 @@ if (!home.includes('aria-label="Поговорить с Виком голосо�
   console.error('The public Vik voice card must be enabled in normal homepage HTML');
   ok = false;
 }
-for (const expected of ['"X-Vik-Voice": "1"', '/api/vik-site/voice/session', '/api/vik-site/voice/deep', 'mode: "speech_to_speech"', 'new RTCPeerConnection()', 'response.output_audio_transcript.delta', 'function_call_output', '/api/vik-site/voice/events', 'sessionStorage.setItem(vikConversationStorageKey, token.conversationId)']) {
+for (const expected of ['"X-Vik-Voice": "1"', '/api/vik-site/voice/session', '/api/vik-site/voice/greeting', 'ensureVikGreeting("voice")', 'ensureVikGreeting("text")', 'openingStream?.getTracks()', '/api/vik-site/voice/deep', 'mode: "speech_to_speech"', 'new RTCPeerConnection()', 'response.output_audio_transcript.delta', 'function_call_output', '/api/vik-site/voice/events', 'sessionStorage.setItem(vikConversationStorageKey, token.conversationId)']) {
   if (!appJs.includes(expected)) {
     console.error('app.js missing public ONE VIK voice production lock:', expected);
     ok = false;

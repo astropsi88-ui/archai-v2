@@ -91,6 +91,32 @@ function setChatDisabled(disabled) {
     if (button) button.disabled = disabled;
   });
 }
+let vikGreetingChecked = false;
+async function ensureVikGreeting(mode) {
+  if (vikGreetingChecked) return null;
+  const response = await fetch("/api/vik-site/voice/greeting", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-Vik-Voice": "1",
+    },
+    body: JSON.stringify({ mode }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "greeting_request_failed");
+  vikGreetingChecked = true;
+  if (typeof data.conversationId === "string") {
+    sessionStorage.setItem(vikConversationStorageKey, data.conversationId);
+    setTelegramContinueVisible(true);
+  }
+  if (data.created && data.message?.role === "assistant" && typeof data.message.content === "string") {
+    setChatActive(true);
+    addChatMessage("assistant", data.message.content);
+  }
+  return data;
+}
 async function restoreVikHistory() {
   const controller = new AbortController(),
     timer = setTimeout(() => controller.abort(), 5000);
@@ -105,6 +131,7 @@ async function restoreVikHistory() {
     const data = await response.json().catch(() => null);
     if (!data || !Array.isArray(data.messages)) return;
     if (typeof data.conversationId !== "string") {
+      vikGreetingChecked = false;
       sessionStorage.removeItem(vikConversationStorageKey);
       setChatActive(false);
       setTelegramContinueVisible(false);
@@ -119,6 +146,7 @@ async function restoreVikHistory() {
       )
         addChatMessage(item.role, item.content);
     });
+    vikGreetingChecked = data.messages.length > 0;
     setChatActive(true);
     setTelegramContinueVisible(true);
   } catch {
@@ -158,6 +186,7 @@ function initVikSiteForm(form) {
       return;
     }
     await vikHistoryReady;
+    await ensureVikGreeting("text").catch(() => null);
     setChatActive();
     const sensitiveCandidate =
       /(?:светочк|светлана\s+итаф|владель|секретн.{0,12}фраз)/iu.test(
@@ -640,6 +669,7 @@ function initVikVoicePrototype() {
     setVikStatus(text);
   };
   let active = null;
+  let openingStream = null;
   const usePreferredVoiceEngine = true;
 
   const post = async (path, body) => {
@@ -651,6 +681,27 @@ function initVikVoicePrototype() {
       throw error;
     }
     return data;
+  };
+  const playGreetingAudio = async (audio) => {
+    if (!audio || audio.mimeType !== "audio/mpeg" || typeof audio.base64 !== "string" || !audio.base64) return;
+    const binary = atob(audio.base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+    const objectUrl = URL.createObjectURL(new Blob([bytes], { type: audio.mimeType }));
+    const player = new Audio(objectUrl);
+    try {
+      setStatus("Вик начинает разговор…");
+      await player.play();
+      await new Promise((resolve, reject) => {
+        player.addEventListener("ended", resolve, { once: true });
+        player.addEventListener("error", () => reject(new Error("greeting_audio_failed")), { once: true });
+      });
+    } finally {
+      player.pause();
+      player.removeAttribute("src");
+      player.load();
+      URL.revokeObjectURL(objectUrl);
+    }
   };
   const completedTurnOutboxKey = "vikVoiceCompletedTurnOutboxV1";
   const readCompletedTurnOutbox = () => {
@@ -925,14 +976,20 @@ function initVikVoicePrototype() {
     }
     try {
       setStatus("Разрешите микрофон — подключаю живой голос Вика");
-      const stream = await navigator.mediaDevices.getUserMedia({
+      await vikHistoryReady;
+      openingStream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
+      const stream = openingStream;
+      const greeting = await ensureVikGreeting("voice");
+      if (greeting?.created && !greeting.audio) throw new Error("greeting_tts_unavailable");
+      if (greeting?.audio) await playGreetingAudio(greeting.audio);
       let preferredToken = null;
       if (usePreferredVoiceEngine) {
         preferredToken = await post("/api/vik-site/voice/session", { mode: "preferred" });
         if (preferredToken.mode === "elevenlabs_speech_engine") {
           await startElevenLabsVoice(stream, preferredToken);
+          openingStream = null;
           return;
         }
       }
@@ -1074,9 +1131,12 @@ function initVikVoicePrototype() {
         }
       }, 2000);
       active = state;
+      openingStream = null;
       button.classList.add("is-listening");
       setStatus(`Живой Вик подключён · ${token.model} · ${token.voice} · говори свободно`);
     } catch (error) {
+      openingStream?.getTracks().forEach((track) => track.stop());
+      openingStream = null;
       const micDenied = error?.name === "NotAllowedError" || error?.name === "SecurityError";
       const text = micDenied
         ? "Микрофон не разрешён · включите доступ и попробуйте снова"
