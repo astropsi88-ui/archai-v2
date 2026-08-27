@@ -8,7 +8,7 @@
     <title>ARCH_AI Office — интерактивная демонстрация</title>
     <link rel="canonical" href="https://iarch.ai/office-demo.html" />
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="assets/office-demo.css?v=20260827-crm-demo-1" />
+    <link rel="stylesheet" href="assets/office-demo.css?v=20260827-crm-label-tabs-2" />
   </head>
   <body>
     <a class="skip-link" href="#office-content">К рабочей области</a>
@@ -94,12 +94,12 @@
 
           <section class="view-panel" id="panel-work" role="tabpanel" aria-labelledby="tab-work" data-panel="work" hidden>
             <div class="section-heading compact"><div><span class="eyebrow">РАБОЧИЙ СТОЛ</span><h1>Дела, клиенты и документы</h1><p>Безопасная демонстрация того, как общий Office связывает работу команды.</p></div><button class="primary-action" type="button" data-demo-action>+ Новая задача</button></div>
-            <div class="work-subtabs" role="tablist" aria-label="Дела, клиенты и документы">
-              <button type="button" class="is-active" role="tab" aria-selected="true" data-work-mode="tasks">Дела <b>4</b></button>
-              <button type="button" role="tab" aria-selected="false" data-work-mode="clients">Клиенты <b>3 демо</b></button>
-              <button type="button" role="tab" aria-selected="false" data-work-mode="documents">Документы <b>5</b></button>
+            <div class="work-subtabs" role="tablist" aria-label="Дела, клиенты CRM и документы">
+              <button id="work-tab-tasks" type="button" class="is-active" role="tab" aria-selected="true" aria-controls="work-panel-tasks" data-work-mode="tasks">Дела <b>4</b></button>
+              <button id="work-tab-clients" type="button" role="tab" aria-selected="false" aria-controls="work-panel-clients" data-work-mode="clients" tabindex="-1">Клиенты · CRM <b>3 демо</b></button>
+              <button id="work-tab-documents" type="button" role="tab" aria-selected="false" aria-controls="work-panel-documents" data-work-mode="documents" tabindex="-1">Документы <b>5</b></button>
             </div>
-            <div class="work-mode is-active" data-work-panel="tasks">
+            <div class="work-mode is-active" id="work-panel-tasks" role="tabpanel" aria-labelledby="work-tab-tasks" data-work-panel="tasks">
               <div class="work-board">
                 <div class="work-column"><header><span><i class="dot blue"></i>В работе</span><b>3</b></header>
                   <button class="task-card" type="button" data-task="proposal"><small>ПРОДАЖИ · СЕГОДНЯ</small><strong>Коммерческое предложение для салона</strong><span><i class="mini-avatar">В</i><i class="mini-avatar gold">П</i><em>68%</em></span></button>
@@ -115,8 +115,8 @@
               </div>
               <div class="work-preview" data-work-preview><span class="result-icon">□</span><div><small>ВЫБЕРИТЕ ЗАДАЧУ</small><strong>Результат откроется здесь</strong><p>Документ, таблица, видео или полный ход работы — в одном месте.</p></div></div>
             </div>
-            <div class="work-mode crm-demo" data-work-panel="clients" data-crm-scope="demo_synthetic" hidden>
-              <div class="crm-demo-banner" role="note"><span>ДЕМОНСТРАЦИЯ · ТОЛЬКО СИНТЕТИЧЕСКИЕ ДАННЫЕ</span><p>Это не готовая production-CRM: здесь нет реальных клиентов, писем, звонков, договоров или платежей, и никакие действия не выполняются.</p></div>
+            <div class="work-mode crm-demo" id="work-panel-clients" role="tabpanel" aria-labelledby="work-tab-clients" data-work-panel="clients" data-crm-scope="demo_synthetic" hidden>
+              <div class="crm-demo-banner" role="note"><span>CRM — РАБОТА С КЛИЕНТАМИ · ТОЛЬКО СИНТЕТИЧЕСКИЕ ДАННЫЕ</span><p>Это не готовая production-CRM: здесь нет реальных клиентов, писем, звонков, договоров или платежей, и никакие действия не выполняются.</p></div>
               <ol class="crm-funnel" aria-label="Демонстрационная воронка клиентов">
                 <li class="is-active">Новая заявка</li><li>Уточнение</li><li>КП</li><li class="is-active">Думает</li><li>Договор/оплата</li><li>В работе</li><li class="is-active">Сопровождение</li>
               </ol>
@@ -138,7 +138,7 @@
                 </article>
               </div>
             </div>
-            <div class="work-mode" data-work-panel="documents" hidden>
+            <div class="work-mode" id="work-panel-documents" role="tabpanel" aria-labelledby="work-tab-documents" data-work-panel="documents" hidden>
               <div class="document-grid" aria-label="Демонстрационные документы">
                 <button type="button" data-demo-action><span class="document-kind violet">DOC</span><small>МАРКЕТИНГ · ДЕМО</small><strong>План запуска продукта</strong><em>Маркетолог · Контент-агент</em></button>
                 <button type="button" data-demo-action><span class="document-kind blue">PDF</span><small>ЮРИДИЧЕСКОЕ · ДЕМО</small><strong>Договор на внедрение</strong><em>Юпитер · 2 замечания</em></button>
@@ -186,7 +186,7 @@
       </div>
     </main>
     <div class="toast" role="status" aria-live="polite" data-toast hidden></div>
-    <script src="assets/office-demo.js?v=20260827-crm-demo-1"></script>
+    <script src="assets/office-demo.js?v=20260827-crm-label-tabs-2"></script>
   </body>
 </html>
 
