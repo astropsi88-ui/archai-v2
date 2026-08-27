@@ -8,7 +8,7 @@
     <title>ARCH_AI Office — интерактивная демонстрация</title>
     <link rel="canonical" href="https://iarch.ai/office-demo.html" />
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="assets/office-demo.css?v=20260822-1" />
+    <link rel="stylesheet" href="assets/office-demo.css?v=20260827-crm-demo-1" />
   </head>
   <body>
     <a class="skip-link" href="#office-content">К рабочей области</a>
@@ -93,21 +93,61 @@
           </section>
 
           <section class="view-panel" id="panel-work" role="tabpanel" aria-labelledby="tab-work" data-panel="work" hidden>
-            <div class="section-heading compact"><div><span class="eyebrow">РАБОЧИЙ СТОЛ</span><h1>Задачи и результаты</h1><p>Здесь видно не болтовню агентов, а то, что они действительно сделали.</p></div><button class="primary-action" type="button" data-demo-action>+ Новая задача</button></div>
-            <div class="work-board">
-              <div class="work-column"><header><span><i class="dot blue"></i>В работе</span><b>3</b></header>
-                <button class="task-card" type="button" data-task="proposal"><small>ПРОДАЖИ · СЕГОДНЯ</small><strong>Коммерческое предложение для салона</strong><span><i class="mini-avatar">В</i><i class="mini-avatar gold">П</i><em>68%</em></span></button>
-                <button class="task-card" type="button" data-task="campaign"><small>МАРКЕТИНГ · СЕГОДНЯ</small><strong>Кампания для запуска AI-консультанта</strong><span><i class="mini-avatar violet">М</i><i class="mini-avatar pink">К</i><em>42%</em></span></button>
+            <div class="section-heading compact"><div><span class="eyebrow">РАБОЧИЙ СТОЛ</span><h1>Дела, клиенты и документы</h1><p>Безопасная демонстрация того, как общий Office связывает работу команды.</p></div><button class="primary-action" type="button" data-demo-action>+ Новая задача</button></div>
+            <div class="work-subtabs" role="tablist" aria-label="Дела, клиенты и документы">
+              <button type="button" class="is-active" role="tab" aria-selected="true" data-work-mode="tasks">Дела <b>4</b></button>
+              <button type="button" role="tab" aria-selected="false" data-work-mode="clients">Клиенты <b>3 демо</b></button>
+              <button type="button" role="tab" aria-selected="false" data-work-mode="documents">Документы <b>5</b></button>
+            </div>
+            <div class="work-mode is-active" data-work-panel="tasks">
+              <div class="work-board">
+                <div class="work-column"><header><span><i class="dot blue"></i>В работе</span><b>3</b></header>
+                  <button class="task-card" type="button" data-task="proposal"><small>ПРОДАЖИ · СЕГОДНЯ</small><strong>Коммерческое предложение для салона</strong><span><i class="mini-avatar">В</i><i class="mini-avatar gold">П</i><em>68%</em></span></button>
+                  <button class="task-card" type="button" data-task="campaign"><small>МАРКЕТИНГ · СЕГОДНЯ</small><strong>Кампания для запуска AI-консультанта</strong><span><i class="mini-avatar violet">М</i><i class="mini-avatar pink">К</i><em>42%</em></span></button>
+                </div>
+                <div class="work-column"><header><span><i class="dot amber"></i>На проверке</span><b>1</b></header>
+                  <button class="task-card highlighted" type="button" data-task="contract"><small>ДОКУМЕНТ · 14:20</small><strong>Договор на внедрение AI-сотрудника</strong><p>Юр отметил два пункта для решения Светочки.</p><span><i class="mini-avatar slate">Ю</i><em>Нужен взгляд</em></span></button>
+                </div>
+                <div class="work-column"><header><span><i class="dot green"></i>Готово</span><b>12</b></header>
+                  <button class="task-card" type="button" data-task="research"><small>АНАЛИТИКА · 12:05</small><strong>Обзор рынка AI-сотрудников</strong><span><i class="mini-avatar cyan">А</i><em>Отчёт</em></span></button>
+                  <button class="task-card" type="button" data-task="cashflow"><small>ФИНАНСЫ · ВЧЕРА</small><strong>Расчёт юнит-экономики продукта</strong><span><i class="mini-avatar green">Ф</i><em>Таблица</em></span></button>
+                </div>
               </div>
-              <div class="work-column"><header><span><i class="dot amber"></i>На проверке</span><b>1</b></header>
-                <button class="task-card highlighted" type="button" data-task="contract"><small>ДОКУМЕНТ · 14:20</small><strong>Договор на внедрение AI-сотрудника</strong><p>Юр отметил два пункта для решения Светочки.</p><span><i class="mini-avatar slate">Ю</i><em>Нужен взгляд</em></span></button>
-              </div>
-              <div class="work-column"><header><span><i class="dot green"></i>Готово</span><b>12</b></header>
-                <button class="task-card" type="button" data-task="research"><small>АНАЛИТИКА · 12:05</small><strong>Обзор рынка AI-сотрудников</strong><span><i class="mini-avatar cyan">А</i><em>Отчёт</em></span></button>
-                <button class="task-card" type="button" data-task="cashflow"><small>ФИНАНСЫ · ВЧЕРА</small><strong>Расчёт юнит-экономики продукта</strong><span><i class="mini-avatar green">Ф</i><em>Таблица</em></span></button>
+              <div class="work-preview" data-work-preview><span class="result-icon">□</span><div><small>ВЫБЕРИТЕ ЗАДАЧУ</small><strong>Результат откроется здесь</strong><p>Документ, таблица, видео или полный ход работы — в одном месте.</p></div></div>
+            </div>
+            <div class="work-mode crm-demo" data-work-panel="clients" data-crm-scope="demo_synthetic" hidden>
+              <div class="crm-demo-banner" role="note"><span>ДЕМОНСТРАЦИЯ · ТОЛЬКО СИНТЕТИЧЕСКИЕ ДАННЫЕ</span><p>Это не готовая production-CRM: здесь нет реальных клиентов, писем, звонков, договоров или платежей, и никакие действия не выполняются.</p></div>
+              <ol class="crm-funnel" aria-label="Демонстрационная воронка клиентов">
+                <li class="is-active">Новая заявка</li><li>Уточнение</li><li>КП</li><li class="is-active">Думает</li><li>Договор/оплата</li><li>В работе</li><li class="is-active">Сопровождение</li>
+              </ol>
+              <div class="crm-card-grid" aria-label="Три вымышленные карточки клиентов">
+                <article class="crm-card" data-demo-crm-card="demo-lead-001">
+                  <header><small>DEMO-001 · ВЫМЫШЛЕННАЯ</small><span>Новая заявка</span></header><h2>Нужен индивидуальный AI-сотрудник</h2>
+                  <dl><div><dt>Потребность</dt><dd>Принимать обращения, собирать документы и передавать структурированный итог человеку.</dd></div><div><dt>Последнее действие</dt><dd>Вик зафиксировал задачу и желаемый результат.</dd></div><div><dt>Следующее действие</dt><dd>Меркурий уточняет каналы, объём и материалы.</dd></div><div><dt>Срок</dt><dd>29 августа · пример</dd></div><div><dt>Ответственный</dt><dd>Меркурий · администратор</dd></div><div><dt>Документы</dt><dd>Бриф роли · черновик</dd></div></dl>
+                  <details><summary>Короткая история</summary><ol><li>Заявка создана из демонстрационного обращения.</li><li>Контактных и персональных данных нет.</li></ol></details>
+                </article>
+                <article class="crm-card" data-demo-crm-card="demo-lead-002">
+                  <header><small>DEMO-002 · ВЫМЫШЛЕННАЯ</small><span>Думает</span></header><h2>КП отправлено</h2>
+                  <dl><div><dt>Потребность</dt><dd>AI-администратор для входящих заявок на существующем сайте.</dd></div><div><dt>Последнее действие</dt><dd>Демонстрационное КП передано после проверки условий.</dd></div><div><dt>Следующее действие</dt><dd>Марс делает мягкий follow-up по согласованному сроку.</dd></div><div><dt>Срок</dt><dd>30 августа · пример</dd></div><div><dt>Ответственный</dt><dd>Марс · продавец</dd></div><div><dt>Документы</dt><dd>КП · версия DEMO-1</dd></div></dl>
+                  <details><summary>Короткая история</summary><ol><li>Потребность уточнена.</li><li>Цена не рассчитывалась по реальным данным.</li></ol></details>
+                </article>
+                <article class="crm-card" data-demo-crm-card="demo-lead-003">
+                  <header><small>DEMO-003 · ВЫМЫШЛЕННАЯ</small><span>Сопровождение</span></header><h2>Клиент на сопровождении</h2>
+                  <dl><div><dt>Потребность</dt><dd>Поддерживать работающего AI-сотрудника и улучшать сценарии по фактам.</dd></div><div><dt>Последнее действие</dt><dd>Уран собрал демонстрационный месячный итог.</dd></div><div><dt>Следующее действие</dt><dd>Подготовлено одно решение для проверки Светочкой.</dd></div><div><dt>Срок</dt><dd>2 сентября · пример</dd></div><div><dt>Ответственный</dt><dd>Уран · аналитик</dd></div><div><dt>Документы</dt><dd>Итог месяца · DEMO</dd></div></dl>
+                  <details><summary>Короткая история</summary><ol><li>Пилот условно завершён.</li><li>Все показатели и события синтетические.</li></ol></details>
+                </article>
               </div>
             </div>
-            <div class="work-preview" data-work-preview><span class="result-icon">□</span><div><small>ВЫБЕРИТЕ ЗАДАЧУ</small><strong>Результат откроется здесь</strong><p>Документ, таблица, видео или полный ход работы — в одном месте.</p></div></div>
+            <div class="work-mode" data-work-panel="documents" hidden>
+              <div class="document-grid" aria-label="Демонстрационные документы">
+                <button type="button" data-demo-action><span class="document-kind violet">DOC</span><small>МАРКЕТИНГ · ДЕМО</small><strong>План запуска продукта</strong><em>Маркетолог · Контент-агент</em></button>
+                <button type="button" data-demo-action><span class="document-kind blue">PDF</span><small>ЮРИДИЧЕСКОЕ · ДЕМО</small><strong>Договор на внедрение</strong><em>Юпитер · 2 замечания</em></button>
+                <button type="button" data-demo-action><span class="document-kind green">XLS</span><small>ФИНАНСЫ · ДЕМО</small><strong>Юнит-экономика ARCH_AI</strong><em>Сатурн</em></button>
+                <button type="button" data-demo-action><span class="document-kind cyan">PDF</span><small>АНАЛИТИКА · ДЕМО</small><strong>Обзор рынка AI-сотрудников</strong><em>Уран</em></button>
+                <button type="button" data-demo-action><span class="document-kind pink">MP4</span><small>КОНТЕНТ · ДЕМО</small><strong>Ролик о цифровом офисе</strong><em>Нептун · на проверке</em></button>
+              </div>
+              <div class="work-preview"><span class="result-icon">▤</span><div><small>ДЕМОНСТРАЦИЯ</small><strong>Документы обезличены</strong><p>Ничего не загружается и не открывает реальные данные.</p></div></div>
+            </div>
           </section>
 
           <section class="view-panel" id="panel-analytics" role="tabpanel" aria-labelledby="tab-analytics" data-panel="analytics" hidden>
@@ -146,7 +186,7 @@
       </div>
     </main>
     <div class="toast" role="status" aria-live="polite" data-toast hidden></div>
-    <script src="assets/office-demo.js?v=20260822-1"></script>
+    <script src="assets/office-demo.js?v=20260827-crm-demo-1"></script>
   </body>
 </html>
 
