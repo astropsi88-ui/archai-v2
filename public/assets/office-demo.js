@@ -62,6 +62,30 @@ $(".main-tabs").addEventListener("keydown", (event) => {
   setView(tabs[next].dataset.view, true);
 });
 
+const workTabs = $$('[data-work-mode]');
+function setWorkMode(mode, focus = false) {
+  workTabs.forEach((tab) => {
+    const active = tab.dataset.workMode === mode;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", String(active));
+    tab.tabIndex = active ? 0 : -1;
+    if (active && focus) tab.focus();
+  });
+  $$('[data-work-panel]').forEach((panel) => {
+    const active = panel.dataset.workPanel === mode;
+    panel.hidden = !active;
+    panel.classList.toggle("is-active", active);
+  });
+}
+workTabs.forEach((tab) => tab.addEventListener("click", () => setWorkMode(tab.dataset.workMode)));
+$(".work-subtabs")?.addEventListener("keydown", (event) => {
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+  event.preventDefault();
+  const current = workTabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true");
+  const next = event.key === "Home" ? 0 : event.key === "End" ? workTabs.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + workTabs.length) % workTabs.length;
+  setWorkMode(workTabs[next].dataset.workMode, true);
+});
+
 function installImageFallbacks(root = document) {
   $$("img", root).forEach((image) => {
     const replace = () => {
