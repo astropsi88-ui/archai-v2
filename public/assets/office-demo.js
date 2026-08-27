@@ -44,6 +44,7 @@ function setView(view, focus = false) {
     const active = tab.dataset.view === view;
     tab.classList.toggle("is-active", active);
     tab.setAttribute("aria-selected", String(active));
+    tab.toggleAttribute("aria-current", active);
     tab.tabIndex = active ? 0 : -1;
     if (active && focus) tab.focus();
   });
@@ -85,6 +86,7 @@ $(".work-subtabs")?.addEventListener("keydown", (event) => {
   const next = event.key === "Home" ? 0 : event.key === "End" ? workTabs.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + workTabs.length) % workTabs.length;
   setWorkMode(workTabs[next].dataset.workMode, true);
 });
+setWorkMode(workTabs.find((tab) => tab.classList.contains("is-active"))?.dataset.workMode || "tasks");
 
 function installImageFallbacks(root = document) {
   $$("img", root).forEach((image) => {
