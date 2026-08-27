@@ -69,6 +69,7 @@ function setWorkMode(mode, focus = false) {
     const active = tab.dataset.workMode === mode;
     tab.classList.toggle("is-active", active);
     tab.setAttribute("aria-selected", String(active));
+    tab.toggleAttribute("aria-current", active);
     tab.tabIndex = active ? 0 : -1;
     if (active && focus) tab.focus();
   });
