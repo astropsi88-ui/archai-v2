@@ -46,10 +46,32 @@ for (const file of businessPages) {
       ok = false;
     }
   }
-  if (/29\s*000|65\s*000|9\s*000|15\s*000/.test(html)) {
+  if (/29\s*000|65\s*000|9\s*000/.test(html)) {
     console.error(file, 'contains a retired public price');
     ok = false;
   }
+}
+
+const pricingHtml = fs.readFileSync(path.join(publicDir, 'pricing.html'), 'utf8');
+for (const expected of [
+  'Вик на сутки',
+  '0 ₽',
+  'от 50 000 ₽',
+  '24 900 ₽/мес после запуска',
+  'от 90 000 ₽',
+  '25 ₽/мин',
+  'от 15 000 ₽',
+  'от 45 000 ₽',
+  'от 4 900 ₽/мес',
+]) {
+  if (!pricingHtml.includes(expected)) {
+    console.error('pricing.html missing approved 2026-08-31 price:', expected);
+    ok = false;
+  }
+}
+if (pricingHtml.includes('30 000 ₽')) {
+  console.error('pricing.html contains the cancelled 30 000 ₽ offer');
+  ok = false;
 }
 
 const home = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
@@ -223,3 +245,4 @@ if (!fs.existsSync(wranglerConfigPath)) {
 }
 
 process.exit(ok ? 0 : 1);
+
