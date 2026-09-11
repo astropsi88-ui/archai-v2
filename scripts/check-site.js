@@ -13,6 +13,7 @@ const requiredPublicFiles = [
   'office-demo.html',
   'pricing.html',
   'privacy.html',
+  'request.html', 'consent.html', 'en/request.html', 'en/consent.html',
   'terms.html',
   '404.html',
   'assets/styles.css',
@@ -257,7 +258,7 @@ for (const file of requiredPublicFiles.filter((file) => file.endsWith('.html') &
     console.error(file, 'does not reference assets/styles.css');
     ok = false;
   }
-  if (!html.includes('assets/app.js')) {
+  if (!file.endsWith('consent.html') && !html.includes('assets/app.js')) {
     console.error(file, 'does not reference assets/app.js');
     ok = false;
   }
