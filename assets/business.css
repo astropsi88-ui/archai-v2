@@ -2591,3 +2591,5 @@ img.creator-photo {
 @media(max-width:640px){.companion-page .companion-team-strip{margin-top:32px;padding:14px;border-radius:20px}.companion-page .companion-team-head{align-items:stretch;flex-direction:column;gap:12px}.companion-page .companion-team-link{flex-basis:auto;width:100%}.companion-page .companion-team-list{grid-template-columns:repeat(2,minmax(0,1fr))}.companion-page .companion-team-card:last-child{grid-column:1/-1;width:min(100%,240px);justify-self:center}}
 @media(max-width:390px){.companion-page .companion-team-list{grid-template-columns:1fr}.companion-page .companion-team-card:last-child{grid-column:auto;width:100%}}
 @media(prefers-reduced-motion:reduce){.companion-page .companion-team-link{transition:none}}
+
+.language-switcher{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.08em;white-space:nowrap}.language-switcher a{color:var(--muted);text-decoration:none}.language-switcher a:hover,.language-switcher a.is-active{color:#fff}.language-switcher span{opacity:.35}@media(max-width:900px){.language-switcher{margin-left:auto}.header-cta{display:none}}

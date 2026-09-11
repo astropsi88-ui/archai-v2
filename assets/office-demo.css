@@ -320,3 +320,5 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .mic-button span { display:none; }
 }
 
+
+.language-switcher{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.08em;white-space:nowrap}.language-switcher a{color:var(--muted);text-decoration:none}.language-switcher a:hover,.language-switcher a.is-active{color:#fff}.language-switcher span{opacity:.35}.language-switcher-floating{position:fixed;z-index:1000;top:12px;right:12px;padding:8px 10px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(3,7,18,.86);backdrop-filter:blur(10px)}@media(max-width:900px){.language-switcher{margin-left:auto}.header-cta{display:none}}

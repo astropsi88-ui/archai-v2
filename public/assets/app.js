@@ -1,5 +1,13 @@
 const $ = (s, r = document) => r.querySelector(s),
   $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const isEnglishPage = document.documentElement.lang === "en";
+const englishPhrases = {
+  administrator: "I need an AI administrator to handle enquiries, requests and appointments. Where should I start?",
+  seller: "I need an AI sales representative for qualification and follow-up. Help me define the first scenario.",
+  service: "I want to improve service for existing customers with AI. Help me choose the role and channels.",
+  routine: "I want to automate repetitive business work. Help me find the best first process.",
+  start: "I am not sure which AI employee I need. Ask me a few questions and help me decide.",
+};
 const phrases = {
   administrator:
     "Нужен AI-администратор: принимать обращения, вести заявки и помогать с записью. С чего начать?",
@@ -12,8 +20,9 @@ const phrases = {
   start:
     "Я пока не знаю, какой AI-сотрудник мне нужен. Задай несколько вопросов и помоги определиться.",
 };
-const typingText =
-  "Расскажите, где бизнес теряет время или клиентов — я помогу найти первую роль для AI.";
+const typingText = isEnglishPage
+  ? "Tell me where your business loses time or customers — I’ll help identify the first AI role."
+  : "Расскажите, где бизнес теряет время или клиентов — я помогу найти первую роль для AI.";
 const vikConversationStorageKey = "vikSiteConversationId";
 function setChatActive(active = true) {
   document.body.classList.toggle("chat-active", active);
@@ -307,7 +316,7 @@ $$("[data-vik-direct]").forEach((link) =>
 );
 $$(".tag[data-prompt]").forEach((button) =>
   button.addEventListener("click", () => {
-    const text = phrases[button.dataset.prompt] || button.textContent.trim();
+    const text = (isEnglishPage ? englishPhrases : phrases)[button.dataset.prompt] || button.textContent.trim();
     if (vikMessage) {
       vikMessage.value = text;
       sizeVikMessage(vikMessage);

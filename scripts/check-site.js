@@ -32,8 +32,41 @@ const forbiddenPublicEntries = [
 ];
 let ok = true;
 
+const localizedPages = [
+  'index.html', 'companion.html', 'partner.html', 'ai-sites.html',
+  'digital-office.html', 'pricing.html', 'privacy.html', 'terms.html',
+  'office-demo.html', '404.html', 'abilities.html', 'coauthor.html', 'project.html',
+];
+
 if (!fs.existsSync(publicDir)) {
   console.error('Missing public directory');
+  ok = false;
+}
+
+for (const file of localizedPages) {
+  const ru = fs.readFileSync(path.join(publicDir, file), 'utf8');
+  const enPath = path.join(publicDir, 'en', file);
+  if (!ru.includes('language-switcher') || !ru.includes('hreflang="en"')) {
+    console.error(file, 'missing RU/EN switcher or English hreflang');
+    ok = false;
+  }
+  if (!fs.existsSync(enPath)) {
+    console.error('Missing English public page:', file);
+    ok = false;
+    continue;
+  }
+  const en = fs.readFileSync(enPath, 'utf8');
+  if (!en.includes('<html lang="en">') || !en.includes('hreflang="ru"')) {
+    console.error(file, 'English page missing lang or Russian hreflang');
+    ok = false;
+  }
+  if (/[А-Яа-яЁё]/.test(en.replace(/https?:[^"']+/g, ''))) {
+    console.error(file, 'English page contains untranslated Cyrillic text');
+    ok = false;
+  }
+}
+if (!fs.readFileSync(path.join(publicDir, 'en', 'index.html'), 'utf8').includes('ARCH_AI — Your AI Employee')) {
+  console.error('English homepage is missing the approved brand line');
   ok = false;
 }
 
@@ -245,4 +278,3 @@ if (!fs.existsSync(wranglerConfigPath)) {
 }
 
 process.exit(ok ? 0 : 1);
-
