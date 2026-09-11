@@ -22,7 +22,7 @@
     const data = Object.fromEntries(new FormData(form));
     data.locale = locale; data.consent = form.elements.consent.checked; data.startedAt = startedAt;
     try {
-      const response = await fetch('/api/lead', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify(data) });
+      const response = await fetch('/api/vik-site/lead', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify(data) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(response.status === 429 ? 'rate' : result.error || 'request');
       status.textContent = `${copy.success}${result.requestId ? ` ID: ${result.requestId}` : ''}`;
