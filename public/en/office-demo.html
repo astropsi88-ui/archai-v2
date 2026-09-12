@@ -1,18 +1,194 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ARCH_AI Office — Interactive Demo</title><meta name="description" content="An interactive, synthetic-data demonstration of the ARCH_AI Digital Office.">
-  <link rel="canonical" href="https://iarch.ai/en/office-demo.html"><link rel="alternate" hreflang="en" href="https://iarch.ai/en/office-demo.html"><link rel="alternate" hreflang="ru" href="https://iarch.ai/office-demo.html"><link rel="alternate" hreflang="x-default" href="https://iarch.ai/office-demo.html">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Onest:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/styles.css?v=20260911-i18n-1"><link rel="stylesheet" href="../assets/business.css?v=20260911-i18n-1"></head><body class="business-page "><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container header-inner">
-  <a class="brand" href="index.html" aria-label="ARCH_AI home"><span class="brand-main">ARCH_AI</span><span class="brand-sub">YOUR AI EMPLOYEE</span></a>
-  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button><nav class="nav" id="site-nav" aria-label="Main navigation">
-  <a href="companion.html">AI Employees</a><a href="ai-sites.html">AI Website</a>
-  <a href="digital-office.html">Digital Office</a><a href="pricing.html">Pricing</a>
-</nav>
-  <div class="language-switcher" aria-label="Language"><a href="../office-demo.html" lang="ru" hreflang="ru">RU</a><span aria-hidden="true">/</span><a class="is-active" href="office-demo.html" lang="en" hreflang="en" aria-current="page">EN</a></div>
-  <a class="header-cta" href="index.html#vik-chat">Talk to Vik</a></div></header><main id="main"><section class="page-hero"><div class="container"><p class="eyebrow">Interactive demonstration</p><h1>ARCH_AI Digital Office</h1><p>Explore a safe browser demo of a shared AI workspace. No messages are sent, no files are uploaded and no real customer data is used.</p><a class="btn primary" href="index.html#vik-chat">Talk to Vik</a></div></section><section><div class="container"><div class="section-head"><p class="kicker">A live team workspace</p><h2>See how roles work together</h2></div><div class="grid-3"><article class="glass-card"><h3>Team conversation</h3><p>A shared thread lets employees hand work to one another while keeping the task context.</p></article><article class="glass-card"><h3>Work and CRM</h3><p>Synthetic example requests, tasks, documents, owners, statuses and next actions.</p></article><article class="glass-card"><h3>Analytics</h3><p>A separate layer for indicators, trends, workload and items that require a decision.</p></article></div></div></section><section><div class="container"><div class="section-head"><p class="kicker">Safe demonstration</p><h2>No production data or actions</h2></div><p class="lede">All customers, events, documents and metrics shown here are fictional. The demo does not connect to real clients, mail, calls, contracts or payments.</p></div></section></main><footer class="site-footer"><div class="container"><div class="footer-grid">
-  <div><strong style="font-size:20px">ARCH_AI</strong><p>Technology evolves. Personality remains.</p></div>
-  <div class="footer-links"><div><span>Contact</span><a href="index.html#vik-chat">Talk to Vik</a><a href="https://t.me/Svetlana_itaf" target="_blank" rel="noopener">Message Svetlana Itaf</a></div>
-  <div><span>Channels</span><a href="https://t.me/AI_VIK_dialog" target="_blank" rel="noopener">Vik on Telegram</a><a href="https://t.me/videocreator_SI" target="_blank" rel="noopener">ARCH_AI on Telegram</a><a href="https://www.youtube.com/@ai_dialoge/featured" target="_blank" rel="noopener">YouTube</a></div>
-  <div><span>Documents</span><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></div></div></div>
-  <hr style="border-color:rgba(196,202,212,.06);margin:34px 0"><p>© 2026 ARCH_AI. All rights reserved.</p></div></footer><script src="../assets/app.js?v=20260911-i18n-1"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="Interactive synthetic ARCH_AI Office demo" />
+    <title>ARCH_AI Office — interactive synthetic demo</title>
+    <link rel="canonical" href="https://iarch.ai/en/office-demo.html" />
+    <link rel="alternate" hreflang="ru" href="https://iarch.ai/office-demo.html" />
+    <link rel="alternate" hreflang="en" href="https://iarch.ai/en/office-demo.html" />
+    <link rel="alternate" hreflang="x-default" href="https://iarch.ai/office-demo.html" />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/office-demo.css?v=20260827-crm-label-tabs-3" />
+  </head>
+  <body><div class="language-switcher language-switcher-floating" aria-label="Language"><a href="../office-demo.html" lang="ru" hreflang="ru">RU</a><span aria-hidden="true">/</span><a class="is-active" href="office-demo.html" lang="en" hreflang="en" aria-current="page">EN</a></div>
+    <a class="skip-link" href="#office-content">Skip to workspace</a>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <main class="demo-frame" aria-label="ARCH_AI Office synthetic demo">
+      <header class="office-header">
+        <a class="brand" href="digital-office.html" aria-label="Back to Digital Office">
+          <span class="brand-mark">A</span>
+          <span><strong>ARCH_AI</strong><small>OFFICE · DEMO</small></span>
+        </a>
+        <nav class="main-tabs" role="tablist" aria-label="Office sections">
+          <button class="main-tab is-active" id="tab-team" type="button" role="tab" aria-selected="true" aria-controls="panel-team" data-view="team">
+            <span aria-hidden="true">◌</span> Team
+          </button>
+          <button class="main-tab" id="tab-work" type="button" role="tab" aria-selected="false" aria-controls="panel-work" data-view="work" tabindex="-1">
+            <span aria-hidden="true">□</span> Work <i>4</i>
+          </button>
+          <button class="main-tab" id="tab-analytics" type="button" role="tab" aria-selected="false" aria-controls="panel-analytics" data-view="analytics" tabindex="-1">
+            <span aria-hidden="true">⌁</span> Analytics
+          </button>
+        </nav>
+        <div class="header-actions">
+          <span class="online"><i></i> Synthetic demo</span>
+          <button class="icon-button" type="button" aria-label="Demo notifications"><span aria-hidden="true">◇</span><b>2</b></button>
+        </div>
+      </header>
+
+      <div class="office-layout">
+        <aside class="founders" aria-label="Fictional conversation participants">
+          <p>DEMO CAST</p>
+          <button class="founder-card is-selected" type="button" data-person="svetochka" aria-pressed="true">
+            <span class="portrait"><img src="../assets/images/svetlana-itaf.jpg" alt="Svetochka" /></span>
+            <strong>Svetochka</strong><small>Creator</small><i class="presence" aria-label="demo speaker"></i>
+          </button>
+          <button class="founder-card" type="button" data-person="adam" aria-pressed="false">
+            <span class="portrait"><img src="../assets/images/adam-room.png" alt="Adam" /></span>
+            <strong>Adam</strong><small>Coauthor</small><i class="presence" aria-label="fictional status"></i>
+          </button>
+          <button class="founder-card" type="button" data-person="vik" aria-pressed="false">
+            <span class="portrait"><img src="../assets/video/vik-intro-4x5-poster.jpg" alt="Vik" /></span>
+            <strong>Vik</strong><small>AI consultant</small><i class="presence" aria-label="fictional status"></i>
+          </button>
+          <button class="all-team-button is-active" type="button" data-show-team aria-pressed="true"><span aria-hidden="true">◎</span><strong>Whole team</strong><small>Team conversation</small></button>
+        </aside>
+
+        <section class="workspace" id="office-content">
+          <section class="view-panel is-active team-panel" id="panel-team" role="tabpanel" aria-labelledby="tab-team" data-panel="team">
+            <div class="team-toolbar">
+              <div><span class="eyebrow">INTERACTIVE SYNTHETIC DEMO</span><h1 data-conversation-title>Shared workspace</h1><p data-conversation-subtitle>Fictional people, statuses and dialogue. One Vik, one Adam; idle Adam is not woken. This is not the owner-private Office.</p></div>
+              <div class="team-mode"><i></i><span><b data-conversation-state>Demo speaker: Svetochka</b><small>10 fictional participants</small></span></div>
+            </div>
+
+            <div class="team-chips" aria-label="Fictional AI employees">
+              <button class="team-chip wants-word" type="button" data-member="admin" aria-pressed="false"><span class="avatar avatar-blue">AD</span><span><strong>Administrator</strong><small>Demo: queued</small></span><i aria-label="fictional queued reply"></i></button>
+              <button class="team-chip" type="button" data-member="seller" aria-pressed="false"><span class="avatar avatar-gold">SA</span><span><strong>Salesperson</strong><small>Demo: available</small></span><i aria-label="fictional status"></i></button>
+              <button class="team-chip" type="button" data-member="marketing" aria-pressed="false"><span class="avatar avatar-violet">M</span><span><strong>Marketer</strong><small>Demo: reviewing</small></span><i aria-label="fictional status"></i></button>
+              <button class="team-chip" type="button" data-member="content" aria-pressed="false"><span class="avatar avatar-pink">C</span><span><strong>Content Agent</strong><small>Demo: video draft</small></span><i aria-label="fictional status"></i></button>
+              <button class="team-chip" type="button" data-member="analyst" aria-pressed="false"><span class="avatar avatar-cyan">AN</span><span><strong>Analyst</strong><small>Demo: insight</small></span><i aria-label="fictional status"></i></button>
+              <button class="team-chip" type="button" data-member="finance" aria-pressed="false"><span class="avatar avatar-green">F</span><span><strong>Finance + Accounting</strong><small>Demo: balance</small></span><i aria-label="fictional status"></i></button>
+              <button class="team-chip" type="button" data-member="yur" aria-pressed="false"><span class="avatar avatar-slate">L</span><span><strong>Legal</strong><small>Demo: reviewed</small></span><i aria-label="fictional status"></i></button>
+            </div>
+
+            <section class="conversation-stage" aria-live="polite">
+              <header class="conversation-stage-head"><div><span class="table-symbol">◎</span><span><small data-flow-label>FICTIONAL TEAM CONVERSATION</small><strong data-flow-title>Sample product launch discussion</strong></span></div><div class="stage-actions"><button type="button" data-show-team class="is-active">Whole team</button><button type="button" data-open-drawer="brief"><span aria-hidden="true">▤</span> 2 sample results</button></div></header>
+              <div class="conversation-feed" data-conversation-feed tabindex="0" aria-label="Fictional demo team conversation">
+                <article class="conversation-line is-live" data-speaker="svetochka"><span class="line-avatar photo"><img src="../assets/images/svetlana-itaf.jpg" alt="" /></span><div><header><strong>Svetochka</strong><time>14:20</time><em>demo speaker</em></header><p>Let us plan a clear launch: what will we show people, and who is responsible for each part?</p></div></article>
+                <article class="conversation-line" data-speaker="adam"><span class="line-avatar photo"><img src="../assets/images/adam-room.png" alt="" /></span><div><header><strong>Adam</strong><time>14:20</time></header><p>In this fictional scenario, a task enters once, passes between AI roles, and produces a shared result.</p></div></article>
+                <article class="conversation-line" data-speaker="marketing"><span class="line-avatar avatar-violet">M</span><div><header><strong>Marketer</strong><time>14:21</time></header><p>Then the central message is «your ready-to-work AI team». I will review the offer and campaign logic.</p></div></article>
+                <article class="conversation-line" data-speaker="content"><span class="line-avatar avatar-pink">C</span><div><header><strong>Content Agent</strong><time>14:21</time></header><p>I will draft a short video and three posts around that message, then return them to the Marketer for review.</p></div></article>
+                <article class="conversation-line with-attachment" data-speaker="yur"><span class="line-avatar avatar-slate">L</span><div><header><strong>Legal</strong><time>14:22</time></header><p>I reviewed the wording. Two clauses in the contract still need Svetochka’s decision.</p><button type="button" data-open-drawer="contract"><span aria-hidden="true">▤</span><span><b>Implementation agreement</b><small>2 comments · open</small></span><em>↗</em></button></div></article>
+                <article class="conversation-line" data-speaker="vik"><span class="line-avatar photo"><img src="../assets/video/vik-intro-4x5-poster.jpg" alt="" /></span><div><header><strong>Vik</strong><time>14:23</time></header><p>In this example, I would greet a visitor, clarify their task and introduce suitable AI roles, with a brief explanation.</p></div></article>
+              </div>
+
+              <aside class="result-drawer" data-result-drawer hidden aria-label="Sample employee result">
+                <header><div><span class="result-icon">▤</span><span><small data-drawer-type>DOCUMENT · LEGAL</small><strong data-drawer-title>Implementation agreement</strong></span></div><button type="button" aria-label="Close result" data-close-drawer>×</button></header>
+                <div class="drawer-preview"><span>ARCH_AI · SAMPLE RESULT</span><h2 data-drawer-heading>AI employee implementation agreement</h2><p data-drawer-copy>I reviewed the wording. Two clauses in the contract still need Svetochka’s decision.</p><div><i></i><i></i><i></i><i></i></div></div>
+                <footer><span><i></i> No real customer data</span><button type="button" data-demo-action>View sample ↗</button></footer>
+              </aside>
+            </section>
+          </section>
+
+          <section class="view-panel" id="panel-work" role="tabpanel" aria-labelledby="tab-work" data-panel="work" hidden>
+            <div class="section-heading compact"><div><span class="eyebrow">WORKSPACE</span><h1>Tasks, clients and documents</h1><p>Synthetic examples of tasks and handoffs. No production actions are performed.</p></div><button class="primary-action" type="button" data-demo-action>+ Sample task</button></div>
+            <div class="work-subtabs" role="tablist" aria-label="Tasks, clients CRM and documents">
+              <button id="work-tab-tasks" type="button" class="is-active" role="tab" aria-selected="true" aria-controls="work-panel-tasks" data-work-mode="tasks">Tasks <b>4</b></button>
+              <button id="work-tab-clients" type="button" role="tab" aria-selected="false" aria-controls="work-panel-clients" data-work-mode="clients" tabindex="-1">Clients · CRM <b>3 demo</b></button>
+              <button id="work-tab-documents" type="button" role="tab" aria-selected="false" aria-controls="work-panel-documents" data-work-mode="documents" tabindex="-1">Documents <b>5</b></button>
+            </div>
+            <div class="work-mode is-active" id="work-panel-tasks" role="tabpanel" aria-labelledby="work-tab-tasks" data-work-panel="tasks">
+              <div class="work-board">
+                <div class="work-column"><header><span><i class="dot blue"></i>In progress</span><b>3</b></header>
+                  <button class="task-card" type="button" data-task="proposal"><small>SALES · SAMPLE TODAY</small><strong>Proposal for a fictional salon</strong><span><i class="mini-avatar">V</i><i class="mini-avatar gold">S</i><em>68%</em></span></button>
+                  <button class="task-card" type="button" data-task="campaign"><small>MARKETING · SAMPLE TODAY</small><strong>AI consultant launch campaign</strong><span><i class="mini-avatar violet">M</i><i class="mini-avatar pink">C</i><em>42%</em></span></button>
+                </div>
+                <div class="work-column"><header><span><i class="dot amber"></i>Under review</span><b>1</b></header>
+                  <button class="task-card highlighted" type="button" data-task="contract"><small>DOCUMENT · 14:20</small><strong>AI employee implementation agreement</strong><p>Legal flagged two clauses for Svetochka’s decision.</p><span><i class="mini-avatar slate">L</i><em>Review needed</em></span></button>
+                </div>
+                <div class="work-column"><header><span><i class="dot green"></i>Completed</span><b>12</b></header>
+                  <button class="task-card" type="button" data-task="research"><small>ANALYTICS · 12:05</small><strong>AI employee market overview</strong><span><i class="mini-avatar cyan">A</i><em>Report</em></span></button>
+                  <button class="task-card" type="button" data-task="cashflow"><small>FINANCE · SAMPLE YESTERDAY</small><strong>Product unit economics estimate</strong><span><i class="mini-avatar green">F</i><em>Spreadsheet</em></span></button>
+                </div>
+              </div>
+              <div class="work-preview" data-work-preview><span class="result-icon">□</span><div><small>SELECT A TASK</small><strong>View a sample result here</strong><p>Sample documents, spreadsheets, videos and task progress in one place.</p></div></div>
+            </div>
+            <div class="work-mode crm-demo" id="work-panel-clients" role="tabpanel" aria-labelledby="work-tab-clients" data-work-panel="clients" data-crm-scope="demo_synthetic" hidden>
+              <div class="crm-demo-banner" role="note"><span>CRM · FICTIONAL CLIENTS · SYNTHETIC DATA ONLY</span><p>INTERACTIVE SYNTHETIC DEMO: nothing is sent or uploaded. No real customer data, mail, calls, contracts, payments or production actions.</p></div>
+              <ol class="crm-funnel" aria-label="Synthetic client funnel">
+                <li class="is-active">New inquiry</li><li>Clarification</li><li>Proposal</li><li class="is-active">Considering</li><li>Contract/payment</li><li>In progress</li><li class="is-active">Support</li>
+              </ol>
+              <div class="crm-card-grid" aria-label="Exactly three fictional client cards">
+                <article class="crm-card" data-demo-crm-card="demo-lead-001">
+                  <header><small>DEMO-001 · FICTIONAL</small><span>Stage: New inquiry</span></header><h2>A custom AI employee is needed</h2>
+                  <dl><div><dt>Need</dt><dd>Handle inquiries, organize documents and hand a structured summary to a person.</dd></div><div><dt>Last action</dt><dd>In the scenario, Vik noted the task and desired result.</dd></div><div><dt>Next action</dt><dd>Sample next step: Mercury clarifies channels, volume and materials.</dd></div><div><dt>Deadline</dt><dd>29 August · sample</dd></div><div><dt>Responsible AI employee</dt><dd>Mercury · Administrator</dd></div><div><dt>Documents</dt><dd>Role brief · draft</dd></div></dl>
+                  <details><summary>Short history</summary><ol><li>The card comes from a synthetic inquiry.</li><li>No contact details or personal data.</li></ol></details>
+                </article>
+                <article class="crm-card" data-demo-crm-card="demo-lead-002">
+                  <header><small>DEMO-002 · FICTIONAL</small><span>Stage: Considering</span></header><h2>Proposal shown as sent (fictional)</h2>
+                  <dl><div><dt>Need</dt><dd>An AI administrator for incoming inquiries on an existing website.</dd></div><div><dt>Last action</dt><dd>The scenario shows a proposal after a terms review; nothing was sent.</dd></div><div><dt>Next action</dt><dd>Sample next step: Mars drafts a gentle follow-up for the agreed date.</dd></div><div><dt>Deadline</dt><dd>30 August · sample</dd></div><div><dt>Responsible AI employee</dt><dd>Mars · Salesperson</dd></div><div><dt>Documents</dt><dd>Proposal · version DEMO-1</dd></div></dl>
+                  <details><summary>Short history</summary><ol><li>The fictional need has been clarified.</li><li>No pricing was calculated from real data.</li></ol></details>
+                </article>
+                <article class="crm-card" data-demo-crm-card="demo-lead-003">
+                  <header><small>DEMO-003 · FICTIONAL</small><span>Stage: Support</span></header><h2>Fictional client in support</h2>
+                  <dl><div><dt>Need</dt><dd>Support an AI employee and improve workflows using evidence.</dd></div><div><dt>Last action</dt><dd>In the scenario, Uranus prepared a synthetic monthly summary.</dd></div><div><dt>Next action</dt><dd>One sample decision is ready for Svetochka’s review.</dd></div><div><dt>Deadline</dt><dd>2 September · sample</dd></div><div><dt>Responsible AI employee</dt><dd>Uranus · Analyst</dd></div><div><dt>Documents</dt><dd>Monthly summary · DEMO</dd></div></dl>
+                  <details><summary>Short history</summary><ol><li>The pilot is marked complete in the scenario.</li><li>All metrics and events are synthetic.</li></ol></details>
+                </article>
+              </div>
+            </div>
+            <div class="work-mode" id="work-panel-documents" role="tabpanel" aria-labelledby="work-tab-documents" data-work-panel="documents" hidden>
+              <div class="document-grid" aria-label="Synthetic documents">
+                <button type="button" data-demo-action><span class="document-kind violet">DOC</span><small>MARKETING · DEMO</small><strong>Product launch plan</strong><em>Marketer · Content Agent</em></button>
+                <button type="button" data-demo-action><span class="document-kind blue">PDF</span><small>LEGAL · DEMO</small><strong>Implementation agreement</strong><em>Jupiter · 2 comments</em></button>
+                <button type="button" data-demo-action><span class="document-kind green">XLS</span><small>FINANCE · DEMO</small><strong>ARCH_AI unit economics</strong><em>Saturn</em></button>
+                <button type="button" data-demo-action><span class="document-kind cyan">PDF</span><small>ANALYTICS · DEMO</small><strong>AI employee market overview</strong><em>Uranus</em></button>
+                <button type="button" data-demo-action><span class="document-kind pink">MP4</span><small>CONTENT · DEMO</small><strong>Digital Office video</strong><em>Neptune · under review</em></button>
+              </div>
+              <div class="work-preview"><span class="result-icon">▤</span><div><small>SYNTHETIC DEMO</small><strong>Fictional document previews</strong><p>Nothing is uploaded; no real data is opened.</p></div></div>
+            </div>
+          </section>
+
+          <section class="view-panel" id="panel-analytics" role="tabpanel" aria-labelledby="tab-analytics" data-panel="analytics" hidden>
+            <div class="section-heading compact"><div><span class="eyebrow">SYNTHETIC METRICS</span><h1>Analytics</h1><p>Fictional metrics, trends and bottlenecks for this UI demonstration.</p></div><div class="range-switch" aria-label="Sample analytics period"><button type="button" data-range="7">7 days</button><button type="button" class="is-active" data-range="30">30 days</button><button type="button" data-range="90">90 days</button></div></div>
+            <div class="kpi-grid"><article><small>SAMPLE INQUIRIES</small><strong data-kpi="leads">148</strong><span class="positive">↗ 24%</span></article><article><small>SAMPLE RESULTS</small><strong data-kpi="results">36</strong><span class="positive">↗ 11%</span></article><article><small>SAMPLE TIME SAVED</small><strong data-kpi="hours">74 h</strong><span>fictional hours saved</span></article><article><small>SAMPLE DECISIONS</small><strong data-kpi="review">2</strong><span class="attention">review</span></article></div>
+            <div class="analytics-grid">
+              <article class="chart-card"><header><div><small>SYNTHETIC TEAM OUTPUT</small><strong>Sample weekly results</strong></div><span><i></i> Completed</span></header><div class="chart" role="img" aria-label="Synthetic completed-results chart"><span class="chart-label l1">40</span><span class="chart-label l2">20</span><span class="chart-label l3">0</span><svg viewBox="0 0 720 240" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#67e8f9" stop-opacity=".36"/><stop offset="1" stop-color="#67e8f9" stop-opacity="0"/></linearGradient></defs><path class="gridline" d="M0 36H720M0 116H720M0 196H720"/><path class="area" d="M0 190 C80 170 95 155 150 165 S245 125 300 136 S380 84 445 104 S540 44 600 63 S680 29 720 34 V230 H0Z"/><path class="line" d="M0 190 C80 170 95 155 150 165 S245 125 300 136 S380 84 445 104 S540 44 600 63 S680 29 720 34"/><g class="points"><circle cx="0" cy="190" r="5"/><circle cx="150" cy="165" r="5"/><circle cx="300" cy="136" r="5"/><circle cx="445" cy="104" r="5"/><circle cx="600" cy="63" r="5"/><circle cx="720" cy="34" r="5"/></g></svg><div class="chart-days"><span>1 Aug</span><span>8 Aug</span><span>15 Aug</span><span>22 Aug</span></div></div></article>
+              <article class="load-card"><header><small>SYNTHETIC WORKLOAD</small><strong>Example allocation</strong></header><div class="load-list"><div><span><i class="mini-avatar">V</i>Vik</span><b><i style="width:82%"></i></b><em>82%</em></div><div><span><i class="mini-avatar violet">M</i>Marketing</span><b><i style="width:68%"></i></b><em>68%</em></div><div><span><i class="mini-avatar cyan">A</i>Analyst</span><b><i style="width:54%"></i></b><em>54%</em></div><div><span><i class="mini-avatar green">F</i>Finance</span><b><i style="width:36%"></i></b><em>36%</em></div></div><button type="button" data-demo-action>Explain these sample figures</button></article>
+            </div>
+          </section>
+
+          <section class="conversation-dock" aria-label="Demo conversation and input">
+            <button class="history-toggle" type="button" aria-expanded="false" aria-controls="history-panel" data-history-toggle><span><i class="transcript-speaker">V</i><strong>Vik:</strong> Sample dialogue: I drafted the proposal. Legal reviewed the agreement; Marketing is drafting the presentation.</span><span class="history-chevron" aria-hidden="true">⌃</span></button>
+            <div class="history-panel" id="history-panel" hidden>
+              <div><time>14:20</time><b>Svetochka</b><p>Draft a proposal for the fictional salon and show me the result.</p></div><div><time>14:21</time><b>Salesperson</b><p>I outlined the fictional task, benefits and next step.</p></div><div><time>14:22</time><b>Legal</b><p>I reviewed the wording. Two clauses in the contract still need Svetochka’s decision.</p></div><div><time>14:23</time><b>Vik</b><p>The sample is ready. Here is the shared team result.</p></div>
+            </div>
+            <div class="composer">
+              <div class="attach-wrap">
+                <button class="attach-button" type="button" aria-label="Choose sample attachment — no upload" aria-expanded="false" aria-controls="attach-menu" data-attach><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 12.5l5.8-5.8a3 3 0 014.2 4.2l-8.8 8.8a5 5 0 01-7.1-7.1l8.5-8.5a3.5 3.5 0 015 5l-8.2 8.2a2 2 0 01-2.8-2.8l7.6-7.6"/></svg></button>
+                <div class="attach-menu" id="attach-menu" role="menu" hidden><small>DEMO · NO FILE UPLOAD</small><button type="button" role="menuitem" data-demo-file="brief"><span>▤</span><b>Company brief.pdf</b><em>sample</em></button><button type="button" role="menuitem" data-demo-file="price"><span>▦</span><b>Prices.xlsx</b><em>sample</em></button><button type="button" role="menuitem" data-demo-file="video"><span>▷</span><b>Video.mp4</b><em>sample</em></button></div>
+              </div>
+              <div class="compose-field"><div class="attachment-chip" data-chip hidden><span>▤</span><b data-chip-name></b><button type="button" aria-label="Remove selected sample" data-remove-chip>×</button></div><label class="sr-only" for="demo-message">Local demo message</label><textarea id="demo-message" rows="1" placeholder="Try a fictional task…" data-message></textarea></div>
+              <button class="mic-button" type="button" aria-label="Voice mode — local visual demo" title="Simulated voice mode" data-voice-demo><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="12" rx="4"/><path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6"/></svg><span>Voice</span></button>
+              <button class="send-button" type="button" aria-label="Show message locally in demo" data-send><span aria-hidden="true">↑</span></button>
+            </div>
+            <p class="demo-disclaimer">INTERACTIVE SYNTHETIC DEMO · Nothing sent or uploaded. No real customer data, mail, calls, contracts, payments or production actions.</p>
+          </section>
+        </section>
+
+        <aside class="activity-rail" aria-label="Fictional demo activity">
+          <header><span><i></i></span><div><strong data-presence-title>Demo speaker: Vik</strong><small data-presence-note>Shared demo workspace</small></div><button type="button" aria-label="Demo activity panel">···</button></header>
+          <div class="speaker-card"><div class="speaker-portrait"><img src="../assets/video/vik-intro-4x5-poster.jpg" alt="Vik" /><span class="voice-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div><strong data-speaker-name>Vik</strong><small data-speaker-role>AI consultant · fictional scenario</small><p data-speaker-quote>«Here is a concise sample result for Svetochka.»</p><button type="button" data-select-result>View sample result</button></div>
+          <div class="queue"><div class="queue-title"><span>Sample reply queue</span><b>2</b></div><button type="button" data-member-jump="admin"><span class="avatar avatar-blue">AD</span><span><strong>Administrator</strong><small>Demo: queued</small></span><i></i></button><button type="button" data-member-jump="analyst"><span class="avatar avatar-cyan">AN</span><span><strong>Analyst</strong><small>Demo: insight</small></span><i></i></button></div>
+          <div class="security-note"><span aria-hidden="true">⌾</span><p><strong>Synthetic demo only</strong><small>No real clients, files or connections. <a href="index.html">Home</a> · <a href="digital-office.html">Digital Office</a> · <a href="pricing.html">Pricing</a></small></p></div>
+        </aside>
+      </div>
+    </main>
+    <div class="toast" role="status" aria-live="polite" data-toast hidden></div>
+    <script src="../assets/office-demo-en.js?v=20260912-en-synthetic-1"></script>
+  </body>
+</html>
