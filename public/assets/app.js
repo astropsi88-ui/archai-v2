@@ -665,8 +665,8 @@ function initVikVoicePrototype() {
   const status = $("[data-vik-voice-status]", button);
   button.disabled = false;
   button.classList.add("is-test-enabled");
-  button.setAttribute("aria-label", "Поговорить с Виком голосом");
-  if (status) status.textContent = "Нажмите и говорите";
+  button.setAttribute("aria-label", isEnglishPage && document.body.classList.contains("home-page") ? "Talk to Vik by voice" : "Поговорить с Виком голосом");
+  if (status) status.textContent = isEnglishPage && document.body.classList.contains("home-page") ? "Tap and speak" : "Нажмите и говорите";
 
   const prototypeHeaders = {
     Accept: "application/json",
