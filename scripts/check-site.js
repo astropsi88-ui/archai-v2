@@ -88,8 +88,6 @@ for (const file of businessPages) {
 
 const pricingHtml = fs.readFileSync(path.join(publicDir, 'pricing.html'), 'utf8');
 for (const expected of [
-  'Вик на сутки',
-  '0 ₽',
   'от 50 000 ₽',
   '24 900 ₽/мес после запуска',
   'от 90 000 ₽',
@@ -106,6 +104,18 @@ for (const expected of [
 if (pricingHtml.includes('30 000 ₽')) {
   console.error('pricing.html contains the cancelled 30 000 ₽ offer');
   ok = false;
+}
+for (const forbidden of ['Вик на сутки', '0 ₽ → 50 000 ₽ → расширение → бизнес', '19 900 ₽/мес']) {
+  if (pricingHtml.includes(forbidden)) {
+    console.error('pricing.html contains a retired public offer or support price:', forbidden);
+    ok = false;
+  }
+}
+for (const expected of ['от 50 000 ₽ → расширение → бизнес', 'от 24 900 ₽/мес по составу']) {
+  if (!pricingHtml.includes(expected)) {
+    console.error('pricing.html missing the current paid entry or support price:', expected);
+    ok = false;
+  }
 }
 
 const home = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
