@@ -679,9 +679,8 @@ function initVikVoicePrototype() {
   };
   let active = null;
   let openingStream = null;
-  // OpenAI Realtime is the production transport. Keep the ElevenLabs
-  // Speech Engine implementation available for an explicit rollback only.
-  const usePreferredVoiceEngine = false;
+  // Owner-selected Marcel transport; retain the alternate path for rollback.
+  const usePreferredVoiceEngine = true;
 
   const post = async (path, body) => {
     const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: prototypeHeaders, body: JSON.stringify(body) });
@@ -750,6 +749,8 @@ function initVikVoicePrototype() {
 
   const closeSession = () => {
     if (!active) return;
+    active.closed = true;
+    if (active.conversation) void active.conversation.endSession().catch(() => {});
     if (active.pollTimer) clearInterval(active.pollTimer);
     active.stream?.getTracks().forEach((track) => track.stop());
     if (active.pc && active.pc.connectionState !== "closed") active.pc.close();
@@ -764,6 +765,8 @@ function initVikVoicePrototype() {
     button.classList.remove("is-listening");
     setStatus("Нажмите, чтобы снова поговорить с Виком");
   };
+  window.addEventListener('pagehide', closeSession);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) closeSession(); });
 
 
   const pcm16Base64 = (samples) => {
@@ -793,6 +796,58 @@ function initVikVoicePrototype() {
     return output;
   };
 
+  let elevenLabsClientPromise = null;
+  const loadElevenLabsClient = () => {
+    if (window.ElevenLabsClient?.Conversation) return Promise.resolve(window.ElevenLabsClient);
+    if (!elevenLabsClientPromise) elevenLabsClientPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = '/assets/vendor/elevenlabs-client-1.25.0.js';
+      script.onload = () => window.ElevenLabsClient?.Conversation ? resolve(window.ElevenLabsClient) : reject(new Error('voice_sdk_unavailable'));
+      script.onerror = () => { elevenLabsClientPromise = null; script.remove(); reject(new Error('voice_sdk_unavailable')); };
+      document.head.appendChild(script);
+    });
+    return elevenLabsClientPromise;
+  };
+  const startElevenLabsWebRtcVoice = async (stream, token) => {
+    if (typeof token.conversationToken !== 'string' || !token.conversationToken) throw new Error('elevenlabs_token_unavailable');
+    const state = {engine:'elevenlabs-webrtc', stream, conversation:null, closed:false};
+    active = state;
+    button.disabled = false;
+    if (typeof token.conversationId === 'string') sessionStorage.setItem(vikConversationStorageKey, token.conversationId);
+    const disconnected = () => {
+      state.closed = true;
+      stream.getTracks().forEach(track => track.stop());
+      if (active === state) {
+        active = null;
+        button.classList.remove('is-listening');
+        setStatus('Голосовое соединение закрыто · нажмите, чтобы подключиться снова');
+      }
+    };
+    try {
+      const { Conversation } = await loadElevenLabsClient();
+      if (state.closed || active !== state) return;
+      // The SDK owns its microphone and playback lifecycle. Release preflight.
+      stream.getTracks().forEach(track => track.stop());
+      state.conversation = await Conversation.startSession({
+        conversationToken:token.conversationToken, connectionType:'webrtc',
+        onDisconnect:disconnected,
+        onError:() => { console.info('vik_elevenlabs_error',{code:'webrtc_failed'}); void state.conversation?.endSession(); disconnected(); },
+        onModeChange:({mode}) => { if (!state.closed) setStatus(mode === 'speaking' ? 'Вик отвечает · ElevenLabs Marcel' : 'Готов к следующей реплике · ElevenLabs Marcel'); },
+        onInterruption:() => { if (!state.closed) setStatus('Остановился · слушаю тебя'); },
+        onMessage:({role,source,message}) => {
+          if (state.closed || active !== state) return;
+          if (typeof message !== 'string' || !/[\p{L}\p{N}]/u.test(message)) return;
+          setChatActive();
+          addChatMessage(role === 'user' || source === 'user' ? 'user' : 'assistant',message);
+        },
+      });
+      if (state.closed || active !== state) { await state.conversation.endSession(); return; }
+      button.classList.add('is-listening');
+      setTelegramContinueVisible(true);
+      setStatus('Живой Вик подключён · ElevenLabs Marcel · говори свободно');
+    } catch (error) { disconnected(); throw error; }
+  };
+
   const startElevenLabsVoice = async (stream, suppliedToken = null) => {
     const token = suppliedToken || await post("/api/vik-site/voice/session", { mode: "elevenlabs_speech_engine" });
     const voiceLabel = typeof token.voice === "string" && token.voice ? token.voice : "Marcel - South African";
@@ -804,7 +859,7 @@ function initVikVoicePrototype() {
 
     const ws = new WebSocket(token.signedUrl);
     const inputContext = new AudioContext();
-    const outputContext = new AudioContext({ sampleRate: 16000 });
+    const outputContext = new AudioContext();
     await Promise.all([inputContext.resume(), outputContext.resume()]);
     const micSource = inputContext.createMediaStreamSource(stream);
     const processor = inputContext.createScriptProcessor(4096, 1, 1);
@@ -829,11 +884,13 @@ function initVikVoicePrototype() {
       firstAudioAt: null,
       assistantItems: null,
       assistantText: "",
-      suppressAgentAudio: false,
-      suppressRecoveryAudio: false,
+      outputSampleRate: null,
+      inputSampleRate: null,
+      interruptedThrough: -1,
+      latestUserEventId: -1,
+      activeAudioEventId: null,
       heardVoiceSinceAgent: false,
-      waitingForInterruptedTranscript: false,
-      waitingForInterruptedReply: false,
+      closed: false,
     };
 
     const stopPlayback = () => {
@@ -843,21 +900,31 @@ function initVikVoicePrototype() {
     };
     state.stopPlayback = stopPlayback;
 
-    const beginBargeIn = () => {
+    const beginBargeIn = (eventId) => {
+      const boundary = Number(eventId);
+      if (Number.isFinite(boundary)) state.interruptedThrough = Math.max(state.interruptedThrough, boundary);
       stopPlayback();
-      state.suppressAgentAudio = true;
-      if (!state.waitingForInterruptedReply) state.waitingForInterruptedTranscript = true;
+      state.assistantItems = null;
+      state.assistantText = "";
     };
 
-    const playPcm16 = (base64) => {
-      if (state.suppressAgentAudio) return;
+    const isStale = (eventId) => Number.isFinite(Number(eventId))
+      && (Number(eventId) <= state.interruptedThrough || Number(eventId) < state.latestUserEventId);
+    const showReady = () => {
+      if (!state.closed && !state.scheduled.size && state.assistantText) {
+        setStatus(`Готов к следующей реплике · ElevenLabs ${voiceLabel}`);
+      }
+    };
+    const playPcm16 = (base64, eventId) => {
+      if (state.closed || !state.outputSampleRate || isStale(eventId)) return;
+      state.activeAudioEventId = eventId;
       if (outputContext.state !== "running") void outputContext.resume().catch(() => {});
       const binary = atob(base64);
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
       const view = new DataView(bytes.buffer);
       const count = Math.floor(bytes.length / 2);
-      const buffer = outputContext.createBuffer(1, count, 16000);
+      const buffer = outputContext.createBuffer(1, count, state.outputSampleRate);
       const channel = buffer.getChannelData(0);
       for (let i = 0; i < count; i += 1) channel[i] = view.getInt16(i * 2, true) / 32768;
       const source = outputContext.createBufferSource();
@@ -867,15 +934,15 @@ function initVikVoicePrototype() {
       source.start(startAt);
       state.nextAudioAt = startAt + buffer.duration;
       state.scheduled.add(source);
-      source.addEventListener("ended", () => state.scheduled.delete(source), { once: true });
+      source.addEventListener("ended", () => { state.scheduled.delete(source); showReady(); }, { once: true });
       if (!state.firstAudioAt && state.speechEndedAt) {
         state.firstAudioAt = performance.now();
-        setStatus(`Вик отвечает · ElevenLabs ${voiceLabel} · ${Math.round(state.firstAudioAt - state.speechEndedAt)} мс`);
+        setStatus(`Вик отвечает · ElevenLabs ${voiceLabel}`);
       }
     };
 
     processor.onaudioprocess = (event) => {
-      if (ws.readyState !== WebSocket.OPEN) return;
+      if (ws.readyState !== WebSocket.OPEN || state.inputSampleRate !== 16000) return;
       const pcm = resampleTo16k(event.inputBuffer.getChannelData(0), inputContext.sampleRate);
       ws.send(JSON.stringify({ user_audio_chunk: pcm16Base64(pcm) }));
     };
@@ -883,11 +950,22 @@ function initVikVoicePrototype() {
     ws.addEventListener("message", (event) => {
       let data;
       try { data = JSON.parse(event.data); } catch { return; }
-      if (data.type === "conversation_initiation_metadata") setStatus(`ElevenLabs ${voiceLabel} подключён · говори свободно`);
+      if (data.type === "conversation_initiation_metadata") {
+        const metadata = data.conversation_initiation_metadata_event || {};
+        const output = /^pcm_(\d+)$/.exec(metadata.agent_output_audio_format || "");
+        const input = /^pcm_(\d+)$/.exec(metadata.user_input_audio_format || "");
+        state.outputSampleRate = output ? Number(output[1]) : null;
+        state.inputSampleRate = input ? Number(input[1]) : null;
+        if (!state.outputSampleRate || state.inputSampleRate !== 16000) {
+          ws.close(1003, "unsupported_audio_format");
+          return;
+        }
+        setStatus(`ElevenLabs ${voiceLabel} подключён · говори свободно`);
+      }
       if (data.type === "ping") ws.send(JSON.stringify({ type: "pong", event_id: data.ping_event?.event_id }));
       if (data.type === "interruption") {
         state.heardVoiceSinceAgent = true;
-        beginBargeIn();
+        beginBargeIn(data.interruption_event?.event_id ?? state.activeAudioEventId);
         state.speechEndedAt = null;
         state.firstAudioAt = null;
         setStatus("Остановился · слушаю тебя");
@@ -895,8 +973,7 @@ function initVikVoicePrototype() {
       if (data.type === "vad_score") {
         const vadScore = Number(data.vad_score_event?.vad_score || 0);
         if (vadScore > 0.12) state.heardVoiceSinceAgent = true;
-        if (vadScore > 0.35 && state.scheduled.size) {
-          beginBargeIn();
+        if (vadScore > 0.35) {
           state.speechEndedAt = null;
           state.firstAudioAt = null;
           setStatus("Слышу тебя…");
@@ -904,13 +981,14 @@ function initVikVoicePrototype() {
       }
       if (data.type === "user_transcript") {
         const transcript = String(data.user_transcription_event?.user_transcript || "").trim();
-        if (transcript) {
+        // Silence/take-turn placeholders are not a new spoken user turn and
+        // must not invalidate audio already in flight for the real question.
+        if (transcript && /[\p{L}\p{N}]/u.test(transcript)) {
           state.heardVoiceSinceAgent = true;
-          if (state.scheduled.size && !state.suppressAgentAudio) beginBargeIn();
-          if (state.waitingForInterruptedTranscript || state.suppressAgentAudio) {
-            state.waitingForInterruptedTranscript = false;
-            state.waitingForInterruptedReply = true;
-          }
+          const eventId = Number(data.user_transcription_event?.event_id);
+          if (Number.isFinite(eventId)) state.latestUserEventId = Math.max(state.latestUserEventId, eventId);
+          state.assistantItems = null;
+          state.assistantText = "";
           state.speechEndedAt = performance.now();
           state.firstAudioAt = null;
           setChatActive();
@@ -919,46 +997,43 @@ function initVikVoicePrototype() {
         }
       }
       if (data.type === "agent_response") {
+        if (isStale(data.agent_response_event?.event_id)) return;
         const reply = String(data.agent_response_event?.agent_response || "").trim();
         if (reply) {
-          const idleRecovery = reply === "Я не расслышал. Повторите, пожалуйста." && !state.heardVoiceSinceAgent;
-          if (idleRecovery) {
-            state.suppressRecoveryAudio = true;
-            state.suppressAgentAudio = true;
-            return;
-          }
-          if (state.waitingForInterruptedReply) {
-            state.suppressAgentAudio = false;
-            state.waitingForInterruptedReply = false;
-          }
           state.assistantText = reply;
           setChatActive();
           if (!state.assistantItems) state.assistantItems = addChatMessage("assistant", reply, { pending: true });
           else updateChatMessages(state.assistantItems, reply);
+          showReady();
         }
       }
       if (data.type === "audio") {
         const audio = data.audio_event?.audio_base_64;
-        if (audio) playPcm16(audio);
+        if (audio) playPcm16(audio, data.audio_event?.event_id);
       }
       if (data.type === "agent_response_end" || data.type === "agent_response_complete") {
-        if (state.suppressRecoveryAudio) {
-          state.suppressRecoveryAudio = false;
-          state.suppressAgentAudio = false;
-          state.assistantItems = null;
-          state.assistantText = "";
-          state.heardVoiceSinceAgent = false;
-          setStatus(`Готов к следующей реплике · ElevenLabs ${voiceLabel}`);
-          return;
-        }
         if (state.assistantItems && state.assistantText) updateChatMessages(state.assistantItems, state.assistantText);
-        state.assistantItems = null;
-        state.assistantText = "";
         state.heardVoiceSinceAgent = false;
-        setStatus(`Готов к следующей реплике · ElevenLabs ${voiceLabel}`);
+        showReady();
       }
       if (data.type === "error") console.info("vik_elevenlabs_error", { code: data.error?.code || data.error_event?.code || "unknown" });
     });
+
+    const disconnected = () => {
+      state.closed = true;
+      stopPlayback();
+      stream.getTracks().forEach((track) => track.stop());
+      try { processor.disconnect(); micSource.disconnect(); silent.disconnect(); } catch {}
+      void inputContext.close().catch(() => {});
+      void outputContext.close().catch(() => {});
+      if (active === state) {
+        active = null;
+        button.classList.remove("is-listening");
+        setStatus("Голосовое соединение закрыто · нажмите, чтобы подключиться снова");
+      }
+    };
+    ws.addEventListener("close", disconnected, { once: true });
+    ws.addEventListener("error", () => { console.info("vik_elevenlabs_error", { code: "socket_failed" }); ws.close(); }, { once: true });
 
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error("elevenlabs_timeout")), 10000);
@@ -997,9 +1072,10 @@ function initVikVoicePrototype() {
       if (greeting?.audio) await playGreetingAudio(greeting.audio);
       let preferredToken = null;
       if (usePreferredVoiceEngine) {
-        preferredToken = await post("/api/vik-site/voice/session", { mode: "preferred" });
+        preferredToken = await post("/api/vik-site/voice/session", { mode: "preferred", transport: "webrtc" });
         if (preferredToken.mode === "elevenlabs_speech_engine") {
-          await startElevenLabsVoice(stream, preferredToken);
+          if (preferredToken.transport === 'webrtc') await startElevenLabsWebRtcVoice(stream, preferredToken);
+          else await startElevenLabsVoice(stream, preferredToken);
           openingStream = null;
           return;
         }
