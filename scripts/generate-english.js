@@ -98,14 +98,14 @@ section('Interactive demonstration','Step inside the Digital Office',`<p class="
 section('Connected work','Channels meet in one place',cards([['Customer channels','Website, Telegram and email.'],['Business systems','CRM and calendar.'],['One office','Shared context, tasks, documents and results.']]))));
 
 const priceRows = [
-['Personal AI employee','from ₽50,000','₽24,900/month after launch. A permanent mini-office, one configured AI employee, knowledge, documents, memory, email, web access, 1–2 channels, tasks, spreadsheets, reminders and reports.'],
-['Extended mini-office / AI website','from ₽90,000','A broader web interface and processes. Connecting AI to an existing website starts at ₽45,000.'],
-['Business processes and team','from ₽120,000','Managed service from ₽24,900/month, depending on scope. Administration, sales, support, voice, several roles and a Digital Office.'],
-['Live web realtime','₽25/min','Connection from ₽15,000; billed for actual conversation minutes.'],
-['AI phone','₽25/min + operator/number','Connection from ₽45,000 outside Voice; infrastructure from ₽4,900/month.']
+['Personal AI employee','from $600 / €520','from $300 / €260 per month after launch. A permanent mini-office, one configured AI employee, knowledge, documents, memory, email, web access, 1–2 channels, tasks, spreadsheets, reminders and reports.'],
+['Extended mini-office / AI website','from $1,100 / €950','A broader web interface and processes. Connecting AI to an existing website starts at $550 / €470.'],
+['Business processes and team','from $1,450 / €1,250','For a new managed product starting at $600 / €520, ongoing support starts from $300 / €260 per month. Administration, sales, support, voice, several roles and a Digital Office.'],
+['Live web realtime','$0.30 / €0.26 per minute','Connection from $180 / €155; billed for actual conversation minutes.'],
+['AI phone','$0.30 / €0.26 per minute + operator/number','Connection from $550 / €470 outside Voice; infrastructure from $60 / €50 per month.']
 ];
 fs.writeFileSync(path.join(enDir,'pricing.html'), page('pricing','AI Employee Implementation Pricing — ARCH_AI','Current ARCH_AI implementation and managed-service pricing guidelines.',hero('Pricing for a real task','Pricing','Guidelines for standard implementation managed by ARCH_AI. The final estimate depends on channels, integrations and workload.'),
-section('A clear path','from ₽50,000 → expansion → business',`<div class="grid-3">${priceRows.map(([h,p,d])=>`<article class="glass-card"><h3>${h}</h3><strong>${p}</strong><p>${d}</p></article>`).join('')}</div><p class="lede">Standard text API and regular TTS voice responses are included in ₽24,900/month at normal working load. Realtime, phone service, external CRM/1C, new roles and complex integrations are priced separately.</p>`)+
+section('A clear path','from $600 / €520 → expansion → business',`<div class="grid-3">${priceRows.map(([h,p,d])=>`<article class="glass-card"><h3>${h}</h3><strong>${p}</strong><p>${d}</p></article>`).join('')}</div><p class="lede">Standard text API and regular TTS voice responses are included in support from $300 / €260 per month at normal working load. Realtime, phone service, external CRM and integrations with business systems, new roles and complex integrations are priced separately. The final cost depends on the selected models, the volume of text and voice interactions, the number of channels, and integrations.</p>`)+
 section('Delivery format','Three models',cards([['Managed by ARCH_AI','We host, monitor, update and operate the system.'],['Dedicated environment','A separate client environment managed by ARCH_AI.'],['Full handover','System, documentation and control move to the client environment.']]))));
 
 for (const [key,title,desc,heading,text] of [

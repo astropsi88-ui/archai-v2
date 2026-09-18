@@ -89,7 +89,7 @@ for (const file of businessPages) {
 const pricingHtml = fs.readFileSync(path.join(publicDir, 'pricing.html'), 'utf8');
 for (const expected of [
   'от 50 000 ₽',
-  '24 900 ₽/мес после запуска',
+  'от 24 900 ₽/мес после запуска',
   'от 90 000 ₽',
   '25 ₽/мин',
   'от 15 000 ₽',
@@ -111,12 +111,67 @@ for (const forbidden of ['Вик на сутки', '0 ₽ → 50 000 ₽ → р�
     ok = false;
   }
 }
-for (const expected of ['от 50 000 ₽ → расширение → бизнес', 'от 24 900 ₽/мес по составу']) {
+for (const expected of ['от 50 000 ₽ → расширение → бизнес', 'от 24 900 ₽/мес']) {
   if (!pricingHtml.includes(expected)) {
     console.error('pricing.html missing the current paid entry or support price:', expected);
     ok = false;
   }
 }
+
+// Pricing contract: public copy, runtime data and generated English must agree.
+const assert = require('node:assert/strict');
+const vm = require('node:vm');
+const ruDependency = 'Итоговая стоимость зависит от выбранных моделей, объёма текстовых и голосовых обращений, числа каналов и интеграций.';
+const enDependency = 'The final cost depends on the selected models, the volume of text and voice interactions, the number of channels, and integrations.';
+const ruSupport = 'от 24 900 ₽/мес';
+const enSupport = 'from $300 / €260 per month';
+const pricingSource = fs.readFileSync(path.join(publicDir, '..', 'assets/pricing-data.js'), 'utf8');
+assert.equal(pricingSource, fs.readFileSync(path.join(publicDir, 'assets/pricing-data.js'), 'utf8'), 'source/public pricing data parity');
+const prices = vm.runInNewContext(pricingSource + '\nARCHAI_PUBLIC_PRICING;', { document: { querySelectorAll: () => [] } });
+for (const [key, value] of Object.entries(prices)) {
+  if (value.support && key !== 'expanded') assert.equal(value.support, ruSupport + (key === 'personal' ? ' после запуска' : ''), key);
+}
+assert.equal(prices.realtime.usage, '25 ₽/мин');
+assert.equal(prices.phone.usage, '25 ₽/мин');
+for (const file of ['pricing.html', 'public/pricing.html']) {
+  const html = fs.readFileSync(path.join(publicDir, '..', file), 'utf8');
+  assert.ok(html.includes(ruDependency), file + ': cost dependency');
+  assert.ok(html.includes('Для нового управляемого продукта от 50 000 ₽ сопровождение — от 24 900 ₽/мес.'));
+  for (const match of html.matchAll(/data-price-key="([^.]+)\.([^"]+)"[^>]*>([^<]*)</g)) {
+    assert.equal(match[3], prices[match[1]][match[2]], file + ': ' + match[1] + '.' + match[2]);
+  }
+}
+function checkEnglishPricing(html) {
+  for (const expected of [enSupport + ' after launch', enDependency, 'For a new managed product starting at $600 / €520, ongoing support starts from $300 / €260 per month.', 'external CRM and integrations with business systems', '$0.30 / €0.26 per minute']) assert.ok(html.includes(expected), 'English pricing missing: ' + expected);
+  assert.ok(!/always|CRM\/1[СC]|from \$0\.30|₽/.test(html), 'English pricing contains retired or incorrect wording');
+}
+const enPricing = fs.readFileSync(path.join(publicDir, 'en/pricing.html'), 'utf8');
+checkEnglishPricing(enPricing);
+const solutions = enPricing.split('Ready-made solutions for larger projects')[1].split('</tbody>')[0];
+const supportCells = [...solutions.matchAll(/<tr><td>[^<]*<\/td><td>[^<]*<\/td><td>([^<]*)<\/td>/g)];
+assert.equal(supportCells.length, 7);
+for (const match of supportCells) assert.equal(match[1], enSupport);
+// Exercise only the pricing block: the legacy full-site generator also writes unrelated pages.
+const generator = fs.readFileSync(path.join(__dirname, 'generate-english.js'), 'utf8');
+const pricingBlock = generator.slice(generator.indexOf('const priceRows = ['), generator.indexOf('\nfor (const [key,title,desc,heading,text]'));
+let generatedPricing = '';
+vm.runInNewContext(pricingBlock, {
+  fs: { writeFileSync: (_file, html) => { generatedPricing = html; } }, path, enDir: '.',
+  page: (...parts) => parts.join(''), hero: (...parts) => parts.join(''),
+  section: (...parts) => parts.join(''), cards: (rows) => rows.flat().join(''),
+});
+checkEnglishPricing(generatedPricing);
+function checkPublicPricing(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const file = path.join(dir, entry.name);
+    if (entry.isDirectory()) checkPublicPricing(file);
+    else if (entry.isFile()) {
+      const text = fs.readFileSync(file).toString('utf8');
+      assert.ok(!/19\s?900|всегда\s+24 900|always\s+\$300|CRM\/1[СC]|(?:от|from)\s+(?:25 ₽\/мин|\$0\.30 \/ €0\.26 per minute)|(?:от|from)\s+0 ₽/.test(text), file + ': retired price, CRM promise or prefixed fixed usage rate');
+    }
+  }
+}
+checkPublicPricing(publicDir);
 
 const home = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
 const productPages = businessPages.slice(1).map((file) => fs.readFileSync(path.join(publicDir, file), 'utf8')).join('\n');
