@@ -187,7 +187,7 @@ if (appJs.includes('<' + 'redacted>')) {
   console.error('app.js contains a redaction placeholder');
   ok = false;
 }
-if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20260826-vik-greeting-1')) {
+if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20260918-realtime-openai-1')) {
   console.error('Homepage missing restored idle caret or repaired app cache version');
   ok = false;
 }
