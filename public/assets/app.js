@@ -679,7 +679,9 @@ function initVikVoicePrototype() {
   };
   let active = null;
   let openingStream = null;
-  const usePreferredVoiceEngine = true;
+  // OpenAI Realtime is the production transport. Keep the ElevenLabs
+  // Speech Engine implementation available for an explicit rollback only.
+  const usePreferredVoiceEngine = false;
 
   const post = async (path, body) => {
     const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: prototypeHeaders, body: JSON.stringify(body) });
