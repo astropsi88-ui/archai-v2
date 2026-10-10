@@ -59,13 +59,18 @@ function typeLoop(el, text) {
   };
   tick();
 }
-typeLoop($(".typing"), typingText);
-$$(".typing")
-  .slice(1)
-  .forEach((el) => typeLoop(el, "Расскажите о задаче вашего бизнеса."));
+$$(".typing").forEach((el, index) => {
+  if (document.body.classList.contains("home-page") && el.closest(".hero-electric")) {
+    el.hidden = true;
+    el.textContent = "";
+    return;
+  }
+  typeLoop(el, index ? "Расскажите о задаче вашего бизнеса." : typingText);
+});
 function sizeVikMessage(field) {
   if (!field) return;
   field.style.removeProperty("height");
+  if (!field.value) field.scrollTop = 0;
 }
 const siteForms = $$("[data-vik-site-form]");
 const vikChatMessages = $$("[data-vik-chat-messages]");
@@ -345,6 +350,7 @@ $$(".tag[data-prompt]").forEach((button) =>
         vikMessage.value.length,
         vikMessage.value.length,
       );
+      vikMessage.scrollTop = vikMessage.scrollHeight;
     }
     sessionStorage.setItem("archaiPrompt", text);
     siteForms[0]?.requestSubmit();

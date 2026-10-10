@@ -2610,3 +2610,15 @@ img.creator-photo {
 .home-page .vik-chat-messages::-webkit-scrollbar{display:block!important;width:6px!important}
 .home-page .vik-chat-messages::-webkit-scrollbar-thumb{background:rgba(143,241,255,.4);border-radius:6px}
 @media(max-width:760px){.home-page .hero-electric .electric-inner,.home-page.chat-active .hero-electric .electric-inner{grid-template-rows:140px auto!important}.home-page .hero-electric .typing,.home-page.chat-active .hero-electric .typing,.home-page .hero-electric .vik-chat-messages,.home-page .hero-electric .vik-chat-messages:empty{height:140px!important;min-height:140px!important;max-height:140px!important}.home-page .vik-voice-actions{width:100%;gap:8px}.home-page .vik-voice-actions .vik-telegram-continue{align-self:center;padding-inline:14px;font-size:12px}}
+/* Separate answer panel and two complete input lines in the existing blue frame. */
+.home-page .hero-electric .typing,.home-page.chat-active .hero-electric .typing{display:none!important;visibility:hidden!important}
+.home-page .hero-electric .electric-inner,.home-page.chat-active .hero-electric .electric-inner{grid-template-rows:160px 62px!important;gap:8px!important}
+.home-page .hero-electric .vik-chat-messages,.home-page .hero-electric .vik-chat-messages:empty{box-sizing:border-box!important;height:160px!important;min-height:160px!important;max-height:160px!important;padding:8px!important;border:1px solid rgba(180,218,255,.16);border-radius:17px;background:rgba(2,8,40,.34)}
+.home-page .vik-form,.home-page.chat-active .vik-form,.home-page .vik-compose,.home-page.chat-active .vik-compose{height:62px!important;min-height:62px!important;max-height:62px!important;flex-basis:62px!important}
+.home-page .vik-compose,.home-page.chat-active .vik-compose{padding:6px 16px!important}
+.home-page .vik-message,.home-page.chat-active .vik-message{height:48px!important;min-height:48px!important;max-height:48px!important;padding:0!important;border:0!important;line-height:24px!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin!important;white-space:pre-wrap!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;clip-path:inset(0)}
+.home-page .vik-message::-webkit-scrollbar{display:block!important;width:6px!important;height:0!important}
+.home-page .vik-message::-webkit-scrollbar-thumb{background:rgba(143,241,255,.4);border-radius:6px}
+.home-page .vik-compose:focus-within{border-color:rgba(143,241,255,.62)!important;box-shadow:0 0 24px rgba(0,82,255,.24)}
+.home-page .vik-idle-caret{top:7px!important;left:17px!important;bottom:auto!important;height:24px!important}
+@media(max-width:760px){.home-page .hero-electric .electric-inner,.home-page.chat-active .hero-electric .electric-inner{grid-template-rows:180px 62px!important}.home-page .hero-electric .vik-chat-messages,.home-page .hero-electric .vik-chat-messages:empty{height:180px!important;min-height:180px!important;max-height:180px!important}}
