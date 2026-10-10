@@ -27,7 +27,7 @@ const vikConversationStorageKey = "vikSiteConversationId";
 function setChatActive(active = true) {
   document.body.classList.toggle("chat-active", active);
 }
-setChatActive(Boolean(sessionStorage.getItem(vikConversationStorageKey)));
+setChatActive($$("[data-vik-chat-messages]").some((container) => container.children.length > 0));
 const telegramContinueButtons = $$("[data-vik-telegram-continue]");
 function setTelegramContinueVisible(visible) {
   telegramContinueButtons.forEach((button) => {
@@ -167,7 +167,7 @@ async function restoreVikHistory() {
         addChatMessage(item.role, item.content);
     });
     vikGreetingChecked = data.messages.length > 0;
-    setChatActive(true);
+    setChatActive(data.messages.length > 0);
     setTelegramContinueVisible(true);
   } catch {
   } finally {

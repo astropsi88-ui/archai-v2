@@ -198,7 +198,7 @@ if (appJs.includes('<' + 'redacted>')) {
   console.error('app.js contains a redaction placeholder');
   ok = false;
 }
-if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20261010-vik-dialog-layout-2')) {
+if (!home.includes('class="vik-idle-caret"') || !home.includes('assets/app.js?v=20261010-vik-original-frame-3')) {
   console.error('Homepage missing restored idle caret or repaired app cache version');
   ok = false;
 }
@@ -219,7 +219,7 @@ for (const file of businessPages) {
       ok = false;
     }
   }
-  if (!html.includes('v=20261010-vik-dialog-layout-2')) {
+  if (!html.includes('v=20261010-vik-original-frame-3')) {
     console.error(file, 'missing current cache-busting asset version');
     ok = false;
   }
