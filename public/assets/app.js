@@ -882,8 +882,10 @@ function initVikVoicePrototype() {
       }
     };
     try {
+      setStatus(isEnglishPage ? "Loading voice module…" : "Загружаю голосовой модуль…");
       const { Conversation } = await loadElevenLabsClient();
       if (state.closed || active !== state) return;
+      setStatus(isEnglishPage ? "Connecting Vik’s voice…" : "Устанавливаю голосовое соединение…");
       // The SDK owns its microphone and playback lifecycle. Release preflight.
       stream.getTracks().forEach(track => track.stop());
       state.conversation = await Conversation.startSession({
@@ -1121,6 +1123,8 @@ function initVikVoicePrototype() {
     cancelVikTextTurn();
     const epoch = ++voiceEpoch;
     openingVoice = true;
+    // Download while microphone permission and greeting are in progress.
+    if (usePreferredVoiceEngine) void loadElevenLabsClient().catch(() => {});
     try {
       setStatus(isEnglishPage ? "Allow your microphone to connect with Vik" : "Разрешите микрофон — подключаю живой голос Вика");
       await vikHistoryReady;
@@ -1135,6 +1139,7 @@ function initVikVoicePrototype() {
       if (greeting?.created && !greeting.audio) throw new Error("greeting_tts_unavailable");
       if (greeting?.audio) await playGreetingAudio(greeting.audio);
       assertOpening(epoch, stream);
+      setStatus(isEnglishPage ? "Connecting Vik’s voice…" : "Подключаю голос Вика…");
       let preferredToken = null;
       if (usePreferredVoiceEngine) {
         preferredToken = await post("/api/vik-site/voice/session", { mode: "preferred", transport: "webrtc" });
