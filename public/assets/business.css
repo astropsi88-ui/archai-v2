@@ -2605,3 +2605,17 @@ img.creator-photo {
 .home-page .vik-chat-messages::-webkit-scrollbar{display:block!important;width:6px!important}
 .home-page .vik-chat-messages::-webkit-scrollbar-thumb{background:rgba(143,241,255,.4);border-radius:6px}
 @media(max-width:760px){.home-page.chat-active .vik-chat-messages{height:clamp(240px,40vh,340px)!important;min-height:240px!important;max-height:340px!important}.home-page .vik-voice-actions{width:100%;gap:8px}.home-page .vik-voice-actions .vik-telegram-continue{align-self:center;padding-inline:14px;font-size:12px}}
+/* CURRENT 2026-10-10: dialogue geometry follows content, including after voice/history. */
+.home-page .hero-electric{height:auto!important;min-height:0!important;max-height:none!important;overflow:clip!important}
+.home-page .hero-electric::before{pointer-events:none!important}
+.home-page .hero-electric .electric-inner{height:auto!important;min-height:0!important;max-height:none!important;display:flex!important;flex-direction:column!important;gap:0!important;overflow:clip!important}
+.home-page .vik-chat-messages:not(:empty){display:flex!important;flex-direction:column!important;height:420px!important;min-height:420px!important;max-height:420px!important;flex:0 0 420px!important;margin:0 0 10px!important;overflow-y:auto!important;overflow-x:hidden!important;white-space:pre-wrap;overflow-wrap:anywhere}
+.home-page .vik-chat-messages:empty{display:none!important;height:0!important;min-height:0!important;max-height:0!important;flex-basis:0!important;margin:0!important}
+.home-page .hero-electric:has(.vik-chat-messages:not(:empty)) .typing{display:none!important;flex-basis:0!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important}
+.home-page .vik-form,.home-page.chat-active .vik-form{height:auto!important;min-height:62px!important;max-height:none!important;flex:0 0 auto!important;margin:0!important;overflow:visible!important}
+.home-page .vik-compose,.home-page.chat-active .vik-compose{height:62px!important;min-height:62px!important;max-height:62px!important;flex-basis:auto!important;grid-template-columns:minmax(0,1fr) 44px!important;align-items:center!important;padding:8px!important;gap:8px!important;overflow:visible!important}
+.home-page .vik-message,.home-page.chat-active .vik-message{height:42px!important;min-height:42px!important;max-height:42px!important;padding:9px 10px!important;font-size:16px!important;line-height:24px!important;overflow-y:auto!important;caret-color:#f7fbff!important}
+.home-page .vik-send{width:44px!important;min-width:44px!important;max-width:44px!important;height:44px!important;min-height:44px!important;max-height:44px!important}
+@media(max-width:760px){.home-page .vik-chat-messages:not(:empty){height:338px!important;min-height:338px!important;max-height:338px!important;flex-basis:338px!important}}
+
+.home-page .vik-message::placeholder{color:rgba(203,210,223,.68)!important;opacity:1!important}
