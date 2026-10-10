@@ -147,9 +147,20 @@ function checkEnglishPricing(html) {
 }
 const enPricing = fs.readFileSync(path.join(publicDir, 'en/pricing.html'), 'utf8');
 checkEnglishPricing(enPricing);
+for (const file of ['pricing.html', 'en/pricing.html', 'companion.html', 'en/companion.html']) {
+  const html = fs.readFileSync(path.join(publicDir, file), 'utf8');
+  assert.ok(!/Полная передача|Full handover|Private.Handover|AI Team \+ Digital Office Start|AI-команда \+ Цифровой офис Start/.test(html), file + ': retired handover or Office sale');
+  assert.ok(html.includes('delivery-license-note'), file + ': individual license note');
+}
+for (const file of ['pricing.html', 'digital-office.html', 'index.html', 'partner.html', 'en/pricing.html', 'en/digital-office.html', 'en/index.html', 'en/partner.html']) {
+  const html = fs.readFileSync(path.join(publicDir, file), 'utf8');
+  assert.ok(html.includes(file.startsWith('en/') ? 'being prepared for launch as a subscription service' : 'готовится к запуску по подписке'), file + ': future subscription status');
+}
+assert.ok(!('office' in prices) && !('exampleOffice' in prices), 'retired Office setup prices');
+
 const solutions = enPricing.split('Ready-made solutions for larger projects')[1].split('</tbody>')[0];
 const supportCells = [...solutions.matchAll(/<tr><td>[^<]*<\/td><td>[^<]*<\/td><td>([^<]*)<\/td>/g)];
-assert.equal(supportCells.length, 7);
+assert.equal(supportCells.length, 5);
 for (const match of supportCells) assert.equal(match[1], enSupport);
 // Exercise only the pricing block: the legacy full-site generator also writes unrelated pages.
 const generator = fs.readFileSync(path.join(__dirname, 'generate-english.js'), 'utf8');
