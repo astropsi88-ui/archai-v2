@@ -2593,3 +2593,15 @@ img.creator-photo {
 @media(prefers-reduced-motion:reduce){.companion-page .companion-team-link{transition:none}}
 
 .language-switcher{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.08em;white-space:nowrap}.language-switcher a{color:var(--muted);text-decoration:none}.language-switcher a:hover,.language-switcher a.is-active{color:#fff}.language-switcher span{opacity:.35}@media(max-width:900px){.language-switcher{margin-left:auto}.header-cta{display:none}}
+
+/* CURRENT 2026-10-10: readable conversation and secondary Telegram action. */
+.home-page .vik-voice-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;min-width:0;align-self:start}
+.home-page .vik-voice-actions .vik-telegram-continue{position:static;inset:auto;align-self:stretch;margin:0;padding:8px 6px;border-radius:12px;font-size:11px;line-height:1.35;text-align:center}
+.home-page .vik-voice-actions .voice-card{width:100%!important;min-width:0!important;max-width:100%!important}
+.home-page.chat-active .hero-electric{height:auto!important;min-height:0!important;max-height:none!important}
+.home-page.chat-active .hero-electric .electric-inner{height:auto!important;min-height:0!important;max-height:none!important;overflow:hidden!important}
+.home-page.chat-active .vik-chat-messages{height:clamp(280px,42vh,420px)!important;min-height:280px!important;max-height:420px!important;flex:0 0 auto!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin!important;scrollbar-color:rgba(143,241,255,.5) transparent}
+.home-page .vik-chat-message{flex-shrink:0}
+.home-page .vik-chat-messages::-webkit-scrollbar{display:block!important;width:6px!important}
+.home-page .vik-chat-messages::-webkit-scrollbar-thumb{background:rgba(143,241,255,.4);border-radius:6px}
+@media(max-width:760px){.home-page.chat-active .vik-chat-messages{height:clamp(240px,40vh,340px)!important;min-height:240px!important;max-height:340px!important}.home-page .vik-voice-actions{width:100%;gap:8px}.home-page .vik-voice-actions .vik-telegram-continue{align-self:center;padding-inline:14px;font-size:12px}}

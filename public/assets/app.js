@@ -6,7 +6,7 @@ const englishPhrases = {
   seller: "I need an AI sales representative for qualification and follow-up. Help me define the first scenario.",
   service: "I want to improve service for existing customers with AI. Help me choose the role and channels.",
   routine: "I want to automate repetitive business work. Help me find the best first process.",
-  start: "I am not sure which AI employee I need. Ask me a few questions and help me decide.",
+  start: "I am not sure where to start. Help me find one recurring task to give to AI and suggest a simple first step. I can describe my business in my own words.",
 };
 const phrases = {
   administrator:
@@ -18,7 +18,7 @@ const phrases = {
   routine:
     "Хочу автоматизировать повторяющуюся работу в бизнесе. Помоги найти лучший первый процесс.",
   start:
-    "Я пока не знаю, какой AI-сотрудник мне нужен. Задай несколько вопросов и помоги определиться.",
+    "Не знаю, с чего начать. Помоги найти одну повторяющуюся задачу, которую разумно передать AI. Дай понятный первый шаг, а я расскажу о своём деле как получается.",
 };
 const typingText = isEnglishPage
   ? "Tell me where your business loses time or customers — I’ll help identify the first AI role."
@@ -90,6 +90,7 @@ function updateChatMessages(items, text, { error = false } = {}) {
     item.classList.remove("is-pending");
     item.classList.toggle("is-error", error);
     item.textContent = text;
+    if (item.parentElement) item.parentElement.scrollTop = item.parentElement.scrollHeight;
   });
 }
 function setChatDisabled(disabled) {
@@ -99,6 +100,16 @@ function setChatDisabled(disabled) {
     if (field) field.disabled = disabled;
     if (button) button.disabled = disabled;
   });
+}
+let pauseVikVoiceForText = async () => {};
+let vikTextTurn = null;
+function cancelVikTextTurn() {
+  const turn = vikTextTurn;
+  if (!turn) return;
+  vikTextTurn = null;
+  turn.controller.abort();
+  turn.pendingItems?.forEach((item) => item.remove());
+  setChatDisabled(false);
 }
 let vikGreetingChecked = false;
 async function ensureVikGreeting(mode) {
@@ -190,60 +201,58 @@ function initVikSiteForm(form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const message = field.value.trim();
-    if (!message) {
-      field.focus();
-      return;
-    }
-    await vikHistoryReady;
-    await ensureVikGreeting("text").catch(() => null);
-    setChatActive();
-    const sensitiveCandidate =
-      /(?:светочк|светлана\s+итаф|владель|секретн.{0,12}фраз)/iu.test(
-        message.normalize("NFC"),
-      );
-    const userItems = sensitiveCandidate ? [] : addChatMessage("user", message);
-    const pending = addChatMessage("assistant", "Вик думает…", {
-      pending: true,
-    });
-    field.value = "";
-    sizeVikMessage(field);
-    sync();
+    if (!message) { field.focus(); return; }
+    cancelVikTextTurn();
+    const turn = { controller: new AbortController(), pendingItems: [] };
+    vikTextTurn = turn;
+    const current = () => vikTextTurn === turn && !turn.controller.signal.aborted;
+    const paused = pauseVikVoiceForText(); // Stops local listening and audio immediately.
     setChatDisabled(true);
-    setVikStatus("Вик готовит ответ.");
     try {
+      await paused;
+      await vikHistoryReady;
+      if (!current()) return;
+      await ensureVikGreeting("text").catch(() => null);
+      if (!current()) return;
+      setChatActive();
+      const sensitiveCandidate = /(?:светочк|светлана\s+итаф|владель|секретн.{0,12}фраз)/iu.test(message.normalize("NFC"));
+      const userItems = sensitiveCandidate ? [] : addChatMessage("user", message);
+      turn.pendingItems = addChatMessage("assistant", isEnglishPage ? "Vik is thinking…" : "Вик думает…", { pending: true });
+      field.value = "";
+      sizeVikMessage(field);
+      sync();
+      setVikStatus(isEnglishPage ? "Vik is preparing a reply." : "Вик готовит ответ.");
       const conversationId = sessionStorage.getItem(vikConversationStorageKey);
       const response = await fetch("/api/vik-site/chat", {
-        method: "POST",
-        credentials: "same-origin",
+        method: "POST", credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message,
-          ...(conversationId ? { conversationId } : {}),
-        }),
+        signal: turn.controller.signal,
+        body: JSON.stringify({ message, ...(conversationId ? { conversationId } : {}) }),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok)
-        throw new Error(data.error || `http_${response.status}`);
+      if (!current()) return;
+      if (!response.ok) throw new Error(data.error || `http_${response.status}`);
       if (data.inputConsumed) userItems.forEach((item) => item.remove());
       if (data.conversationId) {
         sessionStorage.setItem(vikConversationStorageKey, data.conversationId);
         setTelegramContinueVisible(true);
       }
-      updateChatMessages(
-        pending,
-        data.message?.content || "Я рядом. Попробуйте ещё раз.",
-      );
-      setVikStatus("Ответ получен.");
+      updateChatMessages(turn.pendingItems, data.message?.content || (isEnglishPage ? "Please try again." : "Я рядом. Попробуйте ещё раз."));
+      setVikStatus(isEnglishPage ? "Reply received." : "Ответ получен.");
     } catch (error) {
-      const text =
-        error.message === "rate_limited"
-          ? "Слишком быстро 🙂 Дайте мне минутку и напишите ещё раз."
-          : "Я споткнулся на ответе. Попробуйте ещё раз чуть позже.";
-      updateChatMessages(pending, text, { error: true });
-      setVikStatus("Не удалось получить ответ.");
+      if (!current() || error.name === "AbortError") return;
+      const text = error.message === "rate_limited"
+        ? (isEnglishPage ? "Please wait a minute and try again." : "Слишком быстро 🙂 Дайте мне минутку и напишите ещё раз.")
+        : (isEnglishPage ? "The reply failed. Please try again shortly." : "Я споткнулся на ответе. Попробуйте ещё раз чуть позже.");
+      if (!turn.pendingItems.length) turn.pendingItems = addChatMessage("assistant", text, { error: true });
+      else updateChatMessages(turn.pendingItems, text, { error: true });
+      setVikStatus(isEnglishPage ? "Could not get a reply." : "Не удалось получить ответ.");
     } finally {
-      setChatDisabled(false);
-      field.focus();
+      if (vikTextTurn === turn) {
+        vikTextTurn = null;
+        setChatDisabled(false);
+        field.focus({ preventScroll: true });
+      }
     }
   });
   sizeVikMessage(field);
@@ -292,6 +301,16 @@ telegramContinueButtons.forEach((button) =>
     }
   }),
 );
+if (document.body.classList.contains("home-page")) {
+  const voice = $("[data-vik-voice-prototype]");
+  const telegram = telegramContinueButtons[0];
+  if (voice && telegram) {
+    const actions = document.createElement("div");
+    actions.className = "vik-voice-actions";
+    voice.before(actions);
+    actions.append(voice, telegram);
+  }
+}
 const vikMessage = $("[data-vik-message]", siteForms[0]);
 const vikCompose = $("[data-vik-compose]", siteForms[0]);
 function syncVikCompose() {
@@ -328,6 +347,7 @@ $$(".tag[data-prompt]").forEach((button) =>
       );
     }
     sessionStorage.setItem("archaiPrompt", text);
+    siteForms[0]?.requestSubmit();
   }),
 );
 if ("IntersectionObserver" in window) {
@@ -679,7 +699,16 @@ function initVikVoicePrototype() {
   };
   let active = null;
   let openingStream = null;
-  // Owner-selected Marcel transport; retain the alternate path for rollback.
+  let openingVoice = false;
+  let voiceEpoch = 0;
+  let greetingPlayer = null;
+  let finishGreeting = null;
+  const assertOpening = (epoch, stream) => {
+    if (epoch === voiceEpoch && openingVoice) return;
+    stream?.getTracks().forEach((track) => track.stop());
+    throw new DOMException("Voice opening cancelled", "AbortError");
+  };
+  // Server-owned speech engine; retain the alternate transport for rollback.
   const usePreferredVoiceEngine = true;
 
   const post = async (path, body) => {
@@ -699,14 +728,19 @@ function initVikVoicePrototype() {
     for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
     const objectUrl = URL.createObjectURL(new Blob([bytes], { type: audio.mimeType }));
     const player = new Audio(objectUrl);
+    const greetingEpoch = voiceEpoch;
+    greetingPlayer = player;
     try {
       setStatus("Вик начинает разговор…");
       await player.play();
+      if (greetingEpoch !== voiceEpoch) return;
       await new Promise((resolve, reject) => {
+        finishGreeting = resolve;
         player.addEventListener("ended", resolve, { once: true });
         player.addEventListener("error", () => reject(new Error("greeting_audio_failed")), { once: true });
       });
     } finally {
+      if (greetingPlayer === player) { greetingPlayer = null; finishGreeting = null; }
       player.pause();
       player.removeAttribute("src");
       player.load();
@@ -746,24 +780,42 @@ function initVikVoicePrototype() {
     await flushCompletedTurnOutbox();
   };
   void flushCompletedTurnOutbox();
-
   const closeSession = () => {
-    if (!active) return;
-    active.closed = true;
-    if (active.conversation) void active.conversation.endSession().catch(() => {});
-    if (active.pollTimer) clearInterval(active.pollTimer);
-    active.stream?.getTracks().forEach((track) => track.stop());
-    if (active.pc && active.pc.connectionState !== "closed") active.pc.close();
-    if (active.ws && active.ws.readyState < WebSocket.CLOSING) active.ws.close(1000, "user_stop");
-    active.stopPlayback?.();
-    try { active.processor?.disconnect(); } catch {}
-    try { active.micSource?.disconnect(); } catch {}
-    try { active.silent?.disconnect(); } catch {}
-    active.inputContext?.close().catch(() => {});
-    active.outputContext?.close().catch(() => {});
+    voiceEpoch += 1;
+    openingVoice = false;
+    openingStream?.getTracks().forEach((track) => track.stop());
+    openingStream = null;
+    greetingPlayer?.pause();
+    finishGreeting?.();
+    const state = active;
     active = null;
+    let ended = Promise.resolve();
+    if (state) {
+      state.closed = true;
+      state.conversation?.setVolume?.({ volume: 0 });
+      state.conversation?.setMicMuted?.(true);
+      if (state.conversation) ended = state.conversation.endSession().catch(() => {});
+      if (state.pollTimer) clearInterval(state.pollTimer);
+      state.stream?.getTracks().forEach((track) => track.stop());
+      if (state.pc && state.pc.connectionState !== "closed") state.pc.close();
+      if (state.ws && state.ws.readyState < WebSocket.CLOSING) state.ws.close(1000, "user_stop");
+      state.stopPlayback?.();
+      try { state.processor?.disconnect(); state.micSource?.disconnect(); state.silent?.disconnect(); } catch {}
+      state.inputContext?.close().catch(() => {});
+      state.outputContext?.close().catch(() => {});
+    }
     button.classList.remove("is-listening");
-    setStatus("Нажмите, чтобы снова поговорить с Виком");
+    setStatus(isEnglishPage ? "Tap to talk to Vik again" : "Нажмите, чтобы снова поговорить с Виком");
+    return ended;
+  };
+  pauseVikVoiceForText = async () => {
+    const hadVoice = Boolean(active || openingVoice);
+    const ended = closeSession();
+    if (hadVoice) {
+      await vikHistoryReady;
+      await post("/api/vik-site/voice/pause", {});
+    }
+    await ended;
   };
   window.addEventListener('pagehide', closeSession);
   document.addEventListener('visibilitychange', () => { if (document.hidden) closeSession(); });
@@ -832,7 +884,7 @@ function initVikVoicePrototype() {
         conversationToken:token.conversationToken, connectionType:'webrtc',
         onDisconnect:disconnected,
         onError:() => { console.info('vik_elevenlabs_error',{code:'webrtc_failed'}); void state.conversation?.endSession(); disconnected(); },
-        onModeChange:({mode}) => { if (!state.closed) setStatus(mode === 'speaking' ? 'Вик отвечает · ElevenLabs Marcel' : 'Готов к следующей реплике · ElevenLabs Marcel'); },
+        onModeChange:({mode}) => { if (!state.closed) setStatus(mode === 'speaking' ? (isEnglishPage ? 'Vik is speaking' : 'Вик отвечает') : (isEnglishPage ? 'Ready to listen' : 'Готов к следующей реплике')); },
         onInterruption:() => { if (!state.closed) setStatus('Остановился · слушаю тебя'); },
         onMessage:({role,source,message}) => {
           if (state.closed || active !== state) return;
@@ -844,7 +896,7 @@ function initVikVoicePrototype() {
       if (state.closed || active !== state) { await state.conversation.endSession(); return; }
       button.classList.add('is-listening');
       setTelegramContinueVisible(true);
-      setStatus('Живой Вик подключён · ElevenLabs Marcel · говори свободно');
+      setStatus(isEnglishPage ? 'Vik is listening — go ahead' : 'Вик слушает — говорите свободно');
     } catch (error) { disconnected(); throw error; }
   };
 
@@ -1060,19 +1112,27 @@ function initVikVoicePrototype() {
       button.disabled = false;
       return;
     }
+    cancelVikTextTurn();
+    const epoch = ++voiceEpoch;
+    openingVoice = true;
     try {
-      setStatus("Разрешите микрофон — подключаю живой голос Вика");
+      setStatus(isEnglishPage ? "Allow your microphone to connect with Vik" : "Разрешите микрофон — подключаю живой голос Вика");
       await vikHistoryReady;
+      assertOpening(epoch);
       openingStream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
       const stream = openingStream;
+      assertOpening(epoch, stream);
       const greeting = await ensureVikGreeting("voice");
+      assertOpening(epoch, stream);
       if (greeting?.created && !greeting.audio) throw new Error("greeting_tts_unavailable");
       if (greeting?.audio) await playGreetingAudio(greeting.audio);
+      assertOpening(epoch, stream);
       let preferredToken = null;
       if (usePreferredVoiceEngine) {
         preferredToken = await post("/api/vik-site/voice/session", { mode: "preferred", transport: "webrtc" });
+        assertOpening(epoch, stream);
         if (preferredToken.mode === "elevenlabs_speech_engine") {
           if (preferredToken.transport === 'webrtc') await startElevenLabsWebRtcVoice(stream, preferredToken);
           else await startElevenLabsVoice(stream, preferredToken);
@@ -1081,6 +1141,7 @@ function initVikVoicePrototype() {
         }
       }
       const token = preferredToken || await post("/api/vik-site/voice/session", { mode: "speech_to_speech" });
+      assertOpening(epoch, stream);
       if (typeof token.clientSecret !== "string") throw new Error("realtime_unavailable");
       if (typeof token.conversationId === "string") {
         sessionStorage.setItem(vikConversationStorageKey, token.conversationId);
@@ -1207,6 +1268,7 @@ function initVikVoicePrototype() {
       });
       if (!sdpResponse.ok) throw new Error("realtime_unavailable");
       await pc.setRemoteDescription({ type: "answer", sdp: await sdpResponse.text() });
+      if (epoch !== voiceEpoch) { pc.close(); remoteAudio.pause(); assertOpening(epoch, stream); }
       state.pollTimer = setInterval(async () => {
         const response = await fetch(`/api/vik-site/voice/events?after=${encodeURIComponent(state.cursor)}`, { credentials: "same-origin", headers: { Accept: "application/json", "X-Vik-Voice": "1" } }).catch(() => null);
         if (!response?.ok) return;
@@ -1224,6 +1286,7 @@ function initVikVoicePrototype() {
     } catch (error) {
       openingStream?.getTracks().forEach((track) => track.stop());
       openingStream = null;
+      if (epoch !== voiceEpoch || error?.name === "AbortError") return;
       const micDenied = error?.name === "NotAllowedError" || error?.name === "SecurityError";
       const text = micDenied
         ? "Микрофон не разрешён · включите доступ и попробуйте снова"
@@ -1231,6 +1294,7 @@ function initVikVoicePrototype() {
       setStatus(text);
       console.info("vik_voice_prototype_error", { stage: micDenied ? "mic" : error.message });
     } finally {
+      if (epoch === voiceEpoch) openingVoice = false;
       button.disabled = false;
     }
   });

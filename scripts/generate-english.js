@@ -33,7 +33,7 @@ function head(key, title, description) {
   <link rel="canonical" href="${enUrl}"><link rel="alternate" hreflang="en" href="${enUrl}"><link rel="alternate" hreflang="ru" href="${ruUrl}"><link rel="alternate" hreflang="x-default" href="${ruUrl}">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Onest:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/styles.css?v=20260911-i18n-1"><link rel="stylesheet" href="../assets/business.css?v=20260911-i18n-1"></head>`;
+  <link rel="stylesheet" href="../assets/styles.css?v=20260911-i18n-1"><link rel="stylesheet" href="../assets/business.css?v=20261010-vik-voice-text-1"></head>`;
 }
 
 function header(key, cta = 'Talk to Vik') {
@@ -48,7 +48,7 @@ function header(key, cta = 'Talk to Vik') {
 function cards(items) { return `<div class="grid-3">${items.map(([h,p]) => `<article class="glass-card"><h3>${h}</h3><p>${p}</p></article>`).join('')}</div>`; }
 function section(kicker, title, body) { return `<section><div class="container"><div class="section-head"><p class="kicker">${kicker}</p><h2>${title}</h2></div>${body}</div></section>`; }
 function page(key, title, description, hero, content, bodyClass = '') {
-  return `<!doctype html><html lang="en">${head(key,title,description)}<body class="business-page ${bodyClass}">${header(key)}<main id="main">${hero}${content}</main>${footer}<script src="../assets/app.js?v=20260911-i18n-1"></script></body></html>`;
+  return `<!doctype html><html lang="en">${head(key,title,description)}<body class="business-page ${bodyClass}">${header(key)}<main id="main">${hero}${content}</main>${footer}<script src="../assets/app.js?v=20261010-vik-voice-text-1"></script></body></html>`;
 }
 function hero(kicker, title, text, cta='Talk to Vik') { return `<section class="page-hero"><div class="container"><p class="eyebrow">${kicker}</p><h1>${title}</h1><p>${text}</p><a class="btn primary" href="index.html#vik-chat">${cta}</a></div></section>`; }
 
@@ -75,7 +75,7 @@ const homeContent = section('Meet Vik','Vik is a working example',cards([
   ['1. Discovery','We identify one process and the result it should produce.'],['2. Demonstration and testing','The role is tested on real scenarios with limited permissions.'],['3. Limited, then full launch','Responsibility expands only after the workflow is proven.']
 ])) + section('Who created ARCH_AI','Svetlana Itaf',`<p class="lede">Svetlana Itaf is the creator of ARCH_AI. The project combines practical AI work, memory and context architecture, integrations and a visual approach to digital employees.</p><div class="cta-row"><a class="btn primary" href="#vik-chat">Talk to Vik</a><a class="btn" href="digital-office.html">View the office</a><a class="btn" href="pricing.html">How pricing works</a></div>`);
 
-fs.writeFileSync(path.join(enDir,'index.html'), `<!doctype html><html lang="en">${head('index','ARCH_AI — Your AI Employee','ARCH_AI builds practical AI employees for enquiries, sales, customer service and business processes.')}<body class="business-page home-page">${header('index','Discuss your task')}<main id="main">${homeHero}${homeContent}</main>${footer}<script src="../assets/app.js?v=20260911-i18n-1"></script></body></html>`);
+fs.writeFileSync(path.join(enDir,'index.html'), `<!doctype html><html lang="en">${head('index','ARCH_AI — Your AI Employee','ARCH_AI builds practical AI employees for enquiries, sales, customer service and business processes.')}<body class="business-page home-page">${header('index','Discuss your task')}<main id="main">${homeHero}${homeContent}</main>${footer}<script src="../assets/app.js?v=20261010-vik-voice-text-1"></script></body></html>`);
 
 fs.writeFileSync(path.join(enDir,'companion.html'), page('companion','AI Employees for Your Business — ARCH_AI','A practical AI role with the channels, knowledge and tools your business needs.',hero('Role → channels → tools','An AI employee for your business','One working role with the right channels, knowledge and tools. Start with the main task and expand as your business grows.'),
 section('Your AI team','Employees work together',cards([['Administrator','Enquiries, appointments and operational order.'],['Sales representative','Qualification, objections, follow-up and CRM context.'],['Customer support','Knowledge-base answers, statuses, customer history and safe escalation.']]))+
