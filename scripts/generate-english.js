@@ -98,8 +98,8 @@ section('Interactive demonstration','Step inside the Digital Office',`<p class="
 `<p class="delivery-license-note">Self-hosting of individual solutions is available under a separately agreed license. Deliverables, usage rights and pricing are agreed individually. The source code of the shared ARCH_AI platform is not included in the standard delivery.</p>`+section('Connected work','Channels meet in one place',cards([['Customer channels','Website, Telegram and email.'],['Business systems','CRM and calendar.'],['One office','Shared context, tasks, documents and results.']]))));
 
 const priceRows = [
-['Personal AI employee','from $600 / €520','from $300 / €260 per month after launch. A permanent mini-office, one configured AI employee, knowledge, documents, memory, email, web access, 1–2 channels, tasks, spreadsheets, reminders and reports.'],
-['Extended mini-office / AI website','from $1,100 / €950','A broader web interface and processes. Connecting AI to an existing website starts at $550 / €470.'],
+['Personal AI employee','from $600 / €520','from $300 / €260 per month after launch. A personal workspace for an AI employee, one configured AI employee, knowledge, documents, memory, email, web access, 1–2 channels, tasks, spreadsheets, reminders and reports.'],
+['Extended AI website / workspace','from $1,100 / €950','A broader web interface and processes. Connecting AI to an existing website starts at $550 / €470.'],
 ['Business processes and team','from $1,450 / €1,250','For a new managed product starting at $600 / €520, ongoing support starts from $300 / €260 per month. Individual AI employee implementation for administration, sales, support and voice. Roles and integrations are defined in the estimate; the Digital Office subscription service is not included.'],
 ['Live web realtime','$0.30 / €0.26 per minute','Connection from $180 / €155; billed for actual conversation minutes.'],
 ['AI phone','$0.30 / €0.26 per minute + operator/number','Connection from $550 / €470 outside Voice; infrastructure from $60 / €50 per month.']
