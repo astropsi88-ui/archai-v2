@@ -13,9 +13,9 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-180.png">
   <link rel="icon" href="./icon-192.png" type="image/png">
-  <link rel="stylesheet" href="./app.css?v=20261013-4">
-  <script src="./voice.js?v=20261013-4" defer></script>
-  <script src="./app.js?v=20261013-4" defer></script>
+  <link rel="stylesheet" href="./app.css?v=20261013-5">
+  <script src="./voice.js?v=20261013-5" defer></script>
+  <script src="./app.js?v=20261013-5" defer></script>
 </head>
 <body>
   <main class="app">
@@ -46,8 +46,8 @@
       </div>
       <div id="recording-preview" class="recording-preview" hidden>
         <audio id="recording-audio" controls preload="metadata" aria-label="Прослушать своё голосовое"></audio>
-        <div><button id="transcribe" type="button">Вставить в сообщение</button><button id="discard-recording" class="quiet" type="button">Удалить</button></div>
-        <p class="hint">Проверь распознанные слова и нажми ↑. До этого сообщение не отправлено Вику.</p>
+        <div><button id="transcribe" type="button">Отправить запись</button><button id="discard-recording" class="quiet" type="button">Удалить</button></div>
+        <p class="hint">Запись сохранилась здесь. Можно отправить её или удалить.</p>
       </div>
       <div class="status-row"><p id="status" role="status">Соединяюсь…</p><button id="refresh" class="quiet" type="button">Обновить</button></div>
       <form id="compose">
@@ -55,7 +55,7 @@
         <textarea id="message" placeholder="Напиши мне…" rows="2" maxlength="4000"></textarea>
         <button id="send" type="submit" disabled aria-label="Отправить сообщение">↑</button>
       </form>
-      <p class="privacy">Черновик остаётся на этом устройстве. Отправляю только по твоему нажатию.</p>
+      <p class="privacy">Голосовое уходит после «Стоп». Текст — по стрелке ↑.</p>
     </footer>
   </main>
   <dialog id="call-panel">

@@ -2,7 +2,7 @@ window.VikPhoneVoice = function (host) {
   'use strict';
   const $ = id => document.getElementById(id);
   let recorder = null, stream = null, opening = false, transcribing = false, recording = null, previewUrl = null;
-  let call = null, calling = false, callEpoch = 0, timer = 0, started = 0, generation = 0;
+  let call = null, calling = false, callEpoch = 0, timer = 0, started = 0, generation = 0, sendRecording = false;
   let player = null, pendingCallContext = null;
   const urls = new Map();
   const active = () => !!recorder || opening || transcribing || calling || !!call;
@@ -33,12 +33,13 @@ window.VikPhoneVoice = function (host) {
     $('recording-audio').pause(); $('recording-audio').removeAttribute('src');
     $('recording-preview').hidden = true; controls();
   }
-  function endRecording() {
+  function endRecording(sendAfterStop = false) {
+    sendRecording = sendAfterStop;
     if (recorder?.state === 'recording') recorder.stop();
     clearInterval(timer); stopTracks();
   }
   async function record() {
-    if (recorder) { endRecording(); return; }
+    if (recorder) { endRecording(true); return; }
     if (!available() || active()) return;
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) { host.status('Этот браузер не поддерживает запись. Открой приложение в Safari или Chrome.'); return; }
     if (recording || document.querySelector('#message').value.trim()) { host.status('Сначала отправь или убери текущий черновик.'); return; }
@@ -53,7 +54,7 @@ window.VikPhoneVoice = function (host) {
       recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
       const capture = recorder, chunks = [];
       let bytes = 0;
-      capture.addEventListener('dataavailable', event => { if (event.data.size) { chunks.push(event.data); bytes += event.data.size; if (bytes > 7 * 1024 * 1024) endRecording(); } });
+      capture.addEventListener('dataavailable', event => { if (event.data.size) { chunks.push(event.data); bytes += event.data.size; if (bytes > 7 * 1024 * 1024) endRecording(true); } });
       capture.addEventListener('stop', () => {
         clearInterval(timer); stopTracks(); recorder = null;
         $('record').textContent = '🎙 Голосовое'; $('record').classList.remove('is-recording');
@@ -61,17 +62,19 @@ window.VikPhoneVoice = function (host) {
         if (bytes < 100 || bytes > 8 * 1024 * 1024) { host.status('Запись не получилась. Попробуй ещё раз.'); change(); return; }
         recording = new Blob(chunks, { type: capture.mimeType || mime || 'audio/webm' });
         previewUrl = URL.createObjectURL(recording); $('recording-audio').src = previewUrl; $('recording-preview').hidden = false;
-        host.status('Голосовое записано. Можешь прослушать перед отправкой.'); change();
+        const deliver = sendRecording; sendRecording = false;
+        host.status('Голосовое записано.'); change();
+        if (deliver) void transcribe(true);
       }, { once: true });
       capture.addEventListener('error', () => { endRecording(); host.status('Запись прервалась. Попробуй ещё раз.'); }, { once: true });
       capture.start(1000); started = Date.now();
       $('record').classList.add('is-recording');
-      const tick = () => { const seconds = Math.floor((Date.now() - started) / 1000); $('record').textContent = '■ Стоп · ' + Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0'); if (seconds >= 180) endRecording(); };
+      const tick = () => { const seconds = Math.floor((Date.now() - started) / 1000); $('record').textContent = '■ Стоп · ' + Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0'); if (seconds >= 180) endRecording(true); };
       tick(); timer = setInterval(tick, 500); host.status('Слушаю запись. Нажми «Стоп», когда закончишь.');
     } catch (error) { stopTracks(); host.status(error.name === 'NotAllowedError' ? 'Разреши микрофон в настройках браузера.' : 'Не удалось включить микрофон.'); }
     finally { opening = false; change(); }
   }
-  async function transcribe() {
+  async function transcribe(deliver = true) {
     if (!recording || !available() || active()) return;
     const epoch = generation;
     transcribing = true; change(); host.status('Перевожу голосовое в слова…');
@@ -79,6 +82,8 @@ window.VikPhoneVoice = function (host) {
       const data = await post('transcribe', recording);
       if (epoch !== generation || !host.authenticated()) return;
       host.draft(data.transcript); discard();
+      transcribing = false; change();
+      if (deliver) await host.send();
     } catch (error) {
       host.status(error.message === 'speech_not_found' ? 'Слов не расслышал. Можно записать ещё раз.' : error.status === 403 ? 'Нужно снова войти. Запись пока остаётся здесь.' : 'Не удалось распознать. Запись остаётся здесь — можно попробовать ещё раз.');
     } finally { transcribing = false; change(); }
@@ -143,9 +148,12 @@ window.VikPhoneVoice = function (host) {
       const audioContext = pendingCallContext;
       const source = audioContext.createMediaStreamSource(stream), analyser = audioContext.createAnalyser();
       analyser.fftSize = 1024; source.connect(analyser);
-      const wave = new Float32Array(analyser.fftSize);
+      await audioContext.resume();
+      if (epoch !== callEpoch) { source.disconnect(); return; }
+      const muted = audioContext.createGain(); muted.gain.value = 0; analyser.connect(muted); muted.connect(audioContext.destination);
+      const wave = new Uint8Array(analyser.fftSize);
       const state = { closed: false, capture: null, timer: 0, output: null, url: null,
-        endSession: async () => { state.closed = true; clearInterval(state.timer); if (state.capture?.state === 'recording') state.capture.stop(); state.output?.pause(); if (state.url) URL.revokeObjectURL(state.url); source.disconnect(); await audioContext.close().catch(() => {}); }
+        endSession: async () => { state.closed = true; clearInterval(state.timer); if (state.capture?.state === 'recording') state.capture.stop(); state.output?.pause(); if (state.url) URL.revokeObjectURL(state.url); source.disconnect(); analyser.disconnect(); muted.disconnect(); await audioContext.close().catch(() => {}); }
       };
       call = state; calling = false; change();
       const listen = () => {
@@ -172,11 +180,18 @@ window.VikPhoneVoice = function (host) {
             $('call-status').textContent = reply.reply;
             if (!reply.audio) { host.status('Голос не ответил. Текст уже в нашем разговоре.'); listen(); return; }
             const bytes = Uint8Array.from(atob(reply.audio.base64), char => char.charCodeAt(0));
-            state.url = URL.createObjectURL(new Blob([bytes], { type: reply.audio.mimeType }));
-            state.output = new Audio(state.url);
-            const next = () => { if (state.url) URL.revokeObjectURL(state.url); state.url = null; listen(); };
-            state.output.onended = next; state.output.onerror = next;
-            await state.output.play().catch(() => { host.status('Нажми «Прослушать ответ», затем продолжим.'); $('resume-audio').hidden = false; $('resume-audio').onclick = () => { void state.output.play(); $('resume-audio').hidden = true; }; });
+            const buffer = await audioContext.decodeAudioData(bytes.buffer);
+            if (state.closed || epoch !== callEpoch) return;
+            const speak = async () => {
+              await audioContext.resume();
+              if (state.closed || epoch !== callEpoch) return;
+              const output = audioContext.createBufferSource(); output.buffer = buffer; output.connect(audioContext.destination);
+              state.output = { pause: () => { output.onended = null; try { output.stop(); } catch {} output.disconnect(); } };
+              output.onended = () => { output.disconnect(); listen(); }; output.start();
+              $('resume-audio').hidden = true;
+            };
+            if (audioContext.state === 'running') await speak();
+            else { $('resume-audio').hidden = false; $('resume-audio').onclick = () => void speak(); }
           } catch (error) {
             if (state.closed || epoch !== callEpoch) return;
             if (error.message === 'speech_not_found') { listen(); return; }
@@ -186,8 +201,8 @@ window.VikPhoneVoice = function (host) {
         capture.start(500);
         state.timer = setInterval(() => {
           if (state.closed || epoch !== callEpoch) return;
-          analyser.getFloatTimeDomainData(wave);
-          const rms = Math.sqrt(wave.reduce((sum, value) => sum + value * value, 0) / wave.length);
+          analyser.getByteTimeDomainData(wave);
+          const rms = Math.sqrt(wave.reduce((sum, value) => sum + ((value - 128) / 128) ** 2, 0) / wave.length);
           if (rms > 0.018) { voiced++; lastVoice = Date.now(); }
           if ((voiced >= 3 && Date.now() - lastVoice > 1300) || Date.now() - began > 45000 || length > 7 * 1024 * 1024) {
             clearInterval(state.timer); if (capture.state === 'recording') capture.stop();
@@ -203,7 +218,7 @@ window.VikPhoneVoice = function (host) {
     for (const url of urls.values()) URL.revokeObjectURL(url); urls.clear();
   }
   $('record').addEventListener('click', () => void record());
-  $('transcribe').addEventListener('click', () => void transcribe());
+  $('transcribe').addEventListener('click', () => void transcribe(true));
   $('discard-recording').addEventListener('click', discard);
   $('call').addEventListener('click', () => void startCall());
   $('end-call').addEventListener('click', () => void stopCall());

@@ -12,8 +12,8 @@
   $('message').value = read(draftKey) || '';
   const status = text => { $('status').textContent = text; };
   const voice = window.VikPhoneVoice({ authenticated: () => authenticated, blocked: () => busy || restoring || !!attempt, status,
-    draft: text => { $('message').value = text; saveDraft(); status('Слова записаны. Проверь их и нажми ↑.'); },
-    refresh: () => restoreHistory(), changed: () => controls() });
+    draft: text => { $('message').value = text; saveDraft(); status('Голосовое распознано.'); },
+    send: () => submitMessage(), refresh: () => restoreHistory(), changed: () => controls() });
   function controls() {
     $('send').disabled = !authenticated || busy || restoring || !!attempt || voice.active() || !$('message').value.trim();
     $('message').disabled = busy || voice.active();
@@ -163,16 +163,16 @@
       } else { status('Ответ оборвался. Сверяю историю перед повторной отправкой.'); schedulePoll(); }
     } finally { busy = false; controls(); if (authenticated) await restoreHistory(); }
   }
-  $('compose').addEventListener('submit', event => {
-    event.preventDefault();
-    if (navigator.locks) void navigator.locks.request('vik-phone-send', { ifAvailable: true }, async lock => {
+  async function submitMessage() {
+    if (navigator.locks) return navigator.locks.request('vik-phone-send', { ifAvailable: true }, async lock => {
       if (!lock) { status('Сообщение уже отправляется в другом окне.'); return; }
       try { attempt = JSON.parse(read(attemptKey) || 'null'); } catch { attempt = null; }
       if (attempt) { await restoreHistory(); return; }
       await send();
     });
-    else void send();
-  });
+    return send();
+  }
+  $('compose').addEventListener('submit', event => { event.preventDefault(); void submitMessage(); });
   $('message').addEventListener('input', saveDraft);
   $('refresh').addEventListener('click', () => void connect());
   window.addEventListener('online', () => { controls(); void connect(); });
@@ -180,7 +180,7 @@
   window.addEventListener('storage', event => {
     if (event.key === attemptKey && !busy) { try { attempt = JSON.parse(event.newValue || 'null'); } catch { attempt = null; } controls(); if (authenticated) void restoreHistory(); }
   });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && !busy) void connect(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !busy && !voice.active()) void connect(); });
   window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; });
   window.addEventListener('appinstalled', () => { installPrompt = null; $('install').hidden = true; });
   if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) $('install').hidden = true;
