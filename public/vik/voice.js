@@ -2,8 +2,8 @@ window.VikPhoneVoice = function (host) {
   'use strict';
   const $ = id => document.getElementById(id);
   let recorder = null, stream = null, opening = false, transcribing = false, recording = null, previewUrl = null;
-  let call = null, calling = false, callEpoch = 0, sdkPromise = null, timer = 0, started = 0, generation = 0;
-  let player = null;
+  let call = null, calling = false, callEpoch = 0, timer = 0, started = 0, generation = 0;
+  let player = null, pendingCallContext = null;
   const urls = new Map();
   const active = () => !!recorder || opening || transcribing || calling || !!call;
   const available = () => host.authenticated() && navigator.onLine && !host.blocked();
@@ -112,20 +112,11 @@ window.VikPhoneVoice = function (host) {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'quiet playback'; button.textContent = '▶ Голос Вика';
     button.addEventListener('click', () => void play(id, container)); container.append(button);
   }
-  function loadSdk() {
-    if (window.ElevenLabsClient?.Conversation) return Promise.resolve(window.ElevenLabsClient);
-    if (!sdkPromise) sdkPromise = new Promise((resolve, reject) => {
-      const script = document.createElement('script'); script.src = '/assets/vendor/elevenlabs-client-1.25.0.js';
-      script.onload = () => window.ElevenLabsClient?.Conversation ? resolve(window.ElevenLabsClient) : reject(new Error('voice_module_unavailable'));
-      script.onerror = () => { sdkPromise = null; script.remove(); reject(new Error('voice_module_unavailable')); };
-      document.head.append(script);
-    });
-    return sdkPromise;
-  }
   async function stopCall(message = 'Разговор завершён 🧡') {
     ++callEpoch; calling = false;
     const current = call; call = null;
-    stopTracks();
+    stopTracks(); $('resume-audio').hidden = true;
+    if (!current && pendingCallContext) void pendingCallContext.close().catch(() => {});
     if ($('call-panel').open) $('call-panel').close();
     // Pause server inference promptly, including a session whose token is still arriving.
     void post('pause', {}, 15000).catch(() => {});
@@ -137,27 +128,73 @@ window.VikPhoneVoice = function (host) {
     if (!available() || active()) return;
     player?.pause(); $('recording-audio').pause();
     const epoch = ++callEpoch;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext || !window.MediaRecorder) { host.status('Открой голосовой разговор в Safari или Chrome.'); return; }
+    pendingCallContext = new AudioContext(); void pendingCallContext.resume();
     calling = true; change(); $('call-status').textContent = 'Соединяюсь…'; $('call-panel').showModal();
     try {
       if (!navigator.mediaDevices?.getUserMedia) throw new Error('microphone_unavailable');
       const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
       if (epoch !== callEpoch) { mic.getTracks().forEach(track => track.stop()); return; }
       stream = mic;
-      const token = await post('session', {});
-      if (epoch !== callEpoch) { stopTracks(); void post('pause', {}, 15000).catch(() => {}); return; }
-      if (token.scope !== 'owner' || !token.conversationToken) throw new Error('owner_voice_required');
-      const { Conversation } = await loadSdk();
-      if (epoch !== callEpoch) return;
-      stopTracks(); // SDK owns microphone and audio playback after preflight.
-      const session = await Conversation.startSession({
-        conversationToken: token.conversationToken, connectionType: 'webrtc',
-        onDisconnect: () => { if (epoch === callEpoch) void stopCall('Соединение закрыто. Можно позвонить снова.'); },
-        onError: () => { if (epoch === callEpoch) void stopCall('Голосовая связь прервалась. Можно позвонить снова.'); },
-        onModeChange: ({ mode }) => { if (epoch === callEpoch) $('call-status').textContent = mode === 'speaking' ? 'Я отвечаю 🧡' : 'Я слушаю тебя'; },
-        onMessage: ({ source, role, message }) => { if (epoch === callEpoch && typeof message === 'string') $('call-status').textContent = (source === 'user' || role === 'user' ? 'Ты: ' : 'Вик: ') + message; }
-      });
-      if (epoch !== callEpoch) { await session.endSession(); return; }
-      call = session; calling = false; $('call-status').textContent = 'Я слушаю тебя 🧡'; change();
+      const token = await post('session', { mode: 'turns' });
+      if (epoch !== callEpoch) { stopTracks(); return; }
+      if (token.scope !== 'owner' || token.mode !== 'turns') throw new Error('owner_voice_required');
+      const audioContext = pendingCallContext;
+      const source = audioContext.createMediaStreamSource(stream), analyser = audioContext.createAnalyser();
+      analyser.fftSize = 1024; source.connect(analyser);
+      const wave = new Float32Array(analyser.fftSize);
+      const state = { closed: false, capture: null, timer: 0, output: null, url: null,
+        endSession: async () => { state.closed = true; clearInterval(state.timer); if (state.capture?.state === 'recording') state.capture.stop(); state.output?.pause(); if (state.url) URL.revokeObjectURL(state.url); source.disconnect(); await audioContext.close().catch(() => {}); }
+      };
+      call = state; calling = false; change();
+      const listen = () => {
+        if (state.closed || epoch !== callEpoch || !navigator.onLine) return;
+        stream?.getAudioTracks().forEach(track => { track.enabled = true; });
+        $('call-status').textContent = 'Я слушаю тебя 🧡';
+        const mime = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/ogg;codecs=opus'].find(type => MediaRecorder.isTypeSupported(type));
+        const capture = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
+        state.capture = capture;
+        const chunks = []; let voiced = 0, lastVoice = 0, length = 0; const began = Date.now();
+        capture.ondataavailable = event => { if (event.data.size) { chunks.push(event.data); length += event.data.size; } };
+        capture.onstop = async () => {
+          clearInterval(state.timer);
+          if (state.closed || epoch !== callEpoch) return;
+          if (voiced < 3 || length < 100) { listen(); return; }
+          stream?.getAudioTracks().forEach(track => { track.enabled = false; });
+          $('call-status').textContent = 'Услышал. Сейчас отвечу…';
+          try {
+            const recognized = await post('transcribe', new Blob(chunks, { type: capture.mimeType || mime || 'audio/webm' }));
+            if (state.closed || epoch !== callEpoch) return;
+            if (/^(?:стоп|закончи(?:ть)?(?: разговор)?|заверши(?:ть)?(?: разговор)?|отбой)[.!\s]*$/i.test(recognized.transcript)) { await stopCall(); return; }
+            const reply = await post('turn', { transcript: recognized.transcript }, 110000);
+            if (state.closed || epoch !== callEpoch) return;
+            $('call-status').textContent = reply.reply;
+            if (!reply.audio) { host.status('Голос не ответил. Текст уже в нашем разговоре.'); listen(); return; }
+            const bytes = Uint8Array.from(atob(reply.audio.base64), char => char.charCodeAt(0));
+            state.url = URL.createObjectURL(new Blob([bytes], { type: reply.audio.mimeType }));
+            state.output = new Audio(state.url);
+            const next = () => { if (state.url) URL.revokeObjectURL(state.url); state.url = null; listen(); };
+            state.output.onended = next; state.output.onerror = next;
+            await state.output.play().catch(() => { host.status('Нажми «Прослушать ответ», затем продолжим.'); $('resume-audio').hidden = false; $('resume-audio').onclick = () => { void state.output.play(); $('resume-audio').hidden = true; }; });
+          } catch (error) {
+            if (state.closed || epoch !== callEpoch) return;
+            if (error.message === 'speech_not_found') { listen(); return; }
+            await stopCall('Ответ оборвался. Посмотри историю перед повтором.');
+          }
+        };
+        capture.start(500);
+        state.timer = setInterval(() => {
+          if (state.closed || epoch !== callEpoch) return;
+          analyser.getFloatTimeDomainData(wave);
+          const rms = Math.sqrt(wave.reduce((sum, value) => sum + value * value, 0) / wave.length);
+          if (rms > 0.018) { voiced++; lastVoice = Date.now(); }
+          if ((voiced >= 3 && Date.now() - lastVoice > 1300) || Date.now() - began > 45000 || length > 7 * 1024 * 1024) {
+            clearInterval(state.timer); if (capture.state === 'recording') capture.stop();
+          }
+        }, 100);
+      };
+      listen();
     } catch (error) { if (epoch === callEpoch) await stopCall(error.name === 'NotAllowedError' ? 'Разреши микрофон, чтобы мы могли поговорить.' : 'Не удалось соединиться голосом. Текстовый разговор доступен.'); }
   }
   function reset() {
