@@ -75,6 +75,7 @@
     if (delivered) {
       const answered = rows.some(row => row.role === 'assistant' && BigInt(row.id) > BigInt(delivered.id));
       if (answered) { clearAttempt(true); status('Ответ получен 🧡'); }
+      else if (Date.now() - attempt.started >= 120000) { clearAttempt(true); status('Сообщение доставлено. Ответ задержался; можно написать ещё.'); }
       else { status('Сообщение уже у Вика. Жду ответ — повторно не отправляю.'); schedulePoll(); }
     } else if (Date.now() - attempt.started < 120000) {
       status('Проверяю доставку. Повторно не отправляю.'); schedulePoll();
