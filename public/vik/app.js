@@ -11,14 +11,19 @@
   if (attempt && (typeof attempt.text !== 'string' || !/^\d+$/.test(attempt.beforeId) || !Number.isFinite(attempt.started))) { attempt = null; write(attemptKey, null); }
   $('message').value = read(draftKey) || '';
   const status = text => { $('status').textContent = text; };
+  const voice = window.VikPhoneVoice({ authenticated: () => authenticated, blocked: () => busy || restoring || !!attempt, status,
+    draft: text => { $('message').value = text; saveDraft(); status('Слова записаны. Проверь их и нажми ↑.'); },
+    refresh: () => restoreHistory(), changed: () => controls() });
   function controls() {
-    $('send').disabled = !authenticated || busy || restoring || !!attempt || !$('message').value.trim();
-    $('message').disabled = busy;
+    $('send').disabled = !authenticated || busy || restoring || !!attempt || voice.active() || !$('message').value.trim();
+    $('message').disabled = busy || voice.active();
     $('login-button').disabled = busy || !navigator.onLine;
     $('connection').textContent = !navigator.onLine ? 'Нет соединения' : authenticated ? 'Наш личный разговор' : 'Личный вход';
+    voice.controls();
   }
   function gate(value) {
     authenticated = value;
+    if (!value) voice.reset();
     $('welcome').hidden = value;
     $('conversation').hidden = !value;
     if (!value) { rows = []; rendered = ''; $('messages').replaceChildren(); conversationId = null; }
@@ -55,7 +60,9 @@
       const time = document.createElement('small');
       const date = new Date(row.createdAt);
       time.textContent = (row.role === 'user' ? 'Ты' : 'Вик') + (Number.isFinite(date.getTime()) ? ' · ' + date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '');
-      item.append(time); $('messages').append(item);
+      item.append(time);
+      if (row.role === 'assistant') voice.addPlayback(row.id, item);
+      $('messages').append(item);
     }
     if (first || nearBottom) panel.scrollTop = panel.scrollHeight;
   }
@@ -96,7 +103,7 @@
       conversationId = data.conversationId || null;
       render();
       if (attempt) reconcile();
-      else status('Я здесь. Можешь писать 🧡');
+      else if (!voice.active()) status('Я здесь. Можешь писать или говорить 🧡');
     } catch (error) {
       if (error.status === 403) { gate(false); status('Войди по своей фразе — открою личный разговор.'); }
       else status('Сервер пока не ответил. Черновик остаётся на устройстве.');
@@ -126,7 +133,7 @@
     } finally { busy = false; controls(); }
   });
   async function send() {
-    if (busy || restoring || attempt || !authenticated) return;
+    if (busy || restoring || attempt || !authenticated || voice.active()) return;
     const text = $('message').value.trim();
     if (!text) return;
     saveDraft();
@@ -147,7 +154,7 @@
       clearAttempt(true); status('Ответ получен 🧡');
       // The canonical history also contains input that was consumed as an auth command.
       rows = []; rendered = '';
-      if (data.message?.role === 'assistant') { rows = [data.message]; render(); }
+      if (data.message?.role === 'assistant') { rows = [data.message]; render(); void voice.reply(data.message.id); }
     } catch (error) {
       if (!posted || (error.status && error.status < 500)) {
         clearAttempt();
