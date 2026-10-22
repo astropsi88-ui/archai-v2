@@ -88,7 +88,7 @@ for (const file of businessPages) {
 
 const pricingHtml = fs.readFileSync(path.join(publicDir, 'pricing.html'), 'utf8');
 for (const expected of [
-  'от 50 000 ₽',
+  'от 10 000 ₽',
   'от 24 900 ₽/мес после запуска',
   'от 90 000 ₽',
   '25 ₽/мин',
@@ -111,7 +111,7 @@ for (const forbidden of ['Вик на сутки', '0 ₽ → 50 000 ₽ → р�
     ok = false;
   }
 }
-for (const expected of ['от 50 000 ₽ → расширение → бизнес', 'от 24 900 ₽/мес']) {
+for (const expected of ['ИИ-сотрудник под вашу задачу — от 10 000 ₽', 'от 24 900 ₽/мес']) {
   if (!pricingHtml.includes(expected)) {
     console.error('pricing.html missing the current paid entry or support price:', expected);
     ok = false;

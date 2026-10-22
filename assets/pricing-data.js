@@ -1,6 +1,6 @@
 /* Публичная ценовая архитектура ARCH_AI — CURRENT, утверждена 2026-08-31. */
 const ARCHAI_PUBLIC_PRICING = {
-  personal: { implementation: "от 50 000 ₽", support: "от 24 900 ₽/мес после запуска" },
+  personal: { implementation: "от 10 000 ₽", support: "от 24 900 ₽/мес после запуска" },
   expanded: { implementation: "от 90 000 ₽", support: "по составу проекта" },
   business: { implementation: "от 120 000 ₽", support: "от 24 900 ₽/мес" },
   administrator: { implementation: "от 120 000 ₽", support: "от 24 900 ₽/мес" },
