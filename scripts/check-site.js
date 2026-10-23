@@ -89,7 +89,8 @@ for (const file of businessPages) {
 const pricingHtml = fs.readFileSync(path.join(publicDir, 'pricing.html'), 'utf8');
 for (const expected of [
   'от 10 000 ₽',
-  'от 24 900 ₽/мес после запуска',
+  'По желанию — от 3 000 ₽/мес',
+  'По запросу — от 7 000 ₽/мес',
   'от 90 000 ₽',
   '25 ₽/мин',
   'от 15 000 ₽',
@@ -129,20 +130,22 @@ const pricingSource = fs.readFileSync(path.join(publicDir, '..', 'assets/pricing
 assert.equal(pricingSource, fs.readFileSync(path.join(publicDir, 'assets/pricing-data.js'), 'utf8'), 'source/public pricing data parity');
 const prices = vm.runInNewContext(pricingSource + '\nARCHAI_PUBLIC_PRICING;', { document: { querySelectorAll: () => [] } });
 for (const [key, value] of Object.entries(prices)) {
-  if (value.support && key !== 'expanded') assert.equal(value.support, ruSupport + (key === 'personal' ? ' после запуска' : ''), key);
+  if (value.support) assert.equal(value.support, key === 'personal' ? 'По желанию — от 3 000 ₽/мес' : key === 'expanded' ? 'По запросу — от 7 000 ₽/мес' : ruSupport, key);
 }
 assert.equal(prices.realtime.usage, '25 ₽/мин');
 assert.equal(prices.phone.usage, '25 ₽/мин');
 for (const file of ['pricing.html', 'public/pricing.html']) {
   const html = fs.readFileSync(path.join(publicDir, '..', file), 'utf8');
   assert.ok(html.includes(ruDependency), file + ': cost dependency');
-  assert.ok(html.includes('Для нового управляемого продукта от 50 000 ₽ сопровождение — от 24 900 ₽/мес.'));
+  assert.ok(html.includes('Для нового управляемого бизнес-продукта от 50 000 ₽ сопровождение — от 24 900 ₽/мес.'));
+  assert.ok(html.includes('Сопровождение подключается по запросу: размещение на нашем сервере, обслуживание, обновления и устранение неполадок. Объём работ согласуем под вашу задачу. Модели/API, подписки и платные сервисы оплачиваются отдельно по выбранной конфигурации.'), file + ': on-request hosting, maintenance and agreed support scope');
+  assert.ok(html.includes('В бизнес-сопровождение от 24 900 ₽/мес'), file + ': business API/TTS scope');
   for (const match of html.matchAll(/data-price-key="([^.]+)\.([^"]+)"[^>]*>([^<]*)</g)) {
     assert.equal(match[3], prices[match[1]][match[2]], file + ': ' + match[1] + '.' + match[2]);
   }
 }
 function checkEnglishPricing(html) {
-  for (const expected of [enSupport + ' after launch', enDependency, 'For a new managed product starting at $600 / €520, ongoing support starts from $300 / €260 per month.', 'external CRM and integrations with business systems', '$0.30 / €0.26 per minute']) assert.ok(html.includes(expected), 'English pricing missing: ' + expected);
+  for (const expected of ['Optional — from RUB 3,000 per month', 'On request — from RUB 7,000 per month', 'Support is available on request: hosting on our server, maintenance, updates and troubleshooting. We agree the scope of work to suit your task. Models/API, subscriptions and paid services are paid separately according to the selected configuration.', 'business support', enSupport, enDependency, 'For a new managed business product starting at $600 / €520, ongoing support starts from $300 / €260 per month.', 'external CRM and integrations with business systems', '$0.30 / €0.26 per minute']) assert.ok(html.includes(expected), 'English pricing missing: ' + expected);
   assert.ok(!/always|CRM\/1[СC]|from \$0\.30|₽/.test(html), 'English pricing contains retired or incorrect wording');
 }
 const enPricing = fs.readFileSync(path.join(publicDir, 'en/pricing.html'), 'utf8');
